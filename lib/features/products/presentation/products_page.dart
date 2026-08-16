@@ -286,6 +286,7 @@ class _ProductsPageState extends State<ProductsPage> {
     return Card(
       elevation: 0,
       color: warning
+          // ignore: deprecated_member_use
           ? scheme.errorContainer.withOpacity(.55)
           : scheme.surfaceContainerHigh,
       child: Padding(
@@ -294,7 +295,9 @@ class _ProductsPageState extends State<ProductsPage> {
           children: [
             CircleAvatar(
               backgroundColor: warning
+                  // ignore: deprecated_member_use
                   ? scheme.error.withOpacity(.12)
+                  // ignore: deprecated_member_use
                   : scheme.primary.withOpacity(.12),
               child: Icon(
                 icon,

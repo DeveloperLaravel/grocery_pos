@@ -17,7 +17,7 @@ class PosRepositoryImpl implements PosRepository {
 
   @override
   TaskEither<Failure, List<ProductEntity>> getProducts({String query = ''}) => TaskEither.tryCatch(() async {
-    await db.seedIfEmpty();
+    // await db.seedIfEmpty();
     final q = db.select(db.products);
     if (query.trim().isNotEmpty) {
       q.where((t) => t.name.contains(query.trim()) | t.barcode.contains(query.trim()));

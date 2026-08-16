@@ -385,7 +385,7 @@ class CartPanel extends StatelessWidget {
                   onPressed: items.isEmpty || busy ? null : onClear,
                   icon: Icon(
                     Icons.delete_sweep_outlined,
-                    size: compact ? 20 : 22,
+                    size: compact ? 10 : 14,
                   ),
                 ),
               ],
@@ -398,10 +398,10 @@ class CartPanel extends StatelessWidget {
             child: items.isEmpty
                 ? const _EmptyCart()
                 : ListView.separated(
-                    padding: EdgeInsets.all(compact ? 8 : 10),
+                    padding: EdgeInsets.all(compact ? 3 : 5),
                     itemCount: items.length,
                     separatorBuilder: (_, __) =>
-                        SizedBox(height: compact ? 7 : 8),
+                        SizedBox(height: compact ? 2 : 4),
                     itemBuilder: (_, index) {
                       final item = items[index];
 
@@ -438,21 +438,21 @@ class CartPanel extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return Dialog(
-          insetPadding: const EdgeInsets.all(16),
+          insetPadding: const EdgeInsets.all(8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(22),
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 390),
             child: Padding(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       const Icon(Icons.edit_rounded),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 12),
                       const Expanded(
                         child: Text(
                           'تعديل الكمية',
@@ -462,10 +462,13 @@ class CartPanel extends StatelessWidget {
                           ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(dialogContext),
-                        icon: const Icon(Icons.close_rounded),
-                      ),
+IconButton(
+  tooltip: 'إغلاق',
+  onPressed: Navigator.of(dialogContext).canPop()
+      ? () => Navigator.of(dialogContext).pop()
+      : null,
+  icon: const Icon(Icons.close_rounded),
+),
                     ],
                   ),
                   const SizedBox(height: 12),

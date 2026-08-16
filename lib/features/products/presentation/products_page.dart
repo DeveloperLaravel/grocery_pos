@@ -52,6 +52,61 @@ class _ProductsPageState extends State<ProductsPage> {
   int get lowStockCount =>
       products.where((p) => p.isLowStock).length;
 
+Future<void> _deleteProduct(ProductEntity product) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text('حذف المنتج'),
+        content: Text(
+          'هل تريد حذف "${product.name}"؟\n\n'
+          'لا يمكن التراجع عن هذه العملية.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(false);
+            },
+            child: const Text('إلغاء'),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor:
+                  Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () {
+              Navigator.of(dialogContext).pop(true);
+            },
+            icon: const Icon(Icons.delete_outline_rounded),
+            label: const Text('حذف'),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (confirmed != true || !mounted) return;
+
+  final result = await repo.deleteProduct(product.id).run();
+
+  if (!mounted) return;
+
+  result.match(
+    (failure) {
+      _showMessage(
+        failure.message,
+        error: true,
+      );
+    },
+    (_) async {
+      await _load();
+
+      _showMessage(
+        'تم حذف المنتج بنجاح',
+      );
+    },
+  );
+}
   Future<void> _load() async {
     if (mounted) {
       setState(() => loading = true);
@@ -576,14 +631,44 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                   ),
 
-                  IconButton(
-                    tooltip: 'تعديل',
-                    onPressed: () =>
-                        _edit(product),
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                    ),
-                  ),
+                 PopupMenuButton<String>(
+  tooltip: 'خيارات المنتج',
+  onSelected: (value) {
+    if (value == 'edit') {
+      _edit(product);
+    } else if (value == 'delete') {
+      _deleteProduct(product);
+    }
+  },
+  itemBuilder: (context) => const [
+    PopupMenuItem(
+      value: 'edit',
+      child: Row(
+        children: [
+          Icon(Icons.edit_outlined),
+          SizedBox(width: 10),
+          Text('تعديل'),
+        ],
+      ),
+    ),
+    PopupMenuItem(
+      value: 'delete',
+      child: Row(
+        children: [
+          Icon(
+            Icons.delete_outline_rounded,
+            color: Colors.red,
+          ),
+          SizedBox(width: 10),
+          Text(
+            'حذف',
+            style: TextStyle(color: Colors.red),
+          ),
+        ],
+      ),
+    ),
+  ],
+)
                 ],
               ),
 

@@ -235,7 +235,7 @@ class _PosViewState extends State<_PosView> {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 9),
 
           Expanded(
             child: Column(
@@ -250,7 +250,7 @@ class _PosViewState extends State<_PosView> {
                 ),
 
                 if (!compact) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Text(
                     'امسح الباركود ثم حدد الكمية وأكمل البيع',
                     style: TextStyle(

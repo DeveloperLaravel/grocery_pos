@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:grocery_pos/app/home_page.dart';
+
+import '../features/home/presentation/home_page.dart';
 
 class GroceryPosApp extends StatelessWidget {
   const GroceryPosApp({super.key});

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_pos/app/app.dart';
 import 'package:grocery_pos/core/di/injection.dart';
 
+import 'core/database/app_database.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -11,5 +13,9 @@ Future<void> main() async {
 
   await configureDependencies();
 
+  final database = getIt<AppDatabase>();
+
+  await database.clearAllData();
+  
   runApp(const GroceryPosApp());
 }

@@ -109,7 +109,10 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool compact = constraints.maxWidth < 700;
+        final width = constraints.maxWidth;
+        final bool veryCompact = width < 380;
+        final bool compact = width < 700;
+        final bool medium = width >= 700 && width < 1100;
 
         return Scaffold(
           backgroundColor:
@@ -124,25 +127,35 @@ class _ProductsPageState extends State<ProductsPage> {
           body: SafeArea(
             child: Padding(
               padding: EdgeInsets.all(
-                compact ? 12 : 20,
+                veryCompact ? 8 : compact ? 12 : medium ? 16 : 20,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeader(compact),
+                  _buildHeader(
+                    compact,
+                    veryCompact: veryCompact,
+                  ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: veryCompact ? 10 : 16),
 
-                  _buildStatistics(compact),
+                  _buildStatistics(
+                    compact,
+                    veryCompact: veryCompact,
+                  ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: veryCompact ? 10 : 16),
 
                   _buildSearch(),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: veryCompact ? 10 : 16),
 
                   Expanded(
-                    child: _buildContent(compact),
+                    child: _buildContent(
+                      compact,
+                      veryCompact: veryCompact,
+                      medium: medium,
+                    ),
                   ),
                 ],
               ),
@@ -153,12 +166,15 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _buildHeader(bool compact) {
+  Widget _buildHeader(
+    bool compact, {
+    required bool veryCompact,
+  }) {
     return Row(
       children: [
         Container(
-          width: compact ? 44 : 52,
-          height: compact ? 44 : 52,
+          width: veryCompact ? 40 : compact ? 44 : 52,
+          height: veryCompact ? 40 : compact ? 44 : 52,
           decoration: BoxDecoration(
             color: Theme.of(context)
                 .colorScheme
@@ -175,24 +191,28 @@ class _ProductsPageState extends State<ProductsPage> {
 
         const SizedBox(width: 12),
 
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'المنتجات',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: veryCompact ? 20 : compact ? 23 : 26,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              SizedBox(height: 2),
-              Text(
-                'إدارة المنتجات والأسعار والمخزون',
-                style: TextStyle(
-                  color: Colors.grey,
+              if (!veryCompact) ...[
+                const SizedBox(height: 2),
+                const Text(
+                  'إدارة المنتجات والأسعار والمخزون',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -216,7 +236,29 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _buildStatistics(bool compact) {
+  Widget _buildStatistics(
+    bool compact, {
+    required bool veryCompact,
+  }) {
+    if (veryCompact) {
+      return Column(
+        children: [
+          _statCard(
+            title: 'المنتجات',
+            value: '${products.length}',
+            icon: Icons.inventory_2_outlined,
+          ),
+          const SizedBox(height: 8),
+          _statCard(
+            title: 'مخزون منخفض',
+            value: '$lowStockCount',
+            icon: Icons.warning_amber_rounded,
+            warning: lowStockCount > 0,
+          ),
+        ],
+      );
+    }
+
     if (compact) {
       return Row(
         children: [
@@ -373,7 +415,11 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _buildContent(bool compact) {
+  Widget _buildContent(
+    bool compact, {
+    required bool veryCompact,
+    required bool medium,
+  }) {
     if (loading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -418,29 +464,44 @@ class _ProductsPageState extends State<ProductsPage> {
 
     if (compact) {
       return ListView.separated(
+        keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
         itemCount: data.length,
         separatorBuilder: (_, __) =>
-            const SizedBox(height: 10),
+            SizedBox(height: veryCompact ? 8 : 10),
         itemBuilder: (_, index) =>
-            _productCard(data[index]),
+            _productCard(
+              data[index],
+              compact: true,
+              veryCompact: veryCompact,
+            ),
       );
     }
 
     return GridView.builder(
-      gridDelegate:
-          const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 430,
-        mainAxisExtent: 185,
+      keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: medium ? 390 : 430,
+        mainAxisExtent: medium ? 178 : 185,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
       itemCount: data.length,
       itemBuilder: (_, index) =>
-          _productCard(data[index]),
+          _productCard(
+            data[index],
+            compact: false,
+            veryCompact: false,
+          ),
     );
   }
 
-  Widget _productCard(ProductEntity product) {
+  Widget _productCard(
+    ProductEntity product, {
+    required bool compact,
+    required bool veryCompact,
+  }) {
     final bool low = product.isLowStock;
 
     return Card(
@@ -449,7 +510,9 @@ class _ProductsPageState extends State<ProductsPage> {
       child: InkWell(
         onTap: () => _edit(product),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(
+            veryCompact ? 11 : compact ? 13 : 16,
+          ),
           child: Column(
             crossAxisAlignment:
                 CrossAxisAlignment.start,
@@ -457,7 +520,7 @@ class _ProductsPageState extends State<ProductsPage> {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 22,
+                    radius: veryCompact ? 18 : compact ? 20 : 22,
                     child: Text(
                       product.name.isNotEmpty
                           ? product.name[0]
@@ -480,10 +543,9 @@ class _ProductsPageState extends State<ProductsPage> {
                           maxLines: 1,
                           overflow:
                               TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight:
-                                FontWeight.bold,
+                          style: TextStyle(
+                            fontSize: veryCompact ? 14 : compact ? 15 : 17,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
@@ -527,55 +589,83 @@ class _ProductsPageState extends State<ProductsPage> {
 
               const Spacer(),
 
-              Row(
-                children: [
-                  _miniInfo(
-                    'البيع',
-                    '${product.salePrice.toStringAsFixed(2)} د.ل',
-                  ),
-
-                  const SizedBox(width: 10),
-
-                  _miniInfo(
-                    'التكلفة',
-                    '${product.costPrice.toStringAsFixed(2)} د.ل',
-                  ),
-
-                  const SizedBox(width: 10),
-
-                  Expanded(
-                    child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: low
-                            // ignore: deprecated_member_use
-                            ? Colors.red.withOpacity(.10)
-                            // ignore: deprecated_member_use
-                            : Colors.green.withOpacity(.10),
-                        borderRadius:
-                            BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        'المخزون: ${product.quantity}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight:
-                              FontWeight.bold,
-                          color: low
-                              ? Colors.red.shade700
-                              : Colors.green.shade700,
+              if (veryCompact)
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _miniInfo(
+                            'البيع',
+                            '${product.salePrice.toStringAsFixed(2)} د.ل',
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _miniInfo(
+                            'التكلفة',
+                            '${product.costPrice.toStringAsFixed(2)} د.ل',
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(height: 8),
+                    _stockBadge(product, low),
+                  ],
+                )
+              else
+                Row(
+                  children: [
+                    _miniInfo(
+                      'البيع',
+                      '${product.salePrice.toStringAsFixed(2)} د.ل',
+                    ),
+                    const SizedBox(width: 10),
+                    _miniInfo(
+                      'التكلفة',
+                      '${product.costPrice.toStringAsFixed(2)} د.ل',
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _stockBadge(product, low),
+                    ),
+                  ],
+                ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _stockBadge(
+    ProductEntity product,
+    bool low,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: low
+            // ignore: deprecated_member_use
+            ? Colors.red.withOpacity(.10)
+            // ignore: deprecated_member_use
+            : Colors.green.withOpacity(.10),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        'المخزون: ${product.quantity}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: low
+              ? Colors.red.shade700
+              : Colors.green.shade700,
         ),
       ),
     );
@@ -645,15 +735,22 @@ class _ProductsPageState extends State<ProductsPage> {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
+        final size = MediaQuery.sizeOf(dialogContext);
+        final dialogCompact = size.width < 600;
+
         return Dialog(
-          insetPadding: const EdgeInsets.all(16),
+          insetPadding: EdgeInsets.all(
+            size.width < 380 ? 8 : 16,
+          ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
+            constraints: BoxConstraints(
               maxWidth: 620,
-              maxHeight: 720,
+              maxHeight: size.height * .92,
             ),
             child: Padding(
-              padding: const EdgeInsets.all(22),
+              padding: EdgeInsets.all(
+                dialogCompact ? 14 : 22,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment:
@@ -709,18 +806,27 @@ class _ProductsPageState extends State<ProductsPage> {
                                   520;
 
                           if (!twoColumns) {
+                            final fields = _formFields(
+                              dialogContext,
+                              nameController,
+                              barcodeController,
+                              barcodeFocus,
+                              costController,
+                              priceController,
+                              quantityController,
+                              minStockController,
+                            );
+
                             return Column(
-                              children:
-                                  _formFields(
-                                dialogContext,
-                                nameController,
-                                barcodeController,
-                                barcodeFocus,
-                                costController,
-                                priceController,
-                                quantityController,
-                                minStockController,
-                              ),
+                              children: [
+                                for (int i = 0;
+                                    i < fields.length;
+                                    i++) ...[
+                                  fields[i],
+                                  if (i != fields.length - 1)
+                                    const SizedBox(height: 12),
+                                ],
+                              ],
                             );
                           }
 
@@ -760,36 +866,66 @@ class _ProductsPageState extends State<ProductsPage> {
 
                   const SizedBox(height: 18),
 
-                  Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () =>
-                            Navigator.pop(
-                          dialogContext,
-                          false,
+                  if (dialogCompact)
+                    Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: FilledButton.icon(
+                            onPressed: () =>
+                                Navigator.pop(
+                              dialogContext,
+                              true,
+                            ),
+                            icon: const Icon(
+                              Icons.save_outlined,
+                            ),
+                            label: const Text('حفظ'),
+                          ),
                         ),
-                        child:
-                            const Text('إلغاء'),
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      FilledButton.icon(
-                        onPressed: () =>
-                            Navigator.pop(
-                          dialogContext,
-                          true,
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 46,
+                          child: OutlinedButton(
+                            onPressed: () =>
+                                Navigator.pop(
+                              dialogContext,
+                              false,
+                            ),
+                            child: const Text('إلغاء'),
+                          ),
                         ),
-                        icon: const Icon(
-                          Icons.save_outlined,
+                      ],
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(
+                            dialogContext,
+                            false,
+                          ),
+                          child: const Text('إلغاء'),
                         ),
-                        label:
-                            const Text('حفظ'),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 10),
+                        FilledButton.icon(
+                          onPressed: () =>
+                              Navigator.pop(
+                            dialogContext,
+                            true,
+                          ),
+                          icon: const Icon(
+                            Icons.save_outlined,
+                          ),
+                          label: const Text('حفظ'),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -944,7 +1080,7 @@ class _ProductsPageState extends State<ProductsPage> {
       controller: controller,
       focusNode: focusNode,
       autofocus: Platform.isWindows,
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         labelText: 'الباركود',
@@ -1111,17 +1247,22 @@ class _ProductBarcodeScannerPageState
           ),
 
           Center(
-            child: Container(
-              width: 310,
-              height: 150,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.white,
-                  width: 3,
-                ),
-                borderRadius:
-                    BorderRadius.circular(18),
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final frameWidth =
+                    (constraints.maxWidth * .78).clamp(220.0, 360.0);
+                return Container(
+                  width: frameWidth,
+                  height: frameWidth * .48,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                );
+              },
             ),
           ),
 

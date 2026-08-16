@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BackupState {
   bool get loading;
-  String? get email;
+  bool get connected;
   List<BackupFile> get backups;
   String? get message;
   String? get error;
@@ -34,7 +34,8 @@ mixin _$BackupState {
         (other.runtimeType == runtimeType &&
             other is BackupState &&
             (identical(other.loading, loading) || other.loading == loading) &&
-            (identical(other.email, email) || other.email == email) &&
+            (identical(other.connected, connected) ||
+                other.connected == connected) &&
             const DeepCollectionEquality().equals(other.backups, backups) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.error, error) || other.error == error) &&
@@ -46,7 +47,7 @@ mixin _$BackupState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
-      email,
+      connected,
       const DeepCollectionEquality().hash(backups),
       message,
       error,
@@ -54,7 +55,7 @@ mixin _$BackupState {
 
   @override
   String toString() {
-    return 'BackupState(loading: $loading, email: $email, backups: $backups, message: $message, error: $error, restartRequired: $restartRequired)';
+    return 'BackupState(loading: $loading, connected: $connected, backups: $backups, message: $message, error: $error, restartRequired: $restartRequired)';
   }
 }
 
@@ -66,7 +67,7 @@ abstract mixin class $BackupStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
-      String? email,
+      bool connected,
       List<BackupFile> backups,
       String? message,
       String? error,
@@ -86,7 +87,7 @@ class _$BackupStateCopyWithImpl<$Res> implements $BackupStateCopyWith<$Res> {
   @override
   $Res call({
     Object? loading = null,
-    Object? email = freezed,
+    Object? connected = null,
     Object? backups = null,
     Object? message = freezed,
     Object? error = freezed,
@@ -97,10 +98,10 @@ class _$BackupStateCopyWithImpl<$Res> implements $BackupStateCopyWith<$Res> {
           ? _self.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      email: freezed == email
-          ? _self.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
+      connected: null == connected
+          ? _self.connected
+          : connected // ignore: cast_nullable_to_non_nullable
+              as bool,
       backups: null == backups
           ? _self.backups
           : backups // ignore: cast_nullable_to_non_nullable
@@ -214,7 +215,7 @@ extension BackupStatePatterns on BackupState {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(bool loading, String? email, List<BackupFile> backups,
+    TResult Function(bool loading, bool connected, List<BackupFile> backups,
             String? message, String? error, bool restartRequired)?
         $default, {
     required TResult orElse(),
@@ -222,7 +223,7 @@ extension BackupStatePatterns on BackupState {
     final _that = this;
     switch (_that) {
       case _BackupState() when $default != null:
-        return $default(_that.loading, _that.email, _that.backups,
+        return $default(_that.loading, _that.connected, _that.backups,
             _that.message, _that.error, _that.restartRequired);
       case _:
         return orElse();
@@ -244,14 +245,14 @@ extension BackupStatePatterns on BackupState {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(bool loading, String? email, List<BackupFile> backups,
+    TResult Function(bool loading, bool connected, List<BackupFile> backups,
             String? message, String? error, bool restartRequired)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _BackupState():
-        return $default(_that.loading, _that.email, _that.backups,
+        return $default(_that.loading, _that.connected, _that.backups,
             _that.message, _that.error, _that.restartRequired);
       case _:
         throw StateError('Unexpected subclass');
@@ -272,14 +273,14 @@ extension BackupStatePatterns on BackupState {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(bool loading, String? email, List<BackupFile> backups,
+    TResult? Function(bool loading, bool connected, List<BackupFile> backups,
             String? message, String? error, bool restartRequired)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _BackupState() when $default != null:
-        return $default(_that.loading, _that.email, _that.backups,
+        return $default(_that.loading, _that.connected, _that.backups,
             _that.message, _that.error, _that.restartRequired);
       case _:
         return null;
@@ -292,7 +293,7 @@ extension BackupStatePatterns on BackupState {
 class _BackupState implements BackupState {
   const _BackupState(
       {this.loading = false,
-      this.email,
+      this.connected = false,
       final List<BackupFile> backups = const <BackupFile>[],
       this.message,
       this.error,
@@ -303,7 +304,8 @@ class _BackupState implements BackupState {
   @JsonKey()
   final bool loading;
   @override
-  final String? email;
+  @JsonKey()
+  final bool connected;
   final List<BackupFile> _backups;
   @override
   @JsonKey()
@@ -335,7 +337,8 @@ class _BackupState implements BackupState {
         (other.runtimeType == runtimeType &&
             other is _BackupState &&
             (identical(other.loading, loading) || other.loading == loading) &&
-            (identical(other.email, email) || other.email == email) &&
+            (identical(other.connected, connected) ||
+                other.connected == connected) &&
             const DeepCollectionEquality().equals(other._backups, _backups) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.error, error) || other.error == error) &&
@@ -347,7 +350,7 @@ class _BackupState implements BackupState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
-      email,
+      connected,
       const DeepCollectionEquality().hash(_backups),
       message,
       error,
@@ -355,7 +358,7 @@ class _BackupState implements BackupState {
 
   @override
   String toString() {
-    return 'BackupState(loading: $loading, email: $email, backups: $backups, message: $message, error: $error, restartRequired: $restartRequired)';
+    return 'BackupState(loading: $loading, connected: $connected, backups: $backups, message: $message, error: $error, restartRequired: $restartRequired)';
   }
 }
 
@@ -369,7 +372,7 @@ abstract mixin class _$BackupStateCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
-      String? email,
+      bool connected,
       List<BackupFile> backups,
       String? message,
       String? error,
@@ -389,7 +392,7 @@ class __$BackupStateCopyWithImpl<$Res> implements _$BackupStateCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? loading = null,
-    Object? email = freezed,
+    Object? connected = null,
     Object? backups = null,
     Object? message = freezed,
     Object? error = freezed,
@@ -400,10 +403,10 @@ class __$BackupStateCopyWithImpl<$Res> implements _$BackupStateCopyWith<$Res> {
           ? _self.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      email: freezed == email
-          ? _self.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
+      connected: null == connected
+          ? _self.connected
+          : connected // ignore: cast_nullable_to_non_nullable
+              as bool,
       backups: null == backups
           ? _self._backups
           : backups // ignore: cast_nullable_to_non_nullable

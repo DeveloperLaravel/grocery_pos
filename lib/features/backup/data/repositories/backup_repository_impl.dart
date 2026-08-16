@@ -6,133 +6,108 @@ import '../../../../core/database/app_database.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/backup_file.dart';
 import '../../domain/repositories/backup_repository.dart';
+import '../datasources/google_auth_datasource.dart';
 import '../datasources/google_drive_datasource.dart';
 import '../datasources/local_backup_datasource.dart';
 
 @LazySingleton(as: BackupRepository)
 class BackupRepositoryImpl implements BackupRepository {
+  final GoogleAuthDataSource auth;
   final GoogleDriveDataSource drive;
   final LocalBackupDataSource local;
   final AppDatabase database;
 
-  BackupRepositoryImpl(
-    this.drive,
-    this.local,
-    this.database,
-  );
+  BackupRepositoryImpl(this.auth, this.drive, this.local, this.database);
 
-  Failure _failure(Object error) => Failure(error.toString());
+  Failure _f(Object e) => Failure(e.toString());
 
   @override
-  TaskEither<Failure, String> signIn() {
-    return TaskEither.tryCatch(
-      drive.signedInEmail,
-      (error, stackTrace) => _failure(error),
-    );
-  }
-
-  @override
-  TaskEither<Failure, Unit> signOut() {
-    return TaskEither.tryCatch(
-      () async {
-        await drive.signOut();
-        return unit;
-      },
-      (error, stackTrace) => _failure(error),
-    );
-  }
-
-  @override
-  TaskEither<Failure, List<BackupFile>> getBackups() {
-    return TaskEither.tryCatch(
-      drive.listBackups,
-      (error, stackTrace) => _failure(error),
-    );
-  }
-
-  @override
-  TaskEither<Failure, BackupFile> createBackup() {
-    return TaskEither.tryCatch(
-      () async {
-        // Ensures WAL content is flushed to the main SQLite file.
-        await database.customStatement('PRAGMA wal_checkpoint(FULL);');
-
-        final package = await PackageInfo.fromPlatform();
-
-        final archive = await local.createBackupArchive(
-          schemaVersion: database.schemaVersion,
-          appVersion: package.version,
-        );
-
-        try {
-          return await drive.uploadBackup(archive);
-        } finally {
-          if (await archive.exists()) {
-            await archive.delete();
-          }
-        }
-      },
-      (error, stackTrace) => _failure(error),
-    );
-  }
-
-  @override
-  TaskEither<Failure, Unit> restoreBackup(String fileId) {
-    return TaskEither.tryCatch(
-      () async {
-        final zip = await drive.downloadBackup(fileId);
-
-        try {
-          final extracted = await local.extractAndValidateBackup(zip);
-
-          final backupSchemaVersion =
-              extracted.manifest['schemaVersion'] as int?;
-
-          if (backupSchemaVersion == null) {
-            throw const FormatException(
-              'Backup schemaVersion is missing',
-            );
-          }
-
-          if (backupSchemaVersion > database.schemaVersion) {
-            throw StateError(
-              'This backup was created by a newer database version '
-              '($backupSchemaVersion > ${database.schemaVersion}).',
-            );
-          }
-
-          await local.createSafetyCopy();
-
-          // IMPORTANT:
-          // All services using this AppDatabase instance become invalid
-          // after this point. The app must be restarted immediately.
-          await database.close();
-
-          await local.replaceDatabase(extracted.database);
-
-          if (await extracted.database.exists()) {
-            await extracted.database.delete();
-          }
-
+  TaskEither<Failure, Unit> connect() => TaskEither.tryCatch(
+        () async {
+          await auth.connect();
           return unit;
-        } finally {
-          if (await zip.exists()) {
-            await zip.delete();
-          }
-        }
-      },
-      (error, stackTrace) => _failure(error),
-    );
-  }
+        },
+        (e, s) => _f(e),
+      );
 
   @override
-  TaskEither<Failure, Unit> deleteBackup(String fileId) {
-    return TaskEither.tryCatch(
-      () async {
-        await drive.deleteBackup(fileId);
-        return unit;
-      },
-      (error, stackTrace) => _failure(error),
-    );
-  }
+  TaskEither<Failure, Unit> disconnect() => TaskEither.tryCatch(
+        () async {
+          await auth.disconnect();
+          return unit;
+        },
+        (e, s) => _f(e),
+      );
+
+  @override
+  TaskEither<Failure, bool> isConnected() =>
+      TaskEither.tryCatch(auth.isConnected, (e, s) => _f(e));
+
+  @override
+  TaskEither<Failure, List<BackupFile>> getBackups() =>
+      TaskEither.tryCatch(drive.listBackups, (e, s) => _f(e));
+
+  @override
+  TaskEither<Failure, BackupFile> createBackup() => TaskEither.tryCatch(
+        () async {
+          await database.customStatement('PRAGMA wal_checkpoint(FULL);');
+          final info = await PackageInfo.fromPlatform();
+          final zip = await local.createArchive(
+            schemaVersion: database.schemaVersion,
+            appVersion: info.version,
+          );
+          try {
+            return await drive.uploadBackup(zip);
+          } finally {
+            await local.deleteIfExists(zip);
+          }
+        },
+        (e, s) => _f(e),
+      );
+
+  @override
+  TaskEither<Failure, Unit> restoreBackup(String fileId) =>
+      TaskEither.tryCatch(
+        () async {
+          final zip = await drive.downloadBackup(fileId);
+          try {
+            final extracted = await local.extract(zip);
+            try {
+              final raw = extracted.manifest['schemaVersion'];
+              final version =
+                  raw is int ? raw : int.tryParse(raw?.toString() ?? '');
+
+              if (version == null) {
+                throw const FormatException('Missing schemaVersion.');
+              }
+              if (version > database.schemaVersion) {
+                throw StateError(
+                  'Backup database is newer than this app '
+                  '($version > ${database.schemaVersion}).',
+                );
+              }
+
+              await local.createSafetyCopy();
+              await database.close();
+              await local.replaceDatabase(extracted.database);
+              return unit;
+            } finally {
+              await local.deleteIfExists(extracted.database);
+            }
+          } finally {
+            await local.deleteIfExists(zip);
+          }
+        },
+        (e, s) => _f(e),
+      );
+
+  @override
+  TaskEither<Failure, Unit> deleteBackup(String fileId) =>
+      TaskEither.tryCatch(
+        () async {
+          await drive.deleteBackup(fileId);
+          return unit;
+        },
+        (e, s) => _f(e),
+      );
 }

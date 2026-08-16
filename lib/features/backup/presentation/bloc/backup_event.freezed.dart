@@ -51,30 +51,30 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(BackupStarted value)? started,
-    TResult Function(BackupSignInRequested value)? signInRequested,
-    TResult Function(BackupSignOutRequested value)? signOutRequested,
+    TResult Function(BackupConnectRequested value)? connectRequested,
+    TResult Function(BackupDisconnectRequested value)? disconnectRequested,
+    TResult Function(BackupRefreshRequested value)? refreshRequested,
     TResult Function(BackupCreateRequested value)? createRequested,
     TResult Function(BackupRestoreRequested value)? restoreRequested,
     TResult Function(BackupDeleteRequested value)? deleteRequested,
-    TResult Function(BackupRefreshRequested value)? refreshRequested,
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted() when started != null:
         return started(_that);
-      case BackupSignInRequested() when signInRequested != null:
-        return signInRequested(_that);
-      case BackupSignOutRequested() when signOutRequested != null:
-        return signOutRequested(_that);
+      case BackupConnectRequested() when connectRequested != null:
+        return connectRequested(_that);
+      case BackupDisconnectRequested() when disconnectRequested != null:
+        return disconnectRequested(_that);
+      case BackupRefreshRequested() when refreshRequested != null:
+        return refreshRequested(_that);
       case BackupCreateRequested() when createRequested != null:
         return createRequested(_that);
       case BackupRestoreRequested() when restoreRequested != null:
         return restoreRequested(_that);
       case BackupDeleteRequested() when deleteRequested != null:
         return deleteRequested(_that);
-      case BackupRefreshRequested() when refreshRequested != null:
-        return refreshRequested(_that);
       case _:
         return orElse();
     }
@@ -96,29 +96,30 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(BackupStarted value) started,
-    required TResult Function(BackupSignInRequested value) signInRequested,
-    required TResult Function(BackupSignOutRequested value) signOutRequested,
+    required TResult Function(BackupConnectRequested value) connectRequested,
+    required TResult Function(BackupDisconnectRequested value)
+        disconnectRequested,
+    required TResult Function(BackupRefreshRequested value) refreshRequested,
     required TResult Function(BackupCreateRequested value) createRequested,
     required TResult Function(BackupRestoreRequested value) restoreRequested,
     required TResult Function(BackupDeleteRequested value) deleteRequested,
-    required TResult Function(BackupRefreshRequested value) refreshRequested,
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted():
         return started(_that);
-      case BackupSignInRequested():
-        return signInRequested(_that);
-      case BackupSignOutRequested():
-        return signOutRequested(_that);
+      case BackupConnectRequested():
+        return connectRequested(_that);
+      case BackupDisconnectRequested():
+        return disconnectRequested(_that);
+      case BackupRefreshRequested():
+        return refreshRequested(_that);
       case BackupCreateRequested():
         return createRequested(_that);
       case BackupRestoreRequested():
         return restoreRequested(_that);
       case BackupDeleteRequested():
         return deleteRequested(_that);
-      case BackupRefreshRequested():
-        return refreshRequested(_that);
     }
   }
 
@@ -137,29 +138,29 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(BackupStarted value)? started,
-    TResult? Function(BackupSignInRequested value)? signInRequested,
-    TResult? Function(BackupSignOutRequested value)? signOutRequested,
+    TResult? Function(BackupConnectRequested value)? connectRequested,
+    TResult? Function(BackupDisconnectRequested value)? disconnectRequested,
+    TResult? Function(BackupRefreshRequested value)? refreshRequested,
     TResult? Function(BackupCreateRequested value)? createRequested,
     TResult? Function(BackupRestoreRequested value)? restoreRequested,
     TResult? Function(BackupDeleteRequested value)? deleteRequested,
-    TResult? Function(BackupRefreshRequested value)? refreshRequested,
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted() when started != null:
         return started(_that);
-      case BackupSignInRequested() when signInRequested != null:
-        return signInRequested(_that);
-      case BackupSignOutRequested() when signOutRequested != null:
-        return signOutRequested(_that);
+      case BackupConnectRequested() when connectRequested != null:
+        return connectRequested(_that);
+      case BackupDisconnectRequested() when disconnectRequested != null:
+        return disconnectRequested(_that);
+      case BackupRefreshRequested() when refreshRequested != null:
+        return refreshRequested(_that);
       case BackupCreateRequested() when createRequested != null:
         return createRequested(_that);
       case BackupRestoreRequested() when restoreRequested != null:
         return restoreRequested(_that);
       case BackupDeleteRequested() when deleteRequested != null:
         return deleteRequested(_that);
-      case BackupRefreshRequested() when refreshRequested != null:
-        return refreshRequested(_that);
       case _:
         return null;
     }
@@ -180,30 +181,30 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function()? signInRequested,
-    TResult Function()? signOutRequested,
-    TResult Function()? createRequested,
-    TResult Function(String fileId)? restoreRequested,
-    TResult Function(String fileId)? deleteRequested,
+    TResult Function()? connectRequested,
+    TResult Function()? disconnectRequested,
     TResult Function()? refreshRequested,
+    TResult Function()? createRequested,
+    TResult Function(String id)? restoreRequested,
+    TResult Function(String id)? deleteRequested,
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted() when started != null:
         return started();
-      case BackupSignInRequested() when signInRequested != null:
-        return signInRequested();
-      case BackupSignOutRequested() when signOutRequested != null:
-        return signOutRequested();
+      case BackupConnectRequested() when connectRequested != null:
+        return connectRequested();
+      case BackupDisconnectRequested() when disconnectRequested != null:
+        return disconnectRequested();
+      case BackupRefreshRequested() when refreshRequested != null:
+        return refreshRequested();
       case BackupCreateRequested() when createRequested != null:
         return createRequested();
       case BackupRestoreRequested() when restoreRequested != null:
-        return restoreRequested(_that.fileId);
+        return restoreRequested(_that.id);
       case BackupDeleteRequested() when deleteRequested != null:
-        return deleteRequested(_that.fileId);
-      case BackupRefreshRequested() when refreshRequested != null:
-        return refreshRequested();
+        return deleteRequested(_that.id);
       case _:
         return orElse();
     }
@@ -225,29 +226,29 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function() signInRequested,
-    required TResult Function() signOutRequested,
-    required TResult Function() createRequested,
-    required TResult Function(String fileId) restoreRequested,
-    required TResult Function(String fileId) deleteRequested,
+    required TResult Function() connectRequested,
+    required TResult Function() disconnectRequested,
     required TResult Function() refreshRequested,
+    required TResult Function() createRequested,
+    required TResult Function(String id) restoreRequested,
+    required TResult Function(String id) deleteRequested,
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted():
         return started();
-      case BackupSignInRequested():
-        return signInRequested();
-      case BackupSignOutRequested():
-        return signOutRequested();
+      case BackupConnectRequested():
+        return connectRequested();
+      case BackupDisconnectRequested():
+        return disconnectRequested();
+      case BackupRefreshRequested():
+        return refreshRequested();
       case BackupCreateRequested():
         return createRequested();
       case BackupRestoreRequested():
-        return restoreRequested(_that.fileId);
+        return restoreRequested(_that.id);
       case BackupDeleteRequested():
-        return deleteRequested(_that.fileId);
-      case BackupRefreshRequested():
-        return refreshRequested();
+        return deleteRequested(_that.id);
     }
   }
 
@@ -266,29 +267,29 @@ extension BackupEventPatterns on BackupEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function()? signInRequested,
-    TResult? Function()? signOutRequested,
-    TResult? Function()? createRequested,
-    TResult? Function(String fileId)? restoreRequested,
-    TResult? Function(String fileId)? deleteRequested,
+    TResult? Function()? connectRequested,
+    TResult? Function()? disconnectRequested,
     TResult? Function()? refreshRequested,
+    TResult? Function()? createRequested,
+    TResult? Function(String id)? restoreRequested,
+    TResult? Function(String id)? deleteRequested,
   }) {
     final _that = this;
     switch (_that) {
       case BackupStarted() when started != null:
         return started();
-      case BackupSignInRequested() when signInRequested != null:
-        return signInRequested();
-      case BackupSignOutRequested() when signOutRequested != null:
-        return signOutRequested();
+      case BackupConnectRequested() when connectRequested != null:
+        return connectRequested();
+      case BackupDisconnectRequested() when disconnectRequested != null:
+        return disconnectRequested();
+      case BackupRefreshRequested() when refreshRequested != null:
+        return refreshRequested();
       case BackupCreateRequested() when createRequested != null:
         return createRequested();
       case BackupRestoreRequested() when restoreRequested != null:
-        return restoreRequested(_that.fileId);
+        return restoreRequested(_that.id);
       case BackupDeleteRequested() when deleteRequested != null:
-        return deleteRequested(_that.fileId);
-      case BackupRefreshRequested() when refreshRequested != null:
-        return refreshRequested();
+        return deleteRequested(_that.id);
       case _:
         return null;
     }
@@ -317,13 +318,13 @@ class BackupStarted implements BackupEvent {
 
 /// @nodoc
 
-class BackupSignInRequested implements BackupEvent {
-  const BackupSignInRequested();
+class BackupConnectRequested implements BackupEvent {
+  const BackupConnectRequested();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is BackupSignInRequested);
+        (other.runtimeType == runtimeType && other is BackupConnectRequested);
   }
 
   @override
@@ -331,19 +332,20 @@ class BackupSignInRequested implements BackupEvent {
 
   @override
   String toString() {
-    return 'BackupEvent.signInRequested()';
+    return 'BackupEvent.connectRequested()';
   }
 }
 
 /// @nodoc
 
-class BackupSignOutRequested implements BackupEvent {
-  const BackupSignOutRequested();
+class BackupDisconnectRequested implements BackupEvent {
+  const BackupDisconnectRequested();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is BackupSignOutRequested);
+        (other.runtimeType == runtimeType &&
+            other is BackupDisconnectRequested);
   }
 
   @override
@@ -351,7 +353,27 @@ class BackupSignOutRequested implements BackupEvent {
 
   @override
   String toString() {
-    return 'BackupEvent.signOutRequested()';
+    return 'BackupEvent.disconnectRequested()';
+  }
+}
+
+/// @nodoc
+
+class BackupRefreshRequested implements BackupEvent {
+  const BackupRefreshRequested();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is BackupRefreshRequested);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'BackupEvent.refreshRequested()';
   }
 }
 
@@ -378,9 +400,9 @@ class BackupCreateRequested implements BackupEvent {
 /// @nodoc
 
 class BackupRestoreRequested implements BackupEvent {
-  const BackupRestoreRequested(this.fileId);
+  const BackupRestoreRequested(this.id);
 
-  final String fileId;
+  final String id;
 
   /// Create a copy of BackupEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -395,15 +417,15 @@ class BackupRestoreRequested implements BackupEvent {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is BackupRestoreRequested &&
-            (identical(other.fileId, fileId) || other.fileId == fileId));
+            (identical(other.id, id) || other.id == id));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, fileId);
+  int get hashCode => Object.hash(runtimeType, id);
 
   @override
   String toString() {
-    return 'BackupEvent.restoreRequested(fileId: $fileId)';
+    return 'BackupEvent.restoreRequested(id: $id)';
   }
 }
 
@@ -414,7 +436,7 @@ abstract mixin class $BackupRestoreRequestedCopyWith<$Res>
           $Res Function(BackupRestoreRequested) _then) =
       _$BackupRestoreRequestedCopyWithImpl;
   @useResult
-  $Res call({String fileId});
+  $Res call({String id});
 }
 
 /// @nodoc
@@ -429,12 +451,12 @@ class _$BackupRestoreRequestedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? fileId = null,
+    Object? id = null,
   }) {
     return _then(BackupRestoreRequested(
-      null == fileId
-          ? _self.fileId
-          : fileId // ignore: cast_nullable_to_non_nullable
+      null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -443,9 +465,9 @@ class _$BackupRestoreRequestedCopyWithImpl<$Res>
 /// @nodoc
 
 class BackupDeleteRequested implements BackupEvent {
-  const BackupDeleteRequested(this.fileId);
+  const BackupDeleteRequested(this.id);
 
-  final String fileId;
+  final String id;
 
   /// Create a copy of BackupEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -460,15 +482,15 @@ class BackupDeleteRequested implements BackupEvent {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is BackupDeleteRequested &&
-            (identical(other.fileId, fileId) || other.fileId == fileId));
+            (identical(other.id, id) || other.id == id));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, fileId);
+  int get hashCode => Object.hash(runtimeType, id);
 
   @override
   String toString() {
-    return 'BackupEvent.deleteRequested(fileId: $fileId)';
+    return 'BackupEvent.deleteRequested(id: $id)';
   }
 }
 
@@ -479,7 +501,7 @@ abstract mixin class $BackupDeleteRequestedCopyWith<$Res>
           $Res Function(BackupDeleteRequested) _then) =
       _$BackupDeleteRequestedCopyWithImpl;
   @useResult
-  $Res call({String fileId});
+  $Res call({String id});
 }
 
 /// @nodoc
@@ -494,34 +516,14 @@ class _$BackupDeleteRequestedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? fileId = null,
+    Object? id = null,
   }) {
     return _then(BackupDeleteRequested(
-      null == fileId
-          ? _self.fileId
-          : fileId // ignore: cast_nullable_to_non_nullable
+      null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
     ));
-  }
-}
-
-/// @nodoc
-
-class BackupRefreshRequested implements BackupEvent {
-  const BackupRefreshRequested();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is BackupRefreshRequested);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'BackupEvent.refreshRequested()';
   }
 }
 

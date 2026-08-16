@@ -9,280 +9,123 @@ import 'package:path_provider/path_provider.dart';
 
 @lazySingleton
 class LocalBackupDataSource {
-  /// IMPORTANT:
-  /// Change this if your Drift database uses another file name.
-  static const String databaseFileName = 'grocery_pos.sqlite';
+  static const databaseName = 'grocery_pos';
+  static const databaseFileName = '$databaseName.sqlite';
+  static const manifestFileName = 'manifest.json';
 
-  static const String manifestFileName = 'manifest.json';
-
-  Future<File> getDatabaseFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File(
-      p.join(
-        directory.path,
-        databaseFileName,
-      ),
-    );
+  Future<File> databaseFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File(p.join(dir.path, databaseFileName));
   }
 
-  Future<File> createBackupArchive({
+  Future<File> createArchive({
     required int schemaVersion,
     required String appVersion,
   }) async {
-    final database = await getDatabaseFile();
-
-    if (!await database.exists()) {
-      throw StateError(
-        'SQLite database not found: ${database.path}',
-      );
+    final db = await databaseFile();
+    if (!await db.exists()) {
+      throw StateError('Database not found: ${db.path}');
     }
 
-    final databaseBytes = await database.readAsBytes();
-
-    if (databaseBytes.isEmpty) {
-      throw StateError(
-        'SQLite database is empty: ${database.path}',
-      );
-    }
-
-    final manifest = <String, dynamic>{
+    final bytes = await db.readAsBytes();
+    final manifest = utf8.encode(jsonEncode({
       'type': 'grocery_pos_backup',
+      'formatVersion': 1,
       'schemaVersion': schemaVersion,
       'appVersion': appVersion,
       'createdAt': DateTime.now().toUtc().toIso8601String(),
       'databaseFile': databaseFileName,
-      'databaseSize': databaseBytes.length,
-    };
-
-    final manifestBytes = utf8.encode(
-      jsonEncode(manifest),
-    );
+      'sourcePlatform': Platform.operatingSystem,
+      'databaseSize': bytes.length,
+    }));
 
     final archive = Archive()
-      ..addFile(
-        ArchiveFile(
-          databaseFileName,
-          databaseBytes.length,
-          databaseBytes,
-        ),
-      )
-      ..addFile(
-        ArchiveFile(
-          manifestFileName,
-          manifestBytes.length,
-          manifestBytes,
-        ),
-      );
+      ..addFile(ArchiveFile(databaseFileName, bytes.length, bytes))
+      ..addFile(ArchiveFile(manifestFileName, manifest.length, manifest));
 
-    final zipBytes = ZipEncoder().encode(archive);
-
+    final zip = ZipEncoder().encode(archive);
     // ignore: unnecessary_null_comparison
-    if (zipBytes == null || zipBytes.isEmpty) {
-      throw StateError(
-        'Could not create backup ZIP.',
-      );
-    }
+    if (zip == null) throw StateError('Could not create backup ZIP.');
 
-    final tempDirectory = await getTemporaryDirectory();
-
-    final timestamp = DateTime.now()
+    final temp = await getTemporaryDirectory();
+    final stamp = DateTime.now()
         .toUtc()
         .toIso8601String()
         .replaceAll(':', '-')
         .replaceAll('.', '-');
 
-    final output = File(
-      p.join(
-        tempDirectory.path,
-        'grocery_pos_backup_$timestamp.zip',
-      ),
-    );
-
-    await output.writeAsBytes(
-      zipBytes,
-      flush: true,
-    );
-
+    final output = File(p.join(temp.path, 'grocery_pos_backup_$stamp.zip'));
+    await output.writeAsBytes(zip, flush: true);
     return output;
   }
 
-  Future<BackupExtractResult> extractAndValidateBackup(
-    File zipFile,
-  ) async {
-    if (!await zipFile.exists()) {
-      throw StateError(
-        'Backup ZIP not found: ${zipFile.path}',
-      );
-    }
+  Future<BackupExtractResult> extract(File zip) async {
+    final archive =
+        ZipDecoder().decodeBytes(await zip.readAsBytes(), verify: true);
 
-    final zipBytes = await zipFile.readAsBytes();
-
-    if (zipBytes.isEmpty) {
-      throw const FormatException(
-        'Backup ZIP is empty.',
-      );
-    }
-
-    final archive = ZipDecoder().decodeBytes(
-      zipBytes,
-      verify: true,
-    );
-
-    ArchiveFile? databaseEntry;
+    ArchiveFile? dbEntry;
     ArchiveFile? manifestEntry;
 
     for (final entry in archive.files) {
       if (!entry.isFile) continue;
-
-      final fileName = p.basename(entry.name);
-
-      if (fileName == databaseFileName) {
-        databaseEntry = entry;
-      }
-
-      if (fileName == manifestFileName) {
-        manifestEntry = entry;
-      }
+      final name = p.basename(entry.name);
+      if (name == databaseFileName) dbEntry = entry;
+      if (name == manifestFileName) manifestEntry = entry;
     }
 
-    if (databaseEntry == null) {
-      throw const FormatException(
-        'Backup does not contain grocery_pos.sqlite.',
-      );
+    if (dbEntry == null || manifestEntry == null) {
+      throw const FormatException('Invalid Grocery POS backup.');
     }
 
-    if (manifestEntry == null) {
-      throw const FormatException(
-        'Backup does not contain manifest.json.',
-      );
+    final manifest = jsonDecode(
+      utf8.decode(manifestEntry.content as List<int>),
+    ) as Map<String, dynamic>;
+
+    if (manifest['type'] != 'grocery_pos_backup') {
+      throw const FormatException('Invalid backup type.');
     }
 
-    final manifestContent =
-        manifestEntry.content as List<int>;
-
-    final decodedManifest = jsonDecode(
-      utf8.decode(manifestContent),
+    final temp = await getTemporaryDirectory();
+    final out = File(
+      p.join(temp.path, 'restored_${DateTime.now().millisecondsSinceEpoch}.sqlite'),
     );
+    await out.writeAsBytes(dbEntry.content as List<int>, flush: true);
 
-    if (decodedManifest is! Map<String, dynamic>) {
-      throw const FormatException(
-        'Invalid backup manifest.',
-      );
-    }
-
-    if (decodedManifest['type'] !=
-        'grocery_pos_backup') {
-      throw const FormatException(
-        'This file is not a Grocery POS backup.',
-      );
-    }
-
-    final databaseBytes =
-        databaseEntry.content as List<int>;
-
-    if (databaseBytes.length < 100) {
-      throw const FormatException(
-        'Backup database is invalid or too small.',
-      );
-    }
-
-    final temporaryDirectory =
-        await getTemporaryDirectory();
-
-    final extractedDatabase = File(
-      p.join(
-        temporaryDirectory.path,
-        'restore_${DateTime.now().millisecondsSinceEpoch}_$databaseFileName',
-      ),
-    );
-
-    await extractedDatabase.writeAsBytes(
-      databaseBytes,
-      flush: true,
-    );
-
-    return BackupExtractResult(
-      database: extractedDatabase,
-      manifest: decodedManifest,
-    );
+    return BackupExtractResult(database: out, manifest: manifest);
   }
 
-  /// Creates a local safety copy before replacing the current database.
   Future<File?> createSafetyCopy() async {
-    final database = await getDatabaseFile();
+    final db = await databaseFile();
+    if (!await db.exists()) return null;
 
-    if (!await database.exists()) {
-      return null;
-    }
-
-    final directory =
-        await getApplicationDocumentsDirectory();
-
-    final timestamp = DateTime.now()
+    final dir = await getApplicationDocumentsDirectory();
+    final stamp = DateTime.now()
         .toUtc()
         .toIso8601String()
         .replaceAll(':', '-')
         .replaceAll('.', '-');
 
-    final safetyCopy = File(
-      p.join(
-        directory.path,
-        'grocery_pos_before_restore_$timestamp.sqlite',
-      ),
+    return db.copy(
+      p.join(dir.path, 'grocery_pos_before_restore_$stamp.sqlite'),
     );
-
-    await database.copy(safetyCopy.path);
-
-    return safetyCopy;
   }
 
-  /// Replaces the current SQLite file.
-  ///
-  /// AppDatabase must be closed BEFORE calling this.
-  Future<void> replaceDatabase(
-    File restoredDatabase,
-  ) async {
-    if (!await restoredDatabase.exists()) {
-      throw StateError(
-        'Restored SQLite file does not exist.',
-      );
-    }
-
-    final target = await getDatabaseFile();
-
-    if (!await target.parent.exists()) {
-      await target.parent.create(
-        recursive: true,
-      );
-    }
-
-    await restoredDatabase.copy(target.path);
-
-    if (!await target.exists() ||
-        await target.length() == 0) {
-      throw StateError(
-        'Could not replace SQLite database.',
-      );
-    }
+  Future<void> replaceDatabase(File restored) async {
+    final target = await databaseFile();
+    await restored.copy(target.path);
   }
 
-  Future<void> deleteTemporaryFile(
-    File? file,
-  ) async {
-    if (file == null) return;
-
-    if (await file.exists()) {
-      await file.delete();
-    }
+  Future<void> deleteIfExists(File? file) async {
+    if (file != null && await file.exists()) await file.delete();
   }
 }
 
 class BackupExtractResult {
+  final File database;
+  final Map<String, dynamic> manifest;
+
   const BackupExtractResult({
     required this.database,
     required this.manifest,
   });
-
-  final File database;
-  final Map<String, dynamic> manifest;
 }

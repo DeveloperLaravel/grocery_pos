@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:grocery_pos/features/pos/domain/cart_item.dart';
+import 'package:grocery_pos/features/pos/domain/entities/cart_item.dart';
 import 'package:grocery_pos/features/pos/domain/sale_receipt.dart';
 import 'package:grocery_pos/features/products/domain/product_entity.dart';
 

@@ -1,12 +1,11 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:grocery_pos/core/error/failure.dart';
-import 'package:grocery_pos/features/pos/domain/cart_item.dart';
-import 'package:grocery_pos/features/pos/domain/pos_repository.dart';
-import 'package:grocery_pos/features/pos/domain/sale_receipt.dart';
+
+import '../../data/models/sale_item_model.dart';
 
 class CheckoutParams {
-  final List<CartItem> items;
+  final List<SaleItemModel> items;
   final double discount;
   final double paid;
   final String paymentMethod;

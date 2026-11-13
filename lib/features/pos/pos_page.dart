@@ -6,12 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:grocery_pos/core/di/injection.dart';
 import 'package:grocery_pos/features/backup/presentation/backup_page.dart';
-import 'package:grocery_pos/features/pos/presentation/barcode_page.dart';
-import 'package:grocery_pos/features/pos/presentation/bloc/pos_bloc.dart';
-import 'package:grocery_pos/features/pos/presentation/bloc/pos_state.dart';
-import 'package:grocery_pos/features/pos/presentation/receipt_page.dart';
-import 'package:grocery_pos/features/pos/presentation/widgets/cart_panel.dart';
-import 'package:grocery_pos/features/pos/presentation/widgets/checkout_dialog.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/barcode_page.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/bloc/pos_bloc.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/bloc/pos_state.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/receipt_page.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/widgets/cart_panel.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/widgets/checkout_dialog.dart';
 
 class PosPage extends StatelessWidget {
   const PosPage({super.key});

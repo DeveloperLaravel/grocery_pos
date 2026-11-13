@@ -43,7 +43,7 @@ class $ProductsTable extends Products
       'cost_price', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+      defaultValue: const Constant(0.0));
   static const VerificationMeta _salePriceMeta =
       const VerificationMeta('salePrice');
   @override
@@ -57,7 +57,7 @@ class $ProductsTable extends Products
       'quantity', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+      defaultValue: const Constant(0.0));
   static const VerificationMeta _minStockMeta =
       const VerificationMeta('minStock');
   @override
@@ -65,7 +65,7 @@ class $ProductsTable extends Products
       'min_stock', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
-      defaultValue: const Constant(AppConfig.defaultMinStock));
+      defaultValue: const Constant(5.0));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -496,7 +496,7 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleDb> {
       'discount', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+      defaultValue: const Constant(0.0));
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
@@ -507,7 +507,9 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleDb> {
   @override
   late final GeneratedColumn<double> paidAmount = GeneratedColumn<double>(
       'paid_amount', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
   static const VerificationMeta _paymentMethodMeta =
       const VerificationMeta('paymentMethod');
   @override
@@ -515,7 +517,7 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleDb> {
       'payment_method', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(AppConstants.cashPayment));
+      defaultValue: const Constant('cash'));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -577,8 +579,6 @@ class $SalesTable extends Sales with TableInfo<$SalesTable, SaleDb> {
           _paidAmountMeta,
           paidAmount.isAcceptableOrUnknown(
               data['paid_amount']!, _paidAmountMeta));
-    } else if (isInserting) {
-      context.missing(_paidAmountMeta);
     }
     if (data.containsKey('payment_method')) {
       context.handle(
@@ -792,13 +792,12 @@ class SalesCompanion extends UpdateCompanion<SaleDb> {
     required double subtotal,
     this.discount = const Value.absent(),
     required double total,
-    required double paidAmount,
+    this.paidAmount = const Value.absent(),
     this.paymentMethod = const Value.absent(),
     this.createdAt = const Value.absent(),
   })  : invoiceNumber = Value(invoiceNumber),
         subtotal = Value(subtotal),
-        total = Value(total),
-        paidAmount = Value(paidAmount);
+        total = Value(total);
   static Insertable<SaleDb> custom({
     Expression<int>? id,
     Expression<String>? invoiceNumber,
@@ -2246,6 +2245,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $StockMovementsTable stockMovements = $StockMovementsTable(this);
   late final $ReturnsTable returns = $ReturnsTable(this);
   late final $ReturnItemsTable returnItems = $ReturnItemsTable(this);
+  late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
+  late final StockDao stockDao = StockDao(this as AppDatabase);
+  late final DatabaseMaintenanceDao databaseMaintenanceDao =
+      DatabaseMaintenanceDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2479,7 +2482,7 @@ typedef $$SalesTableCreateCompanionBuilder = SalesCompanion Function({
   required double subtotal,
   Value<double> discount,
   required double total,
-  required double paidAmount,
+  Value<double> paidAmount,
   Value<String> paymentMethod,
   Value<DateTime> createdAt,
 });
@@ -2645,7 +2648,7 @@ class $$SalesTableTableManager extends RootTableManager<
             required double subtotal,
             Value<double> discount = const Value.absent(),
             required double total,
-            required double paidAmount,
+            Value<double> paidAmount = const Value.absent(),
             Value<String> paymentMethod = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
           }) =>

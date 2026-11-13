@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:grocery_pos/features/pos/domain/cart_item.dart';
+import 'package:grocery_pos/features/pos/domain/entities/cart_item.dart';
 import 'package:grocery_pos/features/pos/domain/sale_receipt.dart';
 import 'package:grocery_pos/features/pos/domain/usecases/checkout_sale.dart';
 import 'package:grocery_pos/features/pos/domain/usecases/find_product_by_barcode.dart';
 import 'package:grocery_pos/features/pos/domain/usecases/get_pos_products.dart';
-import 'package:grocery_pos/features/pos/presentation/bloc/pos_state.dart';
+import 'package:grocery_pos/features/pos/domain/presentation/bloc/pos_state.dart';
 import 'package:grocery_pos/features/products/domain/product_entity.dart';
 
 sealed class PosEvent {}

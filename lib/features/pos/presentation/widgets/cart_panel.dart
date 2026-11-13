@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:grocery_pos/features/pos/domain/cart_item.dart';
+import 'package:grocery_pos/features/pos/domain/entities/cart_item.dart';
 
 class CartPanel extends StatelessWidget {
   final List<CartItem> items;

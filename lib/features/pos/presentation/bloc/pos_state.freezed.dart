@@ -47,8 +47,8 @@ mixin _$PosState {
                 other.paymentMethod == paymentMethod) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.success, success) || other.success == success) &&
-            (identical(other.lastReceipt, lastReceipt) ||
-                other.lastReceipt == lastReceipt));
+            const DeepCollectionEquality()
+                .equals(other.lastReceipt, lastReceipt));
   }
 
   @override
@@ -62,7 +62,7 @@ mixin _$PosState {
       paymentMethod,
       error,
       success,
-      lastReceipt);
+      const DeepCollectionEquality().hash(lastReceipt));
 
   @override
   String toString() {
@@ -442,8 +442,8 @@ class _PosState extends PosState {
                 other.paymentMethod == paymentMethod) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.success, success) || other.success == success) &&
-            (identical(other.lastReceipt, lastReceipt) ||
-                other.lastReceipt == lastReceipt));
+            const DeepCollectionEquality()
+                .equals(other.lastReceipt, lastReceipt));
   }
 
   @override
@@ -457,7 +457,7 @@ class _PosState extends PosState {
       paymentMethod,
       error,
       success,
-      lastReceipt);
+      const DeepCollectionEquality().hash(lastReceipt));
 
   @override
   String toString() {

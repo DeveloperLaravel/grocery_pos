@@ -1,12 +1,18 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
-import 'package:grocery_pos/core/error/failure.dart';
-import 'package:grocery_pos/features/pos/domain/pos_repository.dart';
-import 'package:grocery_pos/features/products/domain/product_entity.dart';
 
-@injectable
-class GetPosProducts {
+import 'package:fpdart/fpdart.dart';
+
+import '../../../../core/error/failure.dart';
+import '../entities/product_entity.dart';
+import '../pos_repository.dart';
+
+class GetProductsUseCase {
   final PosRepository repository;
-  GetPosProducts(this.repository);
-  TaskEither<Failure, List<ProductEntity>> call([String query = '']) => repository.getProducts(query: query);
+
+  GetProductsUseCase(this.repository);
+
+  TaskEither<Failure, List<ProductEntity>> call({
+    String query = '',
+  }) {
+    return repository.getProducts(query: query);
+  }
 }

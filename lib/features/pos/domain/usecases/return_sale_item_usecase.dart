@@ -1,13 +1,15 @@
 
+import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
-import '../pos_repository.dart';
+import '../repositories/pos_repository.dart';
 
+@lazySingleton
 class ReturnSaleItemUseCase {
-  final PosRepository repository;
+  final PosRepository _repository;
 
-  ReturnSaleItemUseCase(this.repository);
+  ReturnSaleItemUseCase(this._repository);
 
   TaskEither<Failure, Unit> call({
     required int saleId,
@@ -15,7 +17,7 @@ class ReturnSaleItemUseCase {
     required double quantity,
     required double refundAmount,
   }) {
-    return repository.returnSaleItem(
+    return _repository.returnSaleItem(
       saleId: saleId,
       productId: productId,
       quantity: quantity,

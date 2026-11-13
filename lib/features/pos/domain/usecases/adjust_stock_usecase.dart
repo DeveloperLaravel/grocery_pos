@@ -1,20 +1,22 @@
 
+import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
-import '../pos_repository.dart';
+import '../repositories/pos_repository.dart';
 
+@lazySingleton
 class AdjustStockUseCase {
-  final PosRepository repository;
+  final PosRepository _repository;
 
-  AdjustStockUseCase(this.repository);
+  AdjustStockUseCase(this._repository);
 
   TaskEither<Failure, Unit> call({
     required int productId,
     required double delta,
     required String note,
   }) {
-    return repository.adjustStock(
+    return _repository.adjustStock(
       productId: productId,
       delta: delta,
       note: note,

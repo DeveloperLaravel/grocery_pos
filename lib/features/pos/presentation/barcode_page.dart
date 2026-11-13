@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -10,94 +9,92 @@ class BarcodePage extends StatefulWidget {
 }
 
 class _BarcodePageState extends State<BarcodePage> {
-  final MobileScannerController controller = MobileScannerController();
-  bool handled = false;
+  late final MobileScannerController _controller;
+
+  bool _handled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+    );
+  }
+
+  void _onDetect(BarcodeCapture capture) {
+    if (_handled) return;
+
+    if (capture.barcodes.isEmpty) return;
+
+    final barcode = capture.barcodes.first.rawValue?.trim();
+
+    if (barcode == null || barcode.isEmpty) return;
+
+    _handled = true;
+
+    Navigator.of(context).pop(barcode);
+  }
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _onDetect(BarcodeCapture capture) async {
-    if (handled || capture.barcodes.isEmpty) return;
-
-    final code = capture.barcodes.first.rawValue?.trim();
-
-    if (code == null || code.isEmpty) return;
-
-    handled = true;
-    await controller.stop();
-
-    if (!mounted) return;
-    Navigator.pop(context, code);
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final frameWidth = size.width < 500
-        ? size.width * .82
-        : 420.0;
-
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('مسح الباركود'),
         actions: [
           IconButton(
-            tooltip: 'الفلاش',
-            onPressed: () => controller.toggleTorch(),
-            icon: const Icon(Icons.flash_on_rounded),
+            onPressed: () => _controller.toggleTorch(),
+            icon: const Icon(Icons.flash_on),
           ),
           IconButton(
-            tooltip: 'تبديل الكاميرا',
-            onPressed: () => controller.switchCamera(),
-            icon: const Icon(Icons.cameraswitch_rounded),
+            onPressed: () => _controller.switchCamera(),
+            icon: const Icon(Icons.cameraswitch),
           ),
         ],
       ),
       body: Stack(
-        fit: StackFit.expand,
         children: [
           MobileScanner(
-            controller: controller,
+            controller: _controller,
             onDetect: _onDetect,
           ),
           Center(
             child: Container(
-              width: frameWidth,
-              height: frameWidth / 1.7,
+              width: 280,
+              height: 170,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.white,
+                  color: Colors.greenAccent,
                   width: 3,
                 ),
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
+            bottom: 40,
             left: 20,
             right: 20,
-            bottom: 32,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Text(
-                'ضع الباركود داخل الإطار',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                ),
+            child: Text(
+              'وجّه الكاميرا نحو باركود المنتج',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 8,
+                  ),
+                ],
               ),
             ),
           ),

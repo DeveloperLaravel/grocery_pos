@@ -4,8 +4,8 @@ import 'package:injectable/injectable.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 
-import '../datasources/product_local_data_source.dart';
-import '../mappers/product_mapper.dart';
+import '../database/product_local_data_source.dart';
+import '../mapper/product_mapper.dart';
 import '../models/product_model.dart';
 
 @LazySingleton(as: ProductRepository)

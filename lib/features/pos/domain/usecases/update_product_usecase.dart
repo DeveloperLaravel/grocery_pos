@@ -1,20 +1,22 @@
 
+import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
 import '../entities/product_entity.dart';
-import '../pos_repository.dart';
+import '../repositories/pos_repository.dart';
 
+@lazySingleton
 class UpdateProductUseCase {
-  final PosRepository repository;
+  final PosRepository _repository;
 
-  UpdateProductUseCase(this.repository);
+  UpdateProductUseCase(this._repository);
 
   TaskEither<Failure, ProductEntity> call({
     required int id,
     required ProductEntity product,
   }) {
-    return repository.updateProduct(
+    return _repository.updateProduct(
       id: id,
       product: product,
     );

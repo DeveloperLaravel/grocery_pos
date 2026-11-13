@@ -4,12 +4,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart';
 
-import '../../../../core/database/tables/products_table.dart';
-import '../../../../core/database/tables/sales_table.dart';
-import '../../../../core/database/tables/sale_items_table.dart';
-import '../../../../core/database/tables/stock_movements_table.dart';
-import '../../../../core/database/tables/returns_table.dart';
-import '../../../../core/database/tables/return_items_table.dart';
 
 import '../models/checkout_item_model.dart';
 import 'pos_local_data_source.dart';

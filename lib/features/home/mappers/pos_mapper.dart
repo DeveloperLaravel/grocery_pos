@@ -2,13 +2,13 @@
 import 'package:drift/drift.dart';
 
 import '../../../../core/database/app_database.dart';
+import '../../inventory/data/models/stock_movement_model.dart';
+import '../../pos/data/models/product_model.dart';
+import '../../pos/data/models/return_item_model.dart';
+import '../../pos/data/models/return_model.dart';
+import '../../pos/data/models/sale_item_model.dart';
+import '../../pos/data/models/sale_model.dart';
 
-import '../../data/models/product_model.dart';
-import '../../data/models/sale_model.dart';
-import '../../data/models/sale_item_model.dart';
-import '../../data/models/return_model.dart';
-import '../../data/models/return_item_model.dart';
-import '../../data/models/stock_movement_model.dart';
 
 // =====================================================
 // Product Mapper

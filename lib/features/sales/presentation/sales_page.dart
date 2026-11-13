@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:grocery_pos/core/database/app_database.dart';
 import 'package:grocery_pos/core/di/injection.dart';
-import 'package:grocery_pos/features/pos/domain/pos_repository.dart';
+
+import '../../pos/domain/repositories/pos_repository.dart';
 
 class SalesPage extends StatefulWidget {
   const SalesPage({super.key});

@@ -20,4 +20,7 @@ class InventorySummary {
     stockCostValue: 0,
     stockSaleValue: 0,
   );
+
+  double get potentialProfit =>
+      stockSaleValue - stockCostValue;
 }

@@ -16,6 +16,7 @@ class _ProductBarcodeScannerPageState
 
   bool _isScanned = false;
   bool _isFlashOn = false;
+  // ignore: prefer_final_fields
   bool _isCameraReady = false;
 
   @override
@@ -285,54 +286,54 @@ class _ProductBarcodeScannerPageState
     );
   }
 
-  Widget _buildCameraError(
-    BuildContext context,
-    MobileScannerException error,
-  ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.camera_alt_outlined,
-              color: Colors.white,
-              size: 55,
-            ),
+  // Widget _buildCameraError(
+  //   BuildContext context,
+  //   MobileScannerException error,
+  // ) {
+  //   return Center(
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(24),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           const Icon(
+  //             Icons.camera_alt_outlined,
+  //             color: Colors.white,
+  //             size: 55,
+  //           ),
 
-            const SizedBox(height: 16),
+  //           const SizedBox(height: 16),
 
-            const Text(
-              'تعذر تشغيل الكاميرا',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+  //           const Text(
+  //             'تعذر تشغيل الكاميرا',
+  //             style: TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
 
-            const SizedBox(height: 10),
+  //           const SizedBox(height: 10),
 
-            Text(
-              error.errorCode.message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white70,
-              ),
-            ),
+  //           Text(
+  //             error.errorCode.message,
+  //             textAlign: TextAlign.center,
+  //             style: const TextStyle(
+  //               color: Colors.white70,
+  //             ),
+  //           ),
 
-            const SizedBox(height: 20),
+  //           const SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('رجوع'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text('رجوع'),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

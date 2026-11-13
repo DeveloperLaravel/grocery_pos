@@ -31,6 +31,7 @@ class _ProductBarcodeScannerPageState
         BarcodeFormat.code39,
         BarcodeFormat.code93,
         BarcodeFormat.codabar,
+        // ignore: deprecated_member_use
         BarcodeFormat.itf,
         BarcodeFormat.qrCode,
       ],

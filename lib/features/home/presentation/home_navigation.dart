@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:grocery_pos/features/home/domain/entities/home_destination.dart';
-import 'package:grocery_pos/features/inventory/presentation/inventory_page.dart';
-import 'package:grocery_pos/features/pos/pos_page.dart';
+import 'package:grocery_pos/features/pos/presentation/pages/pos_page.dart';
 import 'package:grocery_pos/features/products/presentation/pages/products_page.dart';
-import 'package:grocery_pos/features/reports/presentation/reports_page.dart';
 import 'package:grocery_pos/features/sales/presentation/sales_page.dart';
+
+import '../../inventory/presentation/pages/inventory_page.dart';
+import '../../reports/presentation/pages/reports_page.dart';
 
 /// تعريف الوجهات في مكان واحد بدل تكرارها داخل HomePage.
 abstract final class HomeNavigation {

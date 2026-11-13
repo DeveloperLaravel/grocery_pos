@@ -1,18 +1,20 @@
 
+import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
 import '../entities/product_entity.dart';
-import '../pos_repository.dart';
+import '../repositories/pos_repository.dart';
 
+@lazySingleton
 class GetProductsUseCase {
-  final PosRepository repository;
+  final PosRepository _repository;
 
-  GetProductsUseCase(this.repository);
+  GetProductsUseCase(this._repository);
 
   TaskEither<Failure, List<ProductEntity>> call({
     String query = '',
   }) {
-    return repository.getProducts(query: query);
+    return _repository.getProducts(query: query);
   }
 }

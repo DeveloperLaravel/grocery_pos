@@ -2247,6 +2247,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ReturnItemsTable returnItems = $ReturnItemsTable(this);
   late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
   late final StockDao stockDao = StockDao(this as AppDatabase);
+  late final ReportsDao reportsDao = ReportsDao(this as AppDatabase);
+  late final SalesDao salesDao = SalesDao(this as AppDatabase);
   late final DatabaseMaintenanceDao databaseMaintenanceDao =
       DatabaseMaintenanceDao(this as AppDatabase);
   @override

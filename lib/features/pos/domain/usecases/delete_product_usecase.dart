@@ -1,15 +1,17 @@
 
+import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
-import '../pos_repository.dart';
+import '../repositories/pos_repository.dart';
 
+@lazySingleton
 class DeleteProductUseCase {
-  final PosRepository repository;
+  final PosRepository _repository;
 
-  DeleteProductUseCase(this.repository);
+  DeleteProductUseCase(this._repository);
 
   TaskEither<Failure, Unit> call(int id) {
-    return repository.deleteProduct(id);
+    return _repository.deleteProduct(id);
   }
 }

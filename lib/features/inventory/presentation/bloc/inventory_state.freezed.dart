@@ -14,13 +14,18 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$InventoryState {
-  bool get loading;
-  List<InventoryItem> get items;
+  bool get isLoading;
+  bool get isAdjusting;
+  List<InventoryItem> get inventory;
   InventorySummary get summary;
+  List<InventoryItem> get lowStockProducts;
+  List<StockMovement> get movements;
+  int? get selectedProductId;
+  int get movementsLimit;
   String get query;
   bool get lowStockOnly;
-  String? get error;
-  String? get message;
+  String? get errorMessage;
+  String? get successMessage;
 
   /// Create a copy of InventoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -35,30 +40,47 @@ mixin _$InventoryState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is InventoryState &&
-            (identical(other.loading, loading) || other.loading == loading) &&
-            const DeepCollectionEquality().equals(other.items, items) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.isAdjusting, isAdjusting) ||
+                other.isAdjusting == isAdjusting) &&
+            const DeepCollectionEquality().equals(other.inventory, inventory) &&
             (identical(other.summary, summary) || other.summary == summary) &&
+            const DeepCollectionEquality()
+                .equals(other.lowStockProducts, lowStockProducts) &&
+            const DeepCollectionEquality().equals(other.movements, movements) &&
+            (identical(other.selectedProductId, selectedProductId) ||
+                other.selectedProductId == selectedProductId) &&
+            (identical(other.movementsLimit, movementsLimit) ||
+                other.movementsLimit == movementsLimit) &&
             (identical(other.query, query) || other.query == query) &&
             (identical(other.lowStockOnly, lowStockOnly) ||
                 other.lowStockOnly == lowStockOnly) &&
-            (identical(other.error, error) || other.error == error) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.successMessage, successMessage) ||
+                other.successMessage == successMessage));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      loading,
-      const DeepCollectionEquality().hash(items),
+      isLoading,
+      isAdjusting,
+      const DeepCollectionEquality().hash(inventory),
       summary,
+      const DeepCollectionEquality().hash(lowStockProducts),
+      const DeepCollectionEquality().hash(movements),
+      selectedProductId,
+      movementsLimit,
       query,
       lowStockOnly,
-      error,
-      message);
+      errorMessage,
+      successMessage);
 
   @override
   String toString() {
-    return 'InventoryState(loading: $loading, items: $items, summary: $summary, query: $query, lowStockOnly: $lowStockOnly, error: $error, message: $message)';
+    return 'InventoryState(isLoading: $isLoading, isAdjusting: $isAdjusting, inventory: $inventory, summary: $summary, lowStockProducts: $lowStockProducts, movements: $movements, selectedProductId: $selectedProductId, movementsLimit: $movementsLimit, query: $query, lowStockOnly: $lowStockOnly, errorMessage: $errorMessage, successMessage: $successMessage)';
   }
 }
 
@@ -69,13 +91,18 @@ abstract mixin class $InventoryStateCopyWith<$Res> {
       _$InventoryStateCopyWithImpl;
   @useResult
   $Res call(
-      {bool loading,
-      List<InventoryItem> items,
+      {bool isLoading,
+      bool isAdjusting,
+      List<InventoryItem> inventory,
       InventorySummary summary,
+      List<InventoryItem> lowStockProducts,
+      List<StockMovement> movements,
+      int? selectedProductId,
+      int movementsLimit,
       String query,
       bool lowStockOnly,
-      String? error,
-      String? message});
+      String? errorMessage,
+      String? successMessage});
 }
 
 /// @nodoc
@@ -91,27 +118,52 @@ class _$InventoryStateCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
-    Object? items = null,
+    Object? isLoading = null,
+    Object? isAdjusting = null,
+    Object? inventory = null,
     Object? summary = null,
+    Object? lowStockProducts = null,
+    Object? movements = null,
+    Object? selectedProductId = freezed,
+    Object? movementsLimit = null,
     Object? query = null,
     Object? lowStockOnly = null,
-    Object? error = freezed,
-    Object? message = freezed,
+    Object? errorMessage = freezed,
+    Object? successMessage = freezed,
   }) {
     return _then(_self.copyWith(
-      loading: null == loading
-          ? _self.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      isLoading: null == isLoading
+          ? _self.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
-      items: null == items
-          ? _self.items
-          : items // ignore: cast_nullable_to_non_nullable
+      isAdjusting: null == isAdjusting
+          ? _self.isAdjusting
+          : isAdjusting // ignore: cast_nullable_to_non_nullable
+              as bool,
+      inventory: null == inventory
+          ? _self.inventory
+          : inventory // ignore: cast_nullable_to_non_nullable
               as List<InventoryItem>,
       summary: null == summary
           ? _self.summary
           : summary // ignore: cast_nullable_to_non_nullable
               as InventorySummary,
+      lowStockProducts: null == lowStockProducts
+          ? _self.lowStockProducts
+          : lowStockProducts // ignore: cast_nullable_to_non_nullable
+              as List<InventoryItem>,
+      movements: null == movements
+          ? _self.movements
+          : movements // ignore: cast_nullable_to_non_nullable
+              as List<StockMovement>,
+      selectedProductId: freezed == selectedProductId
+          ? _self.selectedProductId
+          : selectedProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      movementsLimit: null == movementsLimit
+          ? _self.movementsLimit
+          : movementsLimit // ignore: cast_nullable_to_non_nullable
+              as int,
       query: null == query
           ? _self.query
           : query // ignore: cast_nullable_to_non_nullable
@@ -120,13 +172,13 @@ class _$InventoryStateCopyWithImpl<$Res>
           ? _self.lowStockOnly
           : lowStockOnly // ignore: cast_nullable_to_non_nullable
               as bool,
-      error: freezed == error
-          ? _self.error
-          : error // ignore: cast_nullable_to_non_nullable
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
               as String?,
-      message: freezed == message
-          ? _self.message
-          : message // ignore: cast_nullable_to_non_nullable
+      successMessage: freezed == successMessage
+          ? _self.successMessage
+          : successMessage // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -226,21 +278,37 @@ extension InventoryStatePatterns on InventoryState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            bool loading,
-            List<InventoryItem> items,
+            bool isLoading,
+            bool isAdjusting,
+            List<InventoryItem> inventory,
             InventorySummary summary,
+            List<InventoryItem> lowStockProducts,
+            List<StockMovement> movements,
+            int? selectedProductId,
+            int movementsLimit,
             String query,
             bool lowStockOnly,
-            String? error,
-            String? message)?
+            String? errorMessage,
+            String? successMessage)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _InventoryState() when $default != null:
-        return $default(_that.loading, _that.items, _that.summary, _that.query,
-            _that.lowStockOnly, _that.error, _that.message);
+        return $default(
+            _that.isLoading,
+            _that.isAdjusting,
+            _that.inventory,
+            _that.summary,
+            _that.lowStockProducts,
+            _that.movements,
+            _that.selectedProductId,
+            _that.movementsLimit,
+            _that.query,
+            _that.lowStockOnly,
+            _that.errorMessage,
+            _that.successMessage);
       case _:
         return orElse();
     }
@@ -262,20 +330,36 @@ extension InventoryStatePatterns on InventoryState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            bool loading,
-            List<InventoryItem> items,
+            bool isLoading,
+            bool isAdjusting,
+            List<InventoryItem> inventory,
             InventorySummary summary,
+            List<InventoryItem> lowStockProducts,
+            List<StockMovement> movements,
+            int? selectedProductId,
+            int movementsLimit,
             String query,
             bool lowStockOnly,
-            String? error,
-            String? message)
+            String? errorMessage,
+            String? successMessage)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _InventoryState():
-        return $default(_that.loading, _that.items, _that.summary, _that.query,
-            _that.lowStockOnly, _that.error, _that.message);
+        return $default(
+            _that.isLoading,
+            _that.isAdjusting,
+            _that.inventory,
+            _that.summary,
+            _that.lowStockProducts,
+            _that.movements,
+            _that.selectedProductId,
+            _that.movementsLimit,
+            _that.query,
+            _that.lowStockOnly,
+            _that.errorMessage,
+            _that.successMessage);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -296,20 +380,36 @@ extension InventoryStatePatterns on InventoryState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            bool loading,
-            List<InventoryItem> items,
+            bool isLoading,
+            bool isAdjusting,
+            List<InventoryItem> inventory,
             InventorySummary summary,
+            List<InventoryItem> lowStockProducts,
+            List<StockMovement> movements,
+            int? selectedProductId,
+            int movementsLimit,
             String query,
             bool lowStockOnly,
-            String? error,
-            String? message)?
+            String? errorMessage,
+            String? successMessage)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _InventoryState() when $default != null:
-        return $default(_that.loading, _that.items, _that.summary, _that.query,
-            _that.lowStockOnly, _that.error, _that.message);
+        return $default(
+            _that.isLoading,
+            _that.isAdjusting,
+            _that.inventory,
+            _that.summary,
+            _that.lowStockProducts,
+            _that.movements,
+            _that.selectedProductId,
+            _that.movementsLimit,
+            _that.query,
+            _that.lowStockOnly,
+            _that.errorMessage,
+            _that.successMessage);
       case _:
         return null;
     }
@@ -320,30 +420,64 @@ extension InventoryStatePatterns on InventoryState {
 
 class _InventoryState implements InventoryState {
   const _InventoryState(
-      {this.loading = false,
-      final List<InventoryItem> items = const [],
+      {this.isLoading = false,
+      this.isAdjusting = false,
+      final List<InventoryItem> inventory = const [],
       this.summary = InventorySummary.empty,
+      final List<InventoryItem> lowStockProducts = const [],
+      final List<StockMovement> movements = const [],
+      this.selectedProductId,
+      this.movementsLimit = 50,
       this.query = '',
       this.lowStockOnly = false,
-      this.error,
-      this.message})
-      : _items = items;
+      this.errorMessage,
+      this.successMessage})
+      : _inventory = inventory,
+        _lowStockProducts = lowStockProducts,
+        _movements = movements;
 
   @override
   @JsonKey()
-  final bool loading;
-  final List<InventoryItem> _items;
+  final bool isLoading;
   @override
   @JsonKey()
-  List<InventoryItem> get items {
-    if (_items is EqualUnmodifiableListView) return _items;
+  final bool isAdjusting;
+  final List<InventoryItem> _inventory;
+  @override
+  @JsonKey()
+  List<InventoryItem> get inventory {
+    if (_inventory is EqualUnmodifiableListView) return _inventory;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_items);
+    return EqualUnmodifiableListView(_inventory);
   }
 
   @override
   @JsonKey()
   final InventorySummary summary;
+  final List<InventoryItem> _lowStockProducts;
+  @override
+  @JsonKey()
+  List<InventoryItem> get lowStockProducts {
+    if (_lowStockProducts is EqualUnmodifiableListView)
+      return _lowStockProducts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_lowStockProducts);
+  }
+
+  final List<StockMovement> _movements;
+  @override
+  @JsonKey()
+  List<StockMovement> get movements {
+    if (_movements is EqualUnmodifiableListView) return _movements;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_movements);
+  }
+
+  @override
+  final int? selectedProductId;
+  @override
+  @JsonKey()
+  final int movementsLimit;
   @override
   @JsonKey()
   final String query;
@@ -351,9 +485,9 @@ class _InventoryState implements InventoryState {
   @JsonKey()
   final bool lowStockOnly;
   @override
-  final String? error;
+  final String? errorMessage;
   @override
-  final String? message;
+  final String? successMessage;
 
   /// Create a copy of InventoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -368,30 +502,49 @@ class _InventoryState implements InventoryState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _InventoryState &&
-            (identical(other.loading, loading) || other.loading == loading) &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.isAdjusting, isAdjusting) ||
+                other.isAdjusting == isAdjusting) &&
+            const DeepCollectionEquality()
+                .equals(other._inventory, _inventory) &&
             (identical(other.summary, summary) || other.summary == summary) &&
+            const DeepCollectionEquality()
+                .equals(other._lowStockProducts, _lowStockProducts) &&
+            const DeepCollectionEquality()
+                .equals(other._movements, _movements) &&
+            (identical(other.selectedProductId, selectedProductId) ||
+                other.selectedProductId == selectedProductId) &&
+            (identical(other.movementsLimit, movementsLimit) ||
+                other.movementsLimit == movementsLimit) &&
             (identical(other.query, query) || other.query == query) &&
             (identical(other.lowStockOnly, lowStockOnly) ||
                 other.lowStockOnly == lowStockOnly) &&
-            (identical(other.error, error) || other.error == error) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.successMessage, successMessage) ||
+                other.successMessage == successMessage));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      loading,
-      const DeepCollectionEquality().hash(_items),
+      isLoading,
+      isAdjusting,
+      const DeepCollectionEquality().hash(_inventory),
       summary,
+      const DeepCollectionEquality().hash(_lowStockProducts),
+      const DeepCollectionEquality().hash(_movements),
+      selectedProductId,
+      movementsLimit,
       query,
       lowStockOnly,
-      error,
-      message);
+      errorMessage,
+      successMessage);
 
   @override
   String toString() {
-    return 'InventoryState(loading: $loading, items: $items, summary: $summary, query: $query, lowStockOnly: $lowStockOnly, error: $error, message: $message)';
+    return 'InventoryState(isLoading: $isLoading, isAdjusting: $isAdjusting, inventory: $inventory, summary: $summary, lowStockProducts: $lowStockProducts, movements: $movements, selectedProductId: $selectedProductId, movementsLimit: $movementsLimit, query: $query, lowStockOnly: $lowStockOnly, errorMessage: $errorMessage, successMessage: $successMessage)';
   }
 }
 
@@ -404,13 +557,18 @@ abstract mixin class _$InventoryStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool loading,
-      List<InventoryItem> items,
+      {bool isLoading,
+      bool isAdjusting,
+      List<InventoryItem> inventory,
       InventorySummary summary,
+      List<InventoryItem> lowStockProducts,
+      List<StockMovement> movements,
+      int? selectedProductId,
+      int movementsLimit,
       String query,
       bool lowStockOnly,
-      String? error,
-      String? message});
+      String? errorMessage,
+      String? successMessage});
 }
 
 /// @nodoc
@@ -426,27 +584,52 @@ class __$InventoryStateCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? loading = null,
-    Object? items = null,
+    Object? isLoading = null,
+    Object? isAdjusting = null,
+    Object? inventory = null,
     Object? summary = null,
+    Object? lowStockProducts = null,
+    Object? movements = null,
+    Object? selectedProductId = freezed,
+    Object? movementsLimit = null,
     Object? query = null,
     Object? lowStockOnly = null,
-    Object? error = freezed,
-    Object? message = freezed,
+    Object? errorMessage = freezed,
+    Object? successMessage = freezed,
   }) {
     return _then(_InventoryState(
-      loading: null == loading
-          ? _self.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      isLoading: null == isLoading
+          ? _self.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
-      items: null == items
-          ? _self._items
-          : items // ignore: cast_nullable_to_non_nullable
+      isAdjusting: null == isAdjusting
+          ? _self.isAdjusting
+          : isAdjusting // ignore: cast_nullable_to_non_nullable
+              as bool,
+      inventory: null == inventory
+          ? _self._inventory
+          : inventory // ignore: cast_nullable_to_non_nullable
               as List<InventoryItem>,
       summary: null == summary
           ? _self.summary
           : summary // ignore: cast_nullable_to_non_nullable
               as InventorySummary,
+      lowStockProducts: null == lowStockProducts
+          ? _self._lowStockProducts
+          : lowStockProducts // ignore: cast_nullable_to_non_nullable
+              as List<InventoryItem>,
+      movements: null == movements
+          ? _self._movements
+          : movements // ignore: cast_nullable_to_non_nullable
+              as List<StockMovement>,
+      selectedProductId: freezed == selectedProductId
+          ? _self.selectedProductId
+          : selectedProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      movementsLimit: null == movementsLimit
+          ? _self.movementsLimit
+          : movementsLimit // ignore: cast_nullable_to_non_nullable
+              as int,
       query: null == query
           ? _self.query
           : query // ignore: cast_nullable_to_non_nullable
@@ -455,13 +638,13 @@ class __$InventoryStateCopyWithImpl<$Res>
           ? _self.lowStockOnly
           : lowStockOnly // ignore: cast_nullable_to_non_nullable
               as bool,
-      error: freezed == error
-          ? _self.error
-          : error // ignore: cast_nullable_to_non_nullable
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
               as String?,
-      message: freezed == message
-          ? _self.message
-          : message // ignore: cast_nullable_to_non_nullable
+      successMessage: freezed == successMessage
+          ? _self.successMessage
+          : successMessage // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }

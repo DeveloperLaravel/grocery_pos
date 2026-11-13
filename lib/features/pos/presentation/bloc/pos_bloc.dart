@@ -1,144 +1,577 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:grocery_pos/features/pos/domain/entities/cart_item.dart';
-import 'package:grocery_pos/features/pos/domain/sale_receipt.dart';
-import 'package:grocery_pos/features/pos/domain/usecases/checkout_sale.dart';
-import 'package:grocery_pos/features/pos/domain/usecases/find_product_by_barcode.dart';
-import 'package:grocery_pos/features/pos/domain/usecases/get_pos_products.dart';
-import 'package:grocery_pos/features/pos/domain/presentation/bloc/pos_state.dart';
-import 'package:grocery_pos/features/products/domain/product_entity.dart';
 
-sealed class PosEvent {}
-class LoadProducts extends PosEvent { final String query; LoadProducts([this.query = '']); }
-class AddProductToCart extends PosEvent { final ProductEntity product; AddProductToCart(this.product); }
-class ScanBarcode extends PosEvent { final String barcode; ScanBarcode(this.barcode); }
-class ChangeQty extends PosEvent { final int productId; final double delta; ChangeQty(this.productId, this.delta); }
-class RemoveCartLine extends PosEvent { final int productId; RemoveCartLine(this.productId); }
-class SetDiscount extends PosEvent { final double value; SetDiscount(this.value); }
-class SetPaymentMethod extends PosEvent { final String value; SetPaymentMethod(this.value); }
-class ClearCart extends PosEvent {}
-class ClearPosMessage extends PosEvent {}
-class Checkout extends PosEvent { final double paid; final String method; final void Function(SaleReceipt)? onSuccess; Checkout(this.paid, this.method, {this.onSuccess}); }
+import '../../domain/entities/cart_item.dart';
+import '../../domain/entities/product_entity.dart';
+
+import '../../domain/usecases/add_product_usecase.dart';
+import '../../domain/usecases/adjust_stock_usecase.dart';
+import '../../domain/usecases/checkout_usecase.dart';
+import '../../domain/usecases/delete_product_usecase.dart';
+import '../../domain/usecases/get_product_by_barcode_usecase.dart';
+import '../../domain/usecases/get_products_usecase.dart';
+import '../../domain/usecases/return_sale_item_usecase.dart';
+import '../../domain/usecases/update_product_usecase.dart';
+
+import 'pos_event.dart';
+import 'pos_state.dart';
 
 @injectable
 class PosBloc extends Bloc<PosEvent, PosState> {
-  final GetPosProducts getProducts;
-  final FindProductByBarcode findByBarcode;
-  final CheckoutSale checkoutSale;
+  final GetProductsUseCase _getProducts;
+  final GetProductByBarcodeUseCase _getProductByBarcode;
+  final AddProductUseCase _addProduct;
+  final UpdateProductUseCase _updateProduct;
+  final DeleteProductUseCase _deleteProduct;
+  final AdjustStockUseCase _adjustStock;
+  final CheckoutUseCase _checkout;
+  final ReturnSaleItemUseCase _returnSaleItem;
 
-  PosBloc(this.getProducts, this.findByBarcode, this.checkoutSale) : super(const PosState()) {
-    on<LoadProducts>(_load);
-    on<AddProductToCart>(_add);
-    on<ScanBarcode>(_scan);
-    on<ChangeQty>(_qty);
-    on<RemoveCartLine>(_remove);
-    on<SetDiscount>(_discount);
-    on<SetPaymentMethod>((e, emit) => emit(state.copyWith(paymentMethod: e.value)));
-    on<ClearCart>((e, emit) => emit(state.copyWith(cart: const [], discount: 0, error: null, success: null)));
-    on<ClearPosMessage>((e, emit) => emit(state.copyWith(error: null, success: null)));
-    on<Checkout>(_checkout);
+  PosBloc(
+    this._getProducts,
+    this._getProductByBarcode,
+    this._addProduct,
+    this._updateProduct,
+    this._deleteProduct,
+    this._adjustStock,
+    this._checkout,
+    this._returnSaleItem,
+  ) : super(const PosState()) {
+    on<PosLoadRequested>(_onLoadRequested);
+    on<PosSearchChanged>(_onSearchChanged);
+    on<PosBarcodeScanned>(_onBarcodeScanned);
+
+    on<PosCartProductAdded>(_onCartProductAdded);
+    on<PosCartProductRemoved>(_onCartProductRemoved);
+    on<PosCartQuantityChanged>(_onCartQuantityChanged);
+    on<PosCartCleared>(_onCartCleared);
+
+    on<PosDiscountChanged>(_onDiscountChanged);
+    on<PosCheckoutRequested>(_onCheckoutRequested);
+
+    on<PosReceiptDismissed>(_onReceiptDismissed);
+
+    on<PosStockAdjustmentRequested>(_onStockAdjustmentRequested);
+    on<PosProductCreated>(_onProductCreated);
+    on<PosProductUpdated>(_onProductUpdated);
+    on<PosProductDeleted>(_onProductDeleted);
+
+    on<PosReturnSaleItemRequested>(_onReturnSaleItemRequested);
   }
 
-  Future<void> _load(LoadProducts e, Emitter<PosState> emit) async {
-    emit(state.copyWith(loading: true, error: null));
-    final result = await getProducts(e.query).run();
+  // ---------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------
+
+  void _setError(
+    Emitter<PosState> emit,
+    String message,
+  ) {
+    emit(state.copyWith(
+      error: message,
+      success: null,
+    ));
+  }
+
+  // void _setSuccess(
+  //   Emitter<PosState> emit,
+  //   String message,
+  // ) {
+  //   emit(state.copyWith(
+  //     success: message,
+  //     error: null,
+  //   ));
+  // }
+
+  // Future<void> _reloadProducts() async {
+  //   final result = await _getProducts(
+  //     query: state.searchQuery,
+  //   ).run();
+
+  //   result.match(
+  //     (failure) {
+  //       // لا نغيّر حالة الشاشة من هنا؛
+  //       // تستقبل عملية التحميل التالية الخطأ بشكل طبيعي.
+  //     },
+  //     (products) {
+  //       if (!isClosed) {
+  //         add(const PosEvent.loadRequested());
+  //       }
+  //     },
+  //   );
+  // }
+
+  // ---------------------------------------------------------
+  // Products
+  // ---------------------------------------------------------
+
+  Future<void> _onLoadRequested(
+    PosLoadRequested event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(
+      loading: true,
+      error: null,
+      success: null,
+    ));
+
+    final result = await _getProducts(
+      query: state.searchQuery,
+    ).run();
+
     result.match(
-      (f) => emit(state.copyWith(loading: false, error: f.message)),
-      (products) => emit(state.copyWith(loading: false, products: products)),
-    );
-  }
-
-  void _add(AddProductToCart e, Emitter<PosState> emit) {
-    final product = e.product;
-    if (product.quantity <= 0) {
-      emit(state.copyWith(error: 'المنتج ${product.name} غير متوفر في المخزون'));
-      return;
-    }
-    final cart = [...state.cart];
-    final index = cart.indexWhere((x) => x.product.id == product.id);
-    if (index == -1) {
-      cart.add(CartItem(product: product, quantity: 1));
-    } else {
-      final next = cart[index].quantity + 1;
-      if (next > product.quantity) {
-        emit(state.copyWith(error: 'لا توجد كمية كافية من ${product.name}'));
-        return;
-      }
-      cart[index] = cart[index].copyWith(quantity: next);
-    }
-    emit(state.copyWith(cart: cart, error: null, success: null));
-  }
-
-  Future<void> _scan(ScanBarcode e, Emitter<PosState> emit) async {
-    final barcode = e.barcode.trim();
-    if (barcode.isEmpty) return;
-    final result = await findByBarcode(barcode).run();
-    result.match(
-      (f) => emit(state.copyWith(error: f.message)),
-      (product) {
-        if (product == null) {
-          emit(state.copyWith(error: 'الباركود $barcode غير موجود'));
-        } else {
-          add(AddProductToCart(product));
-        }
+      (failure) {
+        emit(state.copyWith(
+          loading: false,
+          error: failure.message,
+        ));
+      },
+      (products) {
+        emit(state.copyWith(
+          loading: false,
+          products: products,
+          error: null,
+        ));
       },
     );
   }
 
-  void _qty(ChangeQty e, Emitter<PosState> emit) {
-    final cart = [...state.cart];
-    final index = cart.indexWhere((x) => x.product.id == e.productId);
-    if (index < 0) return;
-    final item = cart[index];
-    final next = item.quantity + e.delta;
-    if (next <= 0) {
-      cart.removeAt(index);
-    } else if (next <= item.product.quantity) {
-      cart[index] = item.copyWith(quantity: next);
-    } else {
-      emit(state.copyWith(error: 'المتاح من ${item.product.name}: ${item.product.quantity}'));
-      return;
-    }
-    emit(state.copyWith(cart: cart, error: null));
-  }
+  Future<void> _onSearchChanged(
+    PosSearchChanged event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(
+      searchQuery: event.query,
+      loading: true,
+      error: null,
+    ));
 
-  void _remove(RemoveCartLine e, Emitter<PosState> emit) {
-    emit(state.copyWith(cart: state.cart.where((x) => x.product.id != e.productId).toList(), error: null));
-  }
+    final result = await _getProducts(
+      query: event.query,
+    ).run();
 
-  void _discount(SetDiscount e, Emitter<PosState> emit) {
-    final value = e.value.clamp(0, state.subtotal).toDouble();
-    emit(state.copyWith(discount: value, error: null));
-  }
-
-  Future<void> _checkout(Checkout e, Emitter<PosState> emit) async {
-    if (state.cart.isEmpty) {
-      emit(state.copyWith(error: 'السلة فارغة'));
-      return;
-    }
-    if (e.paid < state.total) {
-      emit(state.copyWith(error: 'المبلغ المدفوع أقل من الإجمالي'));
-      return;
-    }
-    emit(state.copyWith(checkingOut: true, error: null, success: null));
-    final result = await checkoutSale(CheckoutParams(
-      items: state.cart,
-      discount: state.discount,
-      paid: e.paid,
-      paymentMethod: e.method,
-    )).run();
     result.match(
-      (f) => emit(state.copyWith(checkingOut: false, error: f.message)),
-      (receipt) {
-        e.onSuccess?.call(receipt);
+      (failure) {
+        emit(state.copyWith(
+          loading: false,
+          error: failure.message,
+        ));
+      },
+      (products) {
+        emit(state.copyWith(
+          loading: false,
+          products: products,
+          error: null,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onBarcodeScanned(
+    PosBarcodeScanned event,
+    Emitter<PosState> emit,
+  ) async {
+    final barcode = event.barcode.trim();
+
+    if (barcode.isEmpty) return;
+
+    final result = await _getProductByBarcode(barcode).run();
+
+    result.match(
+      (failure) => _setError(emit, failure.message),
+      (product) {
+        if (product == null) {
+          _setError(emit, 'لم يتم العثور على المنتج');
+          return;
+        }
+
+        _addProductToCart(product, emit);
+      },
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Cart
+  // ---------------------------------------------------------
+
+  void _addProductToCart(
+    ProductEntity product,
+    Emitter<PosState> emit,
+  ) {
+    final productId = product.id;
+
+    if (productId == null) {
+      _setError(emit, 'لا يمكن إضافة منتج غير محفوظ في قاعدة البيانات');
+      return;
+    }
+
+    if (product.quantity <= 0) {
+      _setError(emit, 'المنتج غير متوفر في المخزون');
+      return;
+    }
+
+    final cart = List<CartItem>.from(state.cart);
+
+    final index = cart.indexWhere(
+      (item) => item.product.id == productId,
+    );
+
+    if (index >= 0) {
+      final oldItem = cart[index];
+      final newQuantity = oldItem.quantity + 1;
+
+      if (newQuantity > product.quantity) {
+        _setError(emit, 'الكمية المطلوبة أكبر من المخزون المتاح');
+        return;
+      }
+
+      cart[index] = oldItem.copyWith(
+        quantity: newQuantity,
+      );
+    } else {
+      cart.add(CartItem(
+        product: product,
+        quantity: 1,
+      ));
+    }
+
+    emit(state.copyWith(
+      cart: cart,
+      error: null,
+      success: null,
+    ));
+  }
+
+  void _onCartProductAdded(
+    PosCartProductAdded event,
+    Emitter<PosState> emit,
+  ) {
+    _addProductToCart(event.product, emit);
+  }
+
+  void _onCartProductRemoved(
+    PosCartProductRemoved event,
+    Emitter<PosState> emit,
+  ) {
+    final cart = state.cart
+        .where((item) => item.product.id != event.productId)
+        .toList();
+
+    emit(state.copyWith(
+      cart: cart,
+      error: null,
+    ));
+  }
+
+  void _onCartQuantityChanged(
+    PosCartQuantityChanged event,
+    Emitter<PosState> emit,
+  ) {
+    final cart = <CartItem>[];
+
+    for (final item in state.cart) {
+      if (item.product.id != event.productId) {
+        cart.add(item);
+        continue;
+      }
+
+      final newQuantity = item.quantity + event.delta;
+
+      if (newQuantity <= 0) continue;
+
+      if (newQuantity > item.product.quantity) {
+        _setError(emit, 'لا توجد كمية كافية في المخزون');
+        return;
+      }
+
+      cart.add(item.copyWith(quantity: newQuantity));
+    }
+
+    emit(state.copyWith(
+      cart: cart,
+      error: null,
+    ));
+  }
+
+  void _onCartCleared(
+    PosCartCleared event,
+    Emitter<PosState> emit,
+  ) {
+    emit(state.copyWith(
+      cart: [],
+      discount: 0,
+      error: null,
+      success: null,
+    ));
+  }
+
+  // ---------------------------------------------------------
+  // Discount
+  // ---------------------------------------------------------
+
+  void _onDiscountChanged(
+    PosDiscountChanged event,
+    Emitter<PosState> emit,
+  ) {
+    if (event.discount < 0 || event.discount > state.subtotal) {
+      _setError(emit, 'قيمة الخصم غير صحيحة');
+      return;
+    }
+
+    emit(state.copyWith(
+      discount: event.discount,
+      error: null,
+    ));
+  }
+
+  // ---------------------------------------------------------
+  // Checkout
+  // ---------------------------------------------------------
+
+  Future<void> _onCheckoutRequested(
+    PosCheckoutRequested event,
+    Emitter<PosState> emit,
+  ) async {
+    if (!state.canCheckout) {
+      _setError(emit, 'يرجى مراجعة بيانات الفاتورة');
+      return;
+    }
+
+    if (event.paid < state.total) {
+      _setError(emit, 'المبلغ المدفوع غير كافٍ');
+      return;
+    }
+
+    if (event.paid < 0) {
+      _setError(emit, 'المبلغ المدفوع غير صحيح');
+      return;
+    }
+
+    if (!['cash', 'card'].contains(event.paymentMethod)) {
+      _setError(emit, 'طريقة الدفع غير صحيحة');
+      return;
+    }
+
+    final items = List<CartItem>.from(state.cart);
+    final discount = state.discount;
+
+    emit(state.copyWith(
+      checkingOut: true,
+      error: null,
+      success: null,
+    ));
+
+    final result = await _checkout(
+      items: items,
+      discount: discount,
+      paid: event.paid,
+      paymentMethod: event.paymentMethod,
+    ).run();
+
+    result.match(
+      (failure) {
         emit(state.copyWith(
           checkingOut: false,
-          cart: const [],
-          discount: 0,
-          lastReceipt: receipt,
-          success: 'تمت عملية البيع وحفظ ${receipt.invoiceNumber}',
+          error: failure.message,
         ));
-        add(LoadProducts());
+      },
+      (receipt) {
+        emit(state.copyWith(
+          checkingOut: false,
+          lastReceipt: receipt,
+          cart: [],
+          discount: 0,
+          success: 'تمت عملية البيع بنجاح',
+          error: null,
+        ));
+
+        add(const PosEvent.loadRequested());
+      },
+    );
+  }
+
+  void _onReceiptDismissed(
+    PosReceiptDismissed event,
+    Emitter<PosState> emit,
+  ) {
+    emit(state.copyWith(
+      lastReceipt: null,
+      error: null,
+      success: null,
+    ));
+  }
+
+  // ---------------------------------------------------------
+  // Stock
+  // ---------------------------------------------------------
+
+  Future<void> _onStockAdjustmentRequested(
+    PosStockAdjustmentRequested event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(
+      saving: true,
+      error: null,
+      success: null,
+    ));
+
+    final result = await _adjustStock(
+      productId: event.productId,
+      delta: event.delta,
+      note: event.note,
+    ).run();
+
+    result.match(
+      (failure) {
+        emit(state.copyWith(
+          saving: false,
+          error: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          saving: false,
+          success: 'تم تعديل المخزون بنجاح',
+        ));
+
+        add(const PosEvent.loadRequested());
+      },
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Create Product
+  // ---------------------------------------------------------
+
+  Future<void> _onProductCreated(
+    PosProductCreated event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(saving: true, error: null));
+
+    final result = await _addProduct(event.product).run();
+
+    result.match(
+      (failure) {
+        emit(state.copyWith(
+          saving: false,
+          error: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          saving: false,
+          success: 'تمت إضافة المنتج بنجاح',
+        ));
+
+        add(const PosEvent.loadRequested());
+      },
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Update Product
+  // ---------------------------------------------------------
+
+  Future<void> _onProductUpdated(
+    PosProductUpdated event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(saving: true, error: null));
+
+    final result = await _updateProduct(
+      id: event.id,
+      product: event.product,
+    ).run();
+
+    result.match(
+      (failure) {
+        emit(state.copyWith(
+          saving: false,
+          error: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          saving: false,
+          success: 'تم تحديث المنتج بنجاح',
+        ));
+
+        add(const PosEvent.loadRequested());
+      },
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Delete Product
+  // ---------------------------------------------------------
+
+  Future<void> _onProductDeleted(
+    PosProductDeleted event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(saving: true, error: null));
+
+    final result = await _deleteProduct(event.productId).run();
+
+    result.match(
+      (failure) {
+        emit(state.copyWith(
+          saving: false,
+          error: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          saving: false,
+          success: 'تم حذف المنتج بنجاح',
+        ));
+
+        add(const PosEvent.loadRequested());
+      },
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Returns
+  // ---------------------------------------------------------
+
+  Future<void> _onReturnSaleItemRequested(
+    PosReturnSaleItemRequested event,
+    Emitter<PosState> emit,
+  ) async {
+    if (event.quantity <= 0 || event.refundAmount < 0) {
+      _setError(emit, 'بيانات المرتجع غير صحيحة');
+      return;
+    }
+
+    emit(state.copyWith(
+      saving: true,
+      error: null,
+      success: null,
+    ));
+
+    final result = await _returnSaleItem(
+      saleId: event.saleId,
+      productId: event.productId,
+      quantity: event.quantity,
+      refundAmount: event.refundAmount,
+    ).run();
+
+    result.match(
+      (failure) {
+        emit(state.copyWith(
+          saving: false,
+          error: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(
+          saving: false,
+          success: 'تم إرجاع الصنف بنجاح',
+        ));
+
+        add(const PosEvent.loadRequested());
       },
     );
   }

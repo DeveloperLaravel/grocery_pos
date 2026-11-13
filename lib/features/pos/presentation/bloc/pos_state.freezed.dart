@@ -16,13 +16,14 @@ T _$identity<T>(T value) => value;
 mixin _$PosState {
   List<ProductEntity> get products;
   List<CartItem> get cart;
+  String get searchQuery;
+  double get discount;
   bool get loading;
   bool get checkingOut;
-  double get discount;
-  String get paymentMethod;
+  bool get saving;
+  SaleReceipt? get lastReceipt;
   String? get error;
   String? get success;
-  SaleReceipt? get lastReceipt;
 
   /// Create a copy of PosState
   /// with the given fields replaced by the non-null parameter values.
@@ -38,17 +39,18 @@ mixin _$PosState {
             other is PosState &&
             const DeepCollectionEquality().equals(other.products, products) &&
             const DeepCollectionEquality().equals(other.cart, cart) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            (identical(other.discount, discount) ||
+                other.discount == discount) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.checkingOut, checkingOut) ||
                 other.checkingOut == checkingOut) &&
-            (identical(other.discount, discount) ||
-                other.discount == discount) &&
-            (identical(other.paymentMethod, paymentMethod) ||
-                other.paymentMethod == paymentMethod) &&
+            (identical(other.saving, saving) || other.saving == saving) &&
+            (identical(other.lastReceipt, lastReceipt) ||
+                other.lastReceipt == lastReceipt) &&
             (identical(other.error, error) || other.error == error) &&
-            (identical(other.success, success) || other.success == success) &&
-            const DeepCollectionEquality()
-                .equals(other.lastReceipt, lastReceipt));
+            (identical(other.success, success) || other.success == success));
   }
 
   @override
@@ -56,17 +58,18 @@ mixin _$PosState {
       runtimeType,
       const DeepCollectionEquality().hash(products),
       const DeepCollectionEquality().hash(cart),
+      searchQuery,
+      discount,
       loading,
       checkingOut,
-      discount,
-      paymentMethod,
+      saving,
+      lastReceipt,
       error,
-      success,
-      const DeepCollectionEquality().hash(lastReceipt));
+      success);
 
   @override
   String toString() {
-    return 'PosState(products: $products, cart: $cart, loading: $loading, checkingOut: $checkingOut, discount: $discount, paymentMethod: $paymentMethod, error: $error, success: $success, lastReceipt: $lastReceipt)';
+    return 'PosState(products: $products, cart: $cart, searchQuery: $searchQuery, discount: $discount, loading: $loading, checkingOut: $checkingOut, saving: $saving, lastReceipt: $lastReceipt, error: $error, success: $success)';
   }
 }
 
@@ -78,13 +81,14 @@ abstract mixin class $PosStateCopyWith<$Res> {
   $Res call(
       {List<ProductEntity> products,
       List<CartItem> cart,
+      String searchQuery,
+      double discount,
       bool loading,
       bool checkingOut,
-      double discount,
-      String paymentMethod,
+      bool saving,
+      SaleReceipt? lastReceipt,
       String? error,
-      String? success,
-      SaleReceipt? lastReceipt});
+      String? success});
 }
 
 /// @nodoc
@@ -101,13 +105,14 @@ class _$PosStateCopyWithImpl<$Res> implements $PosStateCopyWith<$Res> {
   $Res call({
     Object? products = null,
     Object? cart = null,
+    Object? searchQuery = null,
+    Object? discount = null,
     Object? loading = null,
     Object? checkingOut = null,
-    Object? discount = null,
-    Object? paymentMethod = null,
+    Object? saving = null,
+    Object? lastReceipt = freezed,
     Object? error = freezed,
     Object? success = freezed,
-    Object? lastReceipt = freezed,
   }) {
     return _then(_self.copyWith(
       products: null == products
@@ -118,6 +123,14 @@ class _$PosStateCopyWithImpl<$Res> implements $PosStateCopyWith<$Res> {
           ? _self.cart
           : cart // ignore: cast_nullable_to_non_nullable
               as List<CartItem>,
+      searchQuery: null == searchQuery
+          ? _self.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String,
+      discount: null == discount
+          ? _self.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double,
       loading: null == loading
           ? _self.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -126,14 +139,14 @@ class _$PosStateCopyWithImpl<$Res> implements $PosStateCopyWith<$Res> {
           ? _self.checkingOut
           : checkingOut // ignore: cast_nullable_to_non_nullable
               as bool,
-      discount: null == discount
-          ? _self.discount
-          : discount // ignore: cast_nullable_to_non_nullable
-              as double,
-      paymentMethod: null == paymentMethod
-          ? _self.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
+      saving: null == saving
+          ? _self.saving
+          : saving // ignore: cast_nullable_to_non_nullable
+              as bool,
+      lastReceipt: freezed == lastReceipt
+          ? _self.lastReceipt
+          : lastReceipt // ignore: cast_nullable_to_non_nullable
+              as SaleReceipt?,
       error: freezed == error
           ? _self.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -142,10 +155,6 @@ class _$PosStateCopyWithImpl<$Res> implements $PosStateCopyWith<$Res> {
           ? _self.success
           : success // ignore: cast_nullable_to_non_nullable
               as String?,
-      lastReceipt: freezed == lastReceipt
-          ? _self.lastReceipt
-          : lastReceipt // ignore: cast_nullable_to_non_nullable
-              as SaleReceipt?,
     ));
   }
 }
@@ -246,13 +255,14 @@ extension PosStatePatterns on PosState {
     TResult Function(
             List<ProductEntity> products,
             List<CartItem> cart,
+            String searchQuery,
+            double discount,
             bool loading,
             bool checkingOut,
-            double discount,
-            String paymentMethod,
+            bool saving,
+            SaleReceipt? lastReceipt,
             String? error,
-            String? success,
-            SaleReceipt? lastReceipt)?
+            String? success)?
         $default, {
     required TResult orElse(),
   }) {
@@ -262,13 +272,14 @@ extension PosStatePatterns on PosState {
         return $default(
             _that.products,
             _that.cart,
+            _that.searchQuery,
+            _that.discount,
             _that.loading,
             _that.checkingOut,
-            _that.discount,
-            _that.paymentMethod,
+            _that.saving,
+            _that.lastReceipt,
             _that.error,
-            _that.success,
-            _that.lastReceipt);
+            _that.success);
       case _:
         return orElse();
     }
@@ -292,13 +303,14 @@ extension PosStatePatterns on PosState {
     TResult Function(
             List<ProductEntity> products,
             List<CartItem> cart,
+            String searchQuery,
+            double discount,
             bool loading,
             bool checkingOut,
-            double discount,
-            String paymentMethod,
+            bool saving,
+            SaleReceipt? lastReceipt,
             String? error,
-            String? success,
-            SaleReceipt? lastReceipt)
+            String? success)
         $default,
   ) {
     final _that = this;
@@ -307,13 +319,14 @@ extension PosStatePatterns on PosState {
         return $default(
             _that.products,
             _that.cart,
+            _that.searchQuery,
+            _that.discount,
             _that.loading,
             _that.checkingOut,
-            _that.discount,
-            _that.paymentMethod,
+            _that.saving,
+            _that.lastReceipt,
             _that.error,
-            _that.success,
-            _that.lastReceipt);
+            _that.success);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -336,13 +349,14 @@ extension PosStatePatterns on PosState {
     TResult? Function(
             List<ProductEntity> products,
             List<CartItem> cart,
+            String searchQuery,
+            double discount,
             bool loading,
             bool checkingOut,
-            double discount,
-            String paymentMethod,
+            bool saving,
+            SaleReceipt? lastReceipt,
             String? error,
-            String? success,
-            SaleReceipt? lastReceipt)?
+            String? success)?
         $default,
   ) {
     final _that = this;
@@ -351,13 +365,14 @@ extension PosStatePatterns on PosState {
         return $default(
             _that.products,
             _that.cart,
+            _that.searchQuery,
+            _that.discount,
             _that.loading,
             _that.checkingOut,
-            _that.discount,
-            _that.paymentMethod,
+            _that.saving,
+            _that.lastReceipt,
             _that.error,
-            _that.success,
-            _that.lastReceipt);
+            _that.success);
       case _:
         return null;
     }
@@ -368,15 +383,16 @@ extension PosStatePatterns on PosState {
 
 class _PosState extends PosState {
   const _PosState(
-      {final List<ProductEntity> products = const <ProductEntity>[],
-      final List<CartItem> cart = const <CartItem>[],
+      {final List<ProductEntity> products = const [],
+      final List<CartItem> cart = const [],
+      this.searchQuery = '',
+      this.discount = 0.0,
       this.loading = false,
       this.checkingOut = false,
-      this.discount = 0,
-      this.paymentMethod = 'cash',
+      this.saving = false,
+      this.lastReceipt,
       this.error,
-      this.success,
-      this.lastReceipt})
+      this.success})
       : _products = products,
         _cart = cart,
         super._();
@@ -401,22 +417,25 @@ class _PosState extends PosState {
 
   @override
   @JsonKey()
+  final String searchQuery;
+  @override
+  @JsonKey()
+  final double discount;
+  @override
+  @JsonKey()
   final bool loading;
   @override
   @JsonKey()
   final bool checkingOut;
   @override
   @JsonKey()
-  final double discount;
+  final bool saving;
   @override
-  @JsonKey()
-  final String paymentMethod;
+  final SaleReceipt? lastReceipt;
   @override
   final String? error;
   @override
   final String? success;
-  @override
-  final SaleReceipt? lastReceipt;
 
   /// Create a copy of PosState
   /// with the given fields replaced by the non-null parameter values.
@@ -433,17 +452,18 @@ class _PosState extends PosState {
             other is _PosState &&
             const DeepCollectionEquality().equals(other._products, _products) &&
             const DeepCollectionEquality().equals(other._cart, _cart) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            (identical(other.discount, discount) ||
+                other.discount == discount) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.checkingOut, checkingOut) ||
                 other.checkingOut == checkingOut) &&
-            (identical(other.discount, discount) ||
-                other.discount == discount) &&
-            (identical(other.paymentMethod, paymentMethod) ||
-                other.paymentMethod == paymentMethod) &&
+            (identical(other.saving, saving) || other.saving == saving) &&
+            (identical(other.lastReceipt, lastReceipt) ||
+                other.lastReceipt == lastReceipt) &&
             (identical(other.error, error) || other.error == error) &&
-            (identical(other.success, success) || other.success == success) &&
-            const DeepCollectionEquality()
-                .equals(other.lastReceipt, lastReceipt));
+            (identical(other.success, success) || other.success == success));
   }
 
   @override
@@ -451,17 +471,18 @@ class _PosState extends PosState {
       runtimeType,
       const DeepCollectionEquality().hash(_products),
       const DeepCollectionEquality().hash(_cart),
+      searchQuery,
+      discount,
       loading,
       checkingOut,
-      discount,
-      paymentMethod,
+      saving,
+      lastReceipt,
       error,
-      success,
-      const DeepCollectionEquality().hash(lastReceipt));
+      success);
 
   @override
   String toString() {
-    return 'PosState(products: $products, cart: $cart, loading: $loading, checkingOut: $checkingOut, discount: $discount, paymentMethod: $paymentMethod, error: $error, success: $success, lastReceipt: $lastReceipt)';
+    return 'PosState(products: $products, cart: $cart, searchQuery: $searchQuery, discount: $discount, loading: $loading, checkingOut: $checkingOut, saving: $saving, lastReceipt: $lastReceipt, error: $error, success: $success)';
   }
 }
 
@@ -475,13 +496,14 @@ abstract mixin class _$PosStateCopyWith<$Res>
   $Res call(
       {List<ProductEntity> products,
       List<CartItem> cart,
+      String searchQuery,
+      double discount,
       bool loading,
       bool checkingOut,
-      double discount,
-      String paymentMethod,
+      bool saving,
+      SaleReceipt? lastReceipt,
       String? error,
-      String? success,
-      SaleReceipt? lastReceipt});
+      String? success});
 }
 
 /// @nodoc
@@ -498,13 +520,14 @@ class __$PosStateCopyWithImpl<$Res> implements _$PosStateCopyWith<$Res> {
   $Res call({
     Object? products = null,
     Object? cart = null,
+    Object? searchQuery = null,
+    Object? discount = null,
     Object? loading = null,
     Object? checkingOut = null,
-    Object? discount = null,
-    Object? paymentMethod = null,
+    Object? saving = null,
+    Object? lastReceipt = freezed,
     Object? error = freezed,
     Object? success = freezed,
-    Object? lastReceipt = freezed,
   }) {
     return _then(_PosState(
       products: null == products
@@ -515,6 +538,14 @@ class __$PosStateCopyWithImpl<$Res> implements _$PosStateCopyWith<$Res> {
           ? _self._cart
           : cart // ignore: cast_nullable_to_non_nullable
               as List<CartItem>,
+      searchQuery: null == searchQuery
+          ? _self.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String,
+      discount: null == discount
+          ? _self.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double,
       loading: null == loading
           ? _self.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -523,14 +554,14 @@ class __$PosStateCopyWithImpl<$Res> implements _$PosStateCopyWith<$Res> {
           ? _self.checkingOut
           : checkingOut // ignore: cast_nullable_to_non_nullable
               as bool,
-      discount: null == discount
-          ? _self.discount
-          : discount // ignore: cast_nullable_to_non_nullable
-              as double,
-      paymentMethod: null == paymentMethod
-          ? _self.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
+      saving: null == saving
+          ? _self.saving
+          : saving // ignore: cast_nullable_to_non_nullable
+              as bool,
+      lastReceipt: freezed == lastReceipt
+          ? _self.lastReceipt
+          : lastReceipt // ignore: cast_nullable_to_non_nullable
+              as SaleReceipt?,
       error: freezed == error
           ? _self.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -539,10 +570,6 @@ class __$PosStateCopyWithImpl<$Res> implements _$PosStateCopyWith<$Res> {
           ? _self.success
           : success // ignore: cast_nullable_to_non_nullable
               as String?,
-      lastReceipt: freezed == lastReceipt
-          ? _self.lastReceipt
-          : lastReceipt // ignore: cast_nullable_to_non_nullable
-              as SaleReceipt?,
     ));
   }
 }

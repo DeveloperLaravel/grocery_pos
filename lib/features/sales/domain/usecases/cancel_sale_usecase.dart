@@ -1,9 +1,12 @@
 
 import 'package:fpdart/fpdart.dart';
 
+
 import '../../../../core/error/failure.dart';
 import '../repositories/sales_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class CancelSaleUseCase {
   final SalesRepository repository;
 

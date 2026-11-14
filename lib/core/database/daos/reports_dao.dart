@@ -1,5 +1,6 @@
 
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 
@@ -18,6 +19,7 @@ part 'reports_dao.g.dart';
     ReturnItems,
   ],
 )
+@lazySingleton
 class ReportsDao extends DatabaseAccessor<AppDatabase>
     with _$ReportsDaoMixin {
   ReportsDao(super.db);

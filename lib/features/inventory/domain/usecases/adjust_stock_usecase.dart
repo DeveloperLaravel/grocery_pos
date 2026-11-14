@@ -1,9 +1,10 @@
 
 import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../repositories/inventory_repository.dart';
-
+@lazySingleton
 class AdjustStockUseCase {
   final InventoryRepository repository;
 

@@ -44,7 +44,6 @@ part 'app_database.g.dart';
     DatabaseMaintenanceDao,
   ],
 )
-@lazySingleton
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 

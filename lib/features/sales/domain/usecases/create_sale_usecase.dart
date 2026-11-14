@@ -5,7 +5,9 @@ import '../../../../core/error/failure.dart';
 import '../entities/cart_item.dart';
 import '../entities/sale.dart';
 import '../repositories/sales_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class CreateSaleUseCase {
   final SalesRepository repository;
 

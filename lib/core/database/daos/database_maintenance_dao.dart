@@ -1,5 +1,6 @@
 
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 import '../tables/products_table.dart';
@@ -21,6 +22,7 @@ part 'database_maintenance_dao.g.dart';
     ReturnItems,
   ],
 )
+@lazySingleton
 class DatabaseMaintenanceDao
     extends DatabaseAccessor<AppDatabase>
     with _$DatabaseMaintenanceDaoMixin {

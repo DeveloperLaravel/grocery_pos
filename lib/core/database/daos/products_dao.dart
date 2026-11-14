@@ -1,5 +1,6 @@
 
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 
@@ -18,6 +19,7 @@ part 'products_dao.g.dart';
     StockMovements,
   ],
 )
+@lazySingleton
 class ProductsDao extends DatabaseAccessor<AppDatabase>
     with _$ProductsDaoMixin {
   ProductsDao(super.db);

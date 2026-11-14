@@ -3,7 +3,10 @@
 import '../entities/stock_movement_entity.dart';
 
 import '../repositories/inventory_repository.dart';
+import 'package:injectable/injectable.dart';
 
+
+@lazySingleton
 class WatchStockMovementsUseCase {
   final InventoryRepository repository;
 

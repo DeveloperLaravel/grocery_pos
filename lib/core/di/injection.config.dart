@@ -123,12 +123,12 @@ import '../../features/sales/domain/usecases/get_sales_usecase.dart' as _i283;
 import '../../features/sales/domain/usecases/watch_sales_usecase.dart' as _i209;
 import '../../features/sales/presentation/bloc/sales_bloc.dart' as _i249;
 import '../database/app_database.dart' as _i982;
+import '../database/daos/database_maintenance_dao.dart' as _i879;
 import '../database/daos/products_dao.dart' as _i839;
 import '../database/daos/reports_dao.dart' as _i534;
 import '../database/daos/sales_dao.dart' as _i340;
 import '../database/daos/stock_dao.dart' as _i671;
-import '../printer/printer_service.dart' as _i907;
-import 'sales_module.dart' as _i467;
+import 'app_module.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -141,24 +141,22 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
-    final salesModule = _$SalesModule();
-    gh.lazySingleton<_i982.AppDatabase>(() => _i982.AppDatabase());
+    final appModule = _$AppModule();
+    gh.lazySingleton<_i982.AppDatabase>(() => appModule.appDatabase);
     gh.lazySingleton<_i85.GoogleAuthDataSource>(
         () => _i85.GoogleAuthDataSource());
     gh.lazySingleton<_i44.LocalBackupDataSource>(
         () => _i44.LocalBackupDataSource());
-    gh.factory<_i690.InventoryBloc>(() => _i690.InventoryBloc(
-          gh<_i48.GetInventoryUseCase>(),
-          gh<_i486.WatchInventoryUseCase>(),
-          gh<_i308.GetInventorySummaryUseCase>(),
-          gh<_i330.WatchInventorySummaryUseCase>(),
-          gh<_i72.GetLowStockProductsUseCase>(),
-          gh<_i196.WatchLowStockProductsUseCase>(),
-          gh<_i848.GetStockMovementsUseCase>(),
-          gh<_i72.WatchStockMovementsUseCase>(),
-          gh<_i101.AdjustStockUseCase>(),
-        ));
-    gh.lazySingleton<_i907.PrinterGateway>(() => _i907.PrinterService());
+    gh.lazySingleton<_i879.DatabaseMaintenanceDao>(
+        () => _i879.DatabaseMaintenanceDao(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i839.ProductsDao>(
+        () => _i839.ProductsDao(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i534.ReportsDao>(
+        () => _i534.ReportsDao(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i340.SalesDao>(
+        () => _i340.SalesDao(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i671.StockDao>(
+        () => _i671.StockDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i1035.SalesLocalDataSource>(
         () => _i1012.SalesLocalDataSourceImpl(gh<_i340.SalesDao>()));
     gh.lazySingleton<_i958.GoogleDriveDataSource>(
@@ -221,6 +219,24 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i796.UpdateProductUseCase(gh<_i963.ProductRepository>()));
     gh.lazySingleton<_i215.WatchAllProductsUseCase>(
         () => _i215.WatchAllProductsUseCase(gh<_i963.ProductRepository>()));
+    gh.lazySingleton<_i101.AdjustStockUseCase>(
+        () => _i101.AdjustStockUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i308.GetInventorySummaryUseCase>(() =>
+        _i308.GetInventorySummaryUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i48.GetInventoryUseCase>(
+        () => _i48.GetInventoryUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i72.GetLowStockProductsUseCase>(
+        () => _i72.GetLowStockProductsUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i848.GetStockMovementsUseCase>(
+        () => _i848.GetStockMovementsUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i330.WatchInventorySummaryUseCase>(() =>
+        _i330.WatchInventorySummaryUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i486.WatchInventoryUseCase>(
+        () => _i486.WatchInventoryUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i196.WatchLowStockProductsUseCase>(() =>
+        _i196.WatchLowStockProductsUseCase(gh<_i422.InventoryRepository>()));
+    gh.lazySingleton<_i72.WatchStockMovementsUseCase>(
+        () => _i72.WatchStockMovementsUseCase(gh<_i422.InventoryRepository>()));
     gh.factory<_i911.ProductsCubit>(() => _i911.ProductsCubit(
           gh<_i401.GetAllProductsUseCase>(),
           gh<_i215.WatchAllProductsUseCase>(),
@@ -239,14 +255,16 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i511.PosRepository>(
         () => _i84.PosRepositoryImpl(gh<_i740.PosLocalDataSource>()));
+    gh.lazySingleton<_i184.CancelSaleUseCase>(
+        () => _i184.CancelSaleUseCase(gh<_i434.SalesRepository>()));
     gh.lazySingleton<_i625.CreateSaleUseCase>(
-        () => salesModule.createSaleUseCase(gh<_i434.SalesRepository>()));
-    gh.lazySingleton<_i283.GetSalesUseCase>(
-        () => salesModule.getSalesUseCase(gh<_i434.SalesRepository>()));
+        () => _i625.CreateSaleUseCase(gh<_i434.SalesRepository>()));
     gh.lazySingleton<_i30.GetSaleDetailsUseCase>(
-        () => salesModule.getSaleDetailsUseCase(gh<_i434.SalesRepository>()));
+        () => _i30.GetSaleDetailsUseCase(gh<_i434.SalesRepository>()));
+    gh.lazySingleton<_i283.GetSalesUseCase>(
+        () => _i283.GetSalesUseCase(gh<_i434.SalesRepository>()));
     gh.lazySingleton<_i209.WatchSalesUseCase>(
-        () => salesModule.watchSalesUseCase(gh<_i434.SalesRepository>()));
+        () => _i209.WatchSalesUseCase(gh<_i434.SalesRepository>()));
     gh.lazySingleton<_i391.AddProductUseCase>(
         () => _i391.AddProductUseCase(gh<_i511.PosRepository>()));
     gh.lazySingleton<_i702.AdjustStockUseCase>(
@@ -265,6 +283,17 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i2.ReturnSaleItemUseCase(gh<_i511.PosRepository>()));
     gh.lazySingleton<_i444.UpdateProductUseCase>(
         () => _i444.UpdateProductUseCase(gh<_i511.PosRepository>()));
+    gh.factory<_i690.InventoryBloc>(() => _i690.InventoryBloc(
+          gh<_i48.GetInventoryUseCase>(),
+          gh<_i486.WatchInventoryUseCase>(),
+          gh<_i308.GetInventorySummaryUseCase>(),
+          gh<_i330.WatchInventorySummaryUseCase>(),
+          gh<_i72.GetLowStockProductsUseCase>(),
+          gh<_i196.WatchLowStockProductsUseCase>(),
+          gh<_i848.GetStockMovementsUseCase>(),
+          gh<_i72.WatchStockMovementsUseCase>(),
+          gh<_i101.AdjustStockUseCase>(),
+        ));
     gh.factory<_i249.SalesBloc>(() => _i249.SalesBloc(
           gh<_i283.GetSalesUseCase>(),
           gh<_i209.WatchSalesUseCase>(),
@@ -285,4 +314,4 @@ extension GetItInjectableX on _i174.GetIt {
   }
 }
 
-class _$SalesModule extends _i467.SalesModule {}
+class _$AppModule extends _i460.AppModule {}

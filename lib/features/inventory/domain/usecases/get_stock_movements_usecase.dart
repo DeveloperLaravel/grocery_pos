@@ -4,7 +4,10 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failure.dart';
 import '../entities/stock_movement_entity.dart';
 import '../repositories/inventory_repository.dart';
+import 'package:injectable/injectable.dart';
 
+
+@lazySingleton
 class GetStockMovementsUseCase {
   final InventoryRepository repository;
 

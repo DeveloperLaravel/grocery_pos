@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 import '../tables/products_table.dart';
@@ -16,6 +17,7 @@ part 'sales_dao.g.dart';
     StockMovements,
   ],
 )
+@lazySingleton
 class SalesDao extends DatabaseAccessor<AppDatabase>
     with _$SalesDaoMixin {
   SalesDao(super.db);

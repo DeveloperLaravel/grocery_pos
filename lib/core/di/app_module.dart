@@ -1,0 +1,10 @@
+
+import 'package:injectable/injectable.dart';
+
+import '../database/app_database.dart';
+
+@module
+abstract class AppModule {
+  @lazySingleton
+  AppDatabase get appDatabase => AppDatabase();
+}

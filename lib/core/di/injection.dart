@@ -11,10 +11,10 @@ final GetIt getIt = GetIt.instance;
   preferRelativeImports: true,
   asExtension: true,
 )
-GetIt configureDependencies() {
-  return getIt.init();
+@InjectableInit()
+Future<void> configureDependencies() async {
+  await getIt.init();
 }
-
 Future<void> resetDependencies() async {
   await getIt.reset();
 }

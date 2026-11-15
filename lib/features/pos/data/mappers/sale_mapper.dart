@@ -1,4 +1,3 @@
-
 import '../../../../core/database/app_database.dart';
 
 import '../../domain/entities/sale_receipt.dart';

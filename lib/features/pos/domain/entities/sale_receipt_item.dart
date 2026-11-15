@@ -1,4 +1,3 @@
-
 class SaleReceiptItem {
   final int productId;
   final String productName;

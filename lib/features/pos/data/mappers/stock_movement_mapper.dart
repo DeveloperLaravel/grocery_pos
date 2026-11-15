@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 import '../../../../core/database/app_database.dart';
@@ -24,9 +23,7 @@ extension StockMovementModelMapper on StockMovementModel {
     bool includeId = false,
   }) {
     return StockMovementsCompanion(
-      id: includeId
-          ? Value(id)
-          : const Value.absent(),
+      id: includeId ? Value(id) : const Value.absent(),
       productId: Value(productId),
       type: Value(type),
       quantity: Value(quantity),

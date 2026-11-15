@@ -14,15 +14,48 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$PosState {
-  List<ProductEntity> get products;
-  List<CartItem> get cart;
-  String get searchQuery;
-  double get discount;
+// ==========================================================
+// Products
+// ==========================================================
+  /// Available products.
+  List<ProductEntity>
+      get products; // ==========================================================
+// Shopping Cart
+// ==========================================================
+  /// Products currently added to the cart.
+  List<CartItem>
+      get cart; // ==========================================================
+// Search
+// ==========================================================
+  /// Current search query.
+  String
+      get searchQuery; // ==========================================================
+// Financial
+// ==========================================================
+  /// Applied discount amount.
+  double
+      get discount; // ==========================================================
+// Loading States
+// ==========================================================
+  /// Indicates whether products are being loaded.
   bool get loading;
+
+  /// Indicates whether checkout is being processed.
   bool get checkingOut;
-  bool get saving;
-  SaleReceipt? get lastReceipt;
+
+  /// Indicates whether a product or stock operation is running.
+  bool get saving; // ==========================================================
+// Receipt
+// ==========================================================
+  /// Last successfully created receipt.
+  SaleReceipt?
+      get lastReceipt; // ==========================================================
+// Feedback
+// ==========================================================
+  /// Error message.
   String? get error;
+
+  /// Success message.
   String? get success;
 
   /// Create a copy of PosState
@@ -383,8 +416,8 @@ extension PosStatePatterns on PosState {
 
 class _PosState extends PosState {
   const _PosState(
-      {final List<ProductEntity> products = const [],
-      final List<CartItem> cart = const [],
+      {final List<ProductEntity> products = const <ProductEntity>[],
+      final List<CartItem> cart = const <CartItem>[],
       this.searchQuery = '',
       this.discount = 0.0,
       this.loading = false,
@@ -397,7 +430,15 @@ class _PosState extends PosState {
         _cart = cart,
         super._();
 
+// ==========================================================
+// Products
+// ==========================================================
+  /// Available products.
   final List<ProductEntity> _products;
+// ==========================================================
+// Products
+// ==========================================================
+  /// Available products.
   @override
   @JsonKey()
   List<ProductEntity> get products {
@@ -406,7 +447,15 @@ class _PosState extends PosState {
     return EqualUnmodifiableListView(_products);
   }
 
+// ==========================================================
+// Shopping Cart
+// ==========================================================
+  /// Products currently added to the cart.
   final List<CartItem> _cart;
+// ==========================================================
+// Shopping Cart
+// ==========================================================
+  /// Products currently added to the cart.
   @override
   @JsonKey()
   List<CartItem> get cart {
@@ -415,25 +464,51 @@ class _PosState extends PosState {
     return EqualUnmodifiableListView(_cart);
   }
 
+// ==========================================================
+// Search
+// ==========================================================
+  /// Current search query.
   @override
   @JsonKey()
   final String searchQuery;
+// ==========================================================
+// Financial
+// ==========================================================
+  /// Applied discount amount.
   @override
   @JsonKey()
   final double discount;
+// ==========================================================
+// Loading States
+// ==========================================================
+  /// Indicates whether products are being loaded.
   @override
   @JsonKey()
   final bool loading;
+
+  /// Indicates whether checkout is being processed.
   @override
   @JsonKey()
   final bool checkingOut;
+
+  /// Indicates whether a product or stock operation is running.
   @override
   @JsonKey()
   final bool saving;
+// ==========================================================
+// Receipt
+// ==========================================================
+  /// Last successfully created receipt.
   @override
   final SaleReceipt? lastReceipt;
+// ==========================================================
+// Feedback
+// ==========================================================
+  /// Error message.
   @override
   final String? error;
+
+  /// Success message.
   @override
   final String? success;
 

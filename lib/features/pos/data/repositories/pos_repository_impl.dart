@@ -1,4 +1,3 @@
-
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,7 +7,6 @@ import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/product_entity.dart';
 import '../../domain/entities/sale_receipt.dart';
 import '../../domain/repositories/pos_repository.dart';
-
 
 import '../database/pos_local_data_source.dart';
 import '../models/checkout_item_model.dart';
@@ -35,9 +33,7 @@ class PosRepositoryImpl implements PosRepository {
         query: query,
       );
 
-      return products
-          .map((product) => product.toEntity())
-          .toList();
+      return products.map((product) => product.toEntity()).toList();
     });
   }
 
@@ -46,8 +42,7 @@ class PosRepositoryImpl implements PosRepository {
     String barcode,
   ) {
     return _guard(() async {
-      final product =
-          await _localDataSource.getProductByBarcode(barcode);
+      final product = await _localDataSource.getProductByBarcode(barcode);
 
       return product?.toEntity();
     });
@@ -56,8 +51,7 @@ class PosRepositoryImpl implements PosRepository {
   @override
   TaskEither<Failure, ProductEntity?> getProductById(int id) {
     return _guard(() async {
-      final product =
-          await _localDataSource.getProductById(id);
+      final product = await _localDataSource.getProductById(id);
 
       return product?.toEntity();
     });
@@ -72,8 +66,7 @@ class PosRepositoryImpl implements PosRepository {
         product.toCompanion(),
       );
 
-      final savedProduct =
-          await _localDataSource.getProductById(productId);
+      final savedProduct = await _localDataSource.getProductById(productId);
 
       if (savedProduct == null) {
         throw StateError(
@@ -110,8 +103,7 @@ class PosRepositoryImpl implements PosRepository {
         throw StateError('المنتج غير موجود');
       }
 
-      final savedProduct =
-          await _localDataSource.getProductById(id);
+      final savedProduct = await _localDataSource.getProductById(id);
 
       if (savedProduct == null) {
         throw StateError(
@@ -207,8 +199,7 @@ class PosRepositoryImpl implements PosRepository {
       }
 
       // جلب تفاصيل الفاتورة.
-      final saleItems =
-          await _localDataSource.getSaleItems(saleId);
+      final saleItems = await _localDataSource.getSaleItems(saleId);
 
       // تحويل SaleDb + SaleItemDb إلى SaleReceipt.
       return sale.toReceipt(

@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../features/backup/data/datasources/google_auth_datasource.dart'
     as _i85;
@@ -24,6 +25,15 @@ import '../../features/backup/domain/repositories/backup_repository.dart'
     as _i979;
 import '../../features/backup/domain/usecases/backup_usecases.dart' as _i105;
 import '../../features/backup/presentation/bloc/backup_bloc.dart' as _i894;
+import '../../features/home/data/database/home_local_data_source.dart' as _i735;
+import '../../features/home/data/database/home_local_data_source_impl.dart'
+    as _i139;
+import '../../features/home/data/repositories/home_repository_impl.dart'
+    as _i76;
+import '../../features/home/domain/repositories/home_repository.dart' as _i0;
+import '../../features/home/domain/usecases/get_home_dashboard_usecase.dart'
+    as _i871;
+import '../../features/home/presentation/bloc/home_bloc.dart' as _i202;
 import '../../features/inventory/data/database/inventory_local_data_source.dart'
     as _i814;
 import '../../features/inventory/data/database/inventory_local_data_source_impl.dart'
@@ -124,24 +134,30 @@ import '../../features/sales/domain/usecases/watch_sales_usecase.dart' as _i209;
 import '../../features/sales/presentation/bloc/sales_bloc.dart' as _i249;
 import '../database/app_database.dart' as _i982;
 import '../database/daos/database_maintenance_dao.dart' as _i879;
+import '../database/daos/home_dao.dart' as _i450;
 import '../database/daos/products_dao.dart' as _i839;
 import '../database/daos/reports_dao.dart' as _i534;
 import '../database/daos/sales_dao.dart' as _i340;
 import '../database/daos/stock_dao.dart' as _i671;
+import '../settings/app_settings_controller.dart' as _i131;
 import 'app_module.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(
       this,
       environment,
       environmentFilter,
     );
     final appModule = _$AppModule();
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => appModule.sharedPreferences,
+      preResolve: true,
+    );
     gh.lazySingleton<_i982.AppDatabase>(() => appModule.appDatabase);
     gh.lazySingleton<_i85.GoogleAuthDataSource>(
         () => _i85.GoogleAuthDataSource());
@@ -149,6 +165,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i44.LocalBackupDataSource());
     gh.lazySingleton<_i879.DatabaseMaintenanceDao>(
         () => _i879.DatabaseMaintenanceDao(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i450.HomeDao>(
+        () => _i450.HomeDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i839.ProductsDao>(
         () => _i839.ProductsDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i534.ReportsDao>(
@@ -159,10 +177,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i671.StockDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i1035.SalesLocalDataSource>(
         () => _i1012.SalesLocalDataSourceImpl(gh<_i340.SalesDao>()));
+    gh.singleton<_i131.AppSettingsController>(
+        () => _i131.AppSettingsController(gh<_i460.SharedPreferences>()));
     gh.lazySingleton<_i958.GoogleDriveDataSource>(
         () => _i958.GoogleDriveDataSource(gh<_i85.GoogleAuthDataSource>()));
+    gh.lazySingleton<_i735.HomeLocalDataSource>(
+        () => _i139.HomeLocalDataSourceImpl(gh<_i450.HomeDao>()));
     gh.lazySingleton<_i351.ProductLocalDataSource>(
         () => _i878.ProductLocalDataSourceImpl(gh<_i839.ProductsDao>()));
+    gh.lazySingleton<_i0.HomeRepository>(
+        () => _i76.HomeRepositoryImpl(gh<_i735.HomeLocalDataSource>()));
+    gh.lazySingleton<_i871.GetHomeDashboardUseCase>(
+        () => _i871.GetHomeDashboardUseCase(gh<_i0.HomeRepository>()));
     gh.lazySingleton<_i814.InventoryLocalDataSource>(
         () => _i1039.InventoryLocalDataSourceImpl(
               gh<_i982.AppDatabase>(),
@@ -177,6 +203,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i637.ReportsLocalDataSource>(
         () => _i430.ReportsLocalDataSourceImpl(gh<_i534.ReportsDao>()));
+    gh.factory<_i202.HomeBloc>(
+        () => _i202.HomeBloc(gh<_i871.GetHomeDashboardUseCase>()));
     gh.lazySingleton<_i740.PosLocalDataSource>(
         () => _i679.PosLocalDataSourceImpl(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i434.SalesRepository>(

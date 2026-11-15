@@ -1,4 +1,3 @@
-
 import '../models/checkout_item_model.dart';
 
 class CheckoutItemMapper {

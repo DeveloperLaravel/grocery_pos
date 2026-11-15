@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 import '../../../../core/database/app_database.dart';
@@ -26,9 +25,7 @@ extension ProductModelMapper on ProductModel {
 extension ProductEntityMapper on ProductEntity {
   // Entity -> Model
   ProductModel toModel() {
-    if (id == null ||
-        createdAt == null ||
-        updatedAt == null) {
+    if (id == null || createdAt == null || updatedAt == null) {
       throw StateError(
         'لا يمكن إنشاء ProductModel قبل حفظ المنتج في قاعدة البيانات',
       );
@@ -52,18 +49,14 @@ extension ProductEntityMapper on ProductEntity {
     bool includeId = false,
   }) {
     return ProductsCompanion(
-      id: includeId && id != null
-          ? Value(id!)
-          : const Value.absent(),
+      id: includeId && id != null ? Value(id!) : const Value.absent(),
       name: Value(name.trim()),
       barcode: Value(barcode.trim()),
       costPrice: Value(costPrice),
       salePrice: Value(salePrice),
       quantity: Value(quantity),
       minStock: Value(minStock),
-      createdAt: createdAt == null
-          ? const Value.absent()
-          : Value(createdAt!),
+      createdAt: createdAt == null ? const Value.absent() : Value(createdAt!),
       updatedAt: Value(DateTime.now()),
     );
   }

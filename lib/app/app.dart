@@ -1,30 +1,40 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../features/home/presentation/home_page.dart';
+import '../core/di/injection.dart';
+import '../core/router/app_route.dart';
+import '../core/settings/app_settings_controller.dart';
+import '../core/settings/app_settings_scope.dart';
+import '../core/theme/app_theme.dart';
 
-class GroceryPosApp extends StatelessWidget {
-  const GroceryPosApp({super.key});
+class GroceryApp extends StatelessWidget {
+  const GroceryApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'نقطة البيع',
-      locale: const Locale('ar'),
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green,
-        scaffoldBackgroundColor: const Color(0xfff7f8fa),
-        cardTheme: const CardThemeData(margin: EdgeInsets.zero),
-      ),
-      home: const Directionality(textDirection: TextDirection.rtl, child: HomePage()),
+    final settings = getIt<AppSettingsController>();
+
+    return ListenableBuilder(
+      listenable: settings,
+      builder: (context, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Grocery POS',
+
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: settings.themeMode,
+
+          routerConfig: AppRouter.router,
+
+          builder: (context, child) {
+            return AppSettingsScope(
+              controller: settings,
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
+        );
+      },
     );
   }
 }

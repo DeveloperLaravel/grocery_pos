@@ -1,9 +1,7 @@
-
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart';
-
 
 import '../models/checkout_item_model.dart';
 import 'pos_local_data_source.dart';
@@ -28,9 +26,7 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
 
     if (value.isNotEmpty) {
       request.where(
-        (tbl) =>
-            tbl.name.contains(value) |
-            tbl.barcode.contains(value),
+        (tbl) => tbl.name.contains(value) | tbl.barcode.contains(value),
       );
     }
 
@@ -182,13 +178,13 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
       );
 
       await _database.into(_database.stockMovements).insert(
-        StockMovementsCompanion.insert(
-          productId: productId,
-          type: delta > 0 ? 'in' : 'out',
-          quantity: delta.abs(),
-          note: Value(note),
-        ),
-      );
+            StockMovementsCompanion.insert(
+              productId: productId,
+              type: delta > 0 ? 'in' : 'out',
+              quantity: delta.abs(),
+              note: Value(note),
+            ),
+          );
     });
   }
 
@@ -252,8 +248,7 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
 
         final product = await (_database.select(
           _database.products,
-        )
-              ..where((tbl) => tbl.id.equals(productId)))
+        )..where((tbl) => tbl.id.equals(productId)))
             .getSingleOrNull();
 
         if (product == null) {
@@ -300,36 +295,35 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
       }
 
       // إنشاء رقم فاتورة فريد.
-      final invoiceNumber =
-          'INV-${DateTime.now().microsecondsSinceEpoch}';
+      final invoiceNumber = 'INV-${DateTime.now().microsecondsSinceEpoch}';
 
       // إنشاء الفاتورة.
       final saleId = await _database.into(_database.sales).insert(
-        SalesCompanion.insert(
-          invoiceNumber: invoiceNumber,
-          subtotal: subtotal,
-          discount: Value(discount),
-          total: total,
-          paidAmount: Value(paid),
-          paymentMethod: Value(paymentMethod.trim()),
-        ),
-      );
+            SalesCompanion.insert(
+              invoiceNumber: invoiceNumber,
+              subtotal: subtotal,
+              discount: Value(discount),
+              total: total,
+              paidAmount: Value(paid),
+              paymentMethod: Value(paymentMethod.trim()),
+            ),
+          );
 
       // تسجيل تفاصيل الفاتورة وتحديث المخزون.
       for (final item in preparedItems) {
         final product = item.product;
 
         await _database.into(_database.saleItems).insert(
-          SaleItemsCompanion.insert(
-            saleId: saleId,
-            productId: product.id,
-            productName: product.name,
-            quantity: item.quantity,
-            unitPrice: product.salePrice,
-            costPrice: product.costPrice,
-            total: item.total,
-          ),
-        );
+              SaleItemsCompanion.insert(
+                saleId: saleId,
+                productId: product.id,
+                productName: product.name,
+                quantity: item.quantity,
+                unitPrice: product.salePrice,
+                costPrice: product.costPrice,
+                total: item.total,
+              ),
+            );
 
         final newQuantity = product.quantity - item.quantity;
 
@@ -343,14 +337,14 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
         );
 
         await _database.into(_database.stockMovements).insert(
-          StockMovementsCompanion.insert(
-            productId: product.id,
-            type: 'sale',
-            quantity: item.quantity,
-            reference: Value(invoiceNumber),
-            note: Value('بيع من فاتورة $invoiceNumber'),
-          ),
-        );
+              StockMovementsCompanion.insert(
+                productId: product.id,
+                type: 'sale',
+                quantity: item.quantity,
+                reference: Value(invoiceNumber),
+                note: Value('بيع من فاتورة $invoiceNumber'),
+              ),
+            );
       }
 
       return saleId;
@@ -421,11 +415,9 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
 
       final saleItem = await (_database.select(
         _database.saleItems,
-      )
-            ..where(
+      )..where(
               (tbl) =>
-                  tbl.saleId.equals(saleId) &
-                  tbl.productId.equals(productId),
+                  tbl.saleId.equals(saleId) & tbl.productId.equals(productId),
             ))
           .getSingleOrNull();
 
@@ -456,8 +448,7 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
       final returnedQuantity =
           previousReturns.read<double>('returned_quantity');
 
-      final remainingQuantity =
-          saleItem.quantity - returnedQuantity;
+      final remainingQuantity = saleItem.quantity - returnedQuantity;
 
       if (quantity > remainingQuantity) {
         throw StateError(
@@ -476,20 +467,20 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
 
       // إنشاء سجل المرتجع.
       final returnId = await _database.into(_database.returns).insert(
-        ReturnsCompanion.insert(
-          saleId: saleId,
-          total: refundAmount,
-        ),
-      );
+            ReturnsCompanion.insert(
+              saleId: saleId,
+              total: refundAmount,
+            ),
+          );
 
       await _database.into(_database.returnItems).insert(
-        ReturnItemsCompanion.insert(
-          returnId: returnId,
-          productId: productId,
-          quantity: quantity,
-          refundAmount: refundAmount,
-        ),
-      );
+            ReturnItemsCompanion.insert(
+              returnId: returnId,
+              productId: productId,
+              quantity: quantity,
+              refundAmount: refundAmount,
+            ),
+          );
 
       // إعادة الكمية إلى المخزون.
       await (_database.update(_database.products)
@@ -503,14 +494,14 @@ class PosLocalDataSourceImpl implements PosLocalDataSource {
 
       // تسجيل حركة المخزون.
       await _database.into(_database.stockMovements).insert(
-        StockMovementsCompanion.insert(
-          productId: productId,
-          type: 'return',
-          quantity: quantity,
-          reference: Value('RETURN-$returnId'),
-          note: Value('مرتجع للفاتورة ${sale.invoiceNumber}'),
-        ),
-      );
+            StockMovementsCompanion.insert(
+              productId: productId,
+              type: 'return',
+              quantity: quantity,
+              reference: Value('RETURN-$returnId'),
+              note: Value('مرتجع للفاتورة ${sale.invoiceNumber}'),
+            ),
+          );
     });
   }
 }

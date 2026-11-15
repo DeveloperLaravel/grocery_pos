@@ -1,4 +1,3 @@
-
 class ProductEntity {
   final int? id;
   final String name;

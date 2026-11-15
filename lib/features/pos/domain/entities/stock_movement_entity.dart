@@ -1,4 +1,3 @@
-
 class StockMovementEntity {
   final int id;
   final int productId;
@@ -21,11 +20,9 @@ class StockMovementEntity {
     required this.createdAt,
   });
 
-  bool get isIncoming =>
-      type == 'in' || type == 'return';
+  bool get isIncoming => type == 'in' || type == 'return';
 
-  bool get isOutgoing =>
-      type == 'out' || type == 'sale';
+  bool get isOutgoing => type == 'out' || type == 'sale';
 
   String get movementLabel {
     switch (type) {

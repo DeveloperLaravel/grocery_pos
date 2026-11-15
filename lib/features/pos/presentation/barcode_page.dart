@@ -12,6 +12,7 @@ class _BarcodePageState extends State<BarcodePage> {
   late final MobileScannerController _controller;
 
   bool _handled = false;
+  bool _torchEnabled = false;
 
   @override
   void initState() {
@@ -20,21 +21,8 @@ class _BarcodePageState extends State<BarcodePage> {
     _controller = MobileScannerController(
       detectionSpeed: DetectionSpeed.noDuplicates,
       facing: CameraFacing.back,
+      torchEnabled: false,
     );
-  }
-
-  void _onDetect(BarcodeCapture capture) {
-    if (_handled) return;
-
-    if (capture.barcodes.isEmpty) return;
-
-    final barcode = capture.barcodes.first.rawValue?.trim();
-
-    if (barcode == null || barcode.isEmpty) return;
-
-    _handled = true;
-
-    Navigator.of(context).pop(barcode);
   }
 
   @override
@@ -43,57 +31,171 @@ class _BarcodePageState extends State<BarcodePage> {
     super.dispose();
   }
 
+  void _onDetect(BarcodeCapture capture) {
+    if (_handled) return;
+
+    for (final barcode in capture.barcodes) {
+      final value = barcode.rawValue?.trim();
+
+      if (value == null || value.isEmpty) continue;
+
+      _handled = true;
+
+      Navigator.of(context).pop(value);
+      return;
+    }
+  }
+
+  Future<void> _toggleTorch() async {
+    await _controller.toggleTorch();
+
+    if (!mounted) return;
+
+    setState(() {
+      _torchEnabled = !_torchEnabled;
+    });
+  }
+
+  Future<void> _switchCamera() async {
+    await _controller.switchCamera();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('مسح الباركود'),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: const Text(
+          'مسح الباركود',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
-            onPressed: () => _controller.toggleTorch(),
-            icon: const Icon(Icons.flash_on),
+            tooltip: 'تبديل الكاميرا',
+            onPressed: _switchCamera,
+            icon: const Icon(Icons.flip_camera_ios_rounded),
           ),
           IconButton(
-            onPressed: () => _controller.switchCamera(),
-            icon: const Icon(Icons.cameraswitch),
+            tooltip: 'الإضاءة',
+            onPressed: _toggleTorch,
+            icon: Icon(
+              _torchEnabled ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+            ),
           ),
         ],
       ),
       body: Stack(
         children: [
-          MobileScanner(
-            controller: _controller,
-            onDetect: _onDetect,
-          ),
-          Center(
-            child: Container(
-              width: 280,
-              height: 170,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.greenAccent,
-                  width: 3,
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
+          Positioned.fill(
+            child: MobileScanner(
+              controller: _controller,
+              onDetect: _onDetect,
+              errorBuilder: (context, error) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(25),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.no_photography_outlined,
+                          color: Colors.white,
+                          size: 55,
+                        ),
+                        const SizedBox(height: 15),
+                        const Text(
+                          'تعذر تشغيل الكاميرا',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          error.errorDetails?.message ??
+                              'تحقق من صلاحية استخدام الكاميرا',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        FilledButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('رجوع'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          const Positioned(
-            bottom: 40,
-            left: 20,
-            right: 20,
-            child: Text(
-              'وجّه الكاميرا نحو باركود المنتج',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 8,
+
+          // طبقة إرشادية فوق الكاميرا
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Column(
+                children: [
+                  const Spacer(),
+                  Container(
+                    width: 270,
+                    height: 190,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: scheme.primary,
+                        width: 3,
+                      ),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: 65,
+                            height: 3,
+                            color: scheme.primary,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: 65,
+                            height: 3,
+                            color: scheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    'وجّه الكاميرا نحو باركود المنتج',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'سيتم إضافة المنتج إلى السلة تلقائياً',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(height: 35),
                 ],
               ),
             ),

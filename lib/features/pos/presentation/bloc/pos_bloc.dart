@@ -253,9 +253,8 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     PosCartProductRemoved event,
     Emitter<PosState> emit,
   ) {
-    final cart = state.cart
-        .where((item) => item.product.id != event.productId)
-        .toList();
+    final cart =
+        state.cart.where((item) => item.product.id != event.productId).toList();
 
     emit(state.copyWith(
       cart: cart,

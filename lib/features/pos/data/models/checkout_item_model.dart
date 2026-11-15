@@ -6,8 +6,7 @@ part 'checkout_item_model.g.dart';
 @freezed
 abstract class CheckoutItemModel with _$CheckoutItemModel {
   const factory CheckoutItemModel({
-    @JsonKey(name: 'product_id')
-    required int productId,
+    @JsonKey(name: 'product_id') required int productId,
     required double quantity,
   }) = _CheckoutItemModel;
 

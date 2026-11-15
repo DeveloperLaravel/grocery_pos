@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 import '../../../../core/database/app_database.dart';
@@ -26,9 +25,7 @@ extension ReturnModelMapper on ReturnModel {
     bool includeId = false,
   }) {
     return ReturnsCompanion(
-      id: includeId
-          ? Value(id)
-          : const Value.absent(),
+      id: includeId ? Value(id) : const Value.absent(),
       saleId: Value(saleId),
       total: Value(total),
       createdAt: Value(createdAt),

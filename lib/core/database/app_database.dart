@@ -1,7 +1,7 @@
 
 import 'package:drift/drift.dart';
-import 'package:injectable/injectable.dart';
 
+import 'daos/home_dao.dart';
 import 'daos/reports_dao.dart';
 import 'daos/sales_dao.dart';
 import 'database_connection.dart';
@@ -41,6 +41,7 @@ part 'app_database.g.dart';
     StockDao,
     ReportsDao,
     SalesDao,
+    HomeDao,
     DatabaseMaintenanceDao,
   ],
 )

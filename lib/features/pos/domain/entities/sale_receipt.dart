@@ -1,4 +1,3 @@
-
 import 'sale_receipt_item.dart';
 
 class SaleReceipt {
@@ -30,16 +29,12 @@ class SaleReceipt {
 
   // المبلغ المتبقي.
   double get remainingAmount {
-    return (total - paidAmount)
-        .clamp(0, double.infinity)
-        .toDouble();
+    return (total - paidAmount).clamp(0, double.infinity).toDouble();
   }
 
   // المبلغ الزائد المدفوع.
   double get changeAmount {
-    return (paidAmount - total)
-        .clamp(0, double.infinity)
-        .toDouble();
+    return (paidAmount - total).clamp(0, double.infinity).toDouble();
   }
 
   // عدد المنتجات في الفاتورة بوحداتها.
@@ -57,8 +52,7 @@ class SaleReceipt {
   bool get isPaid => paidAmount >= total;
 
   // هل الفاتورة مدفوعة جزئيًا؟
-  bool get isPartiallyPaid =>
-      paidAmount > 0 && paidAmount < total;
+  bool get isPartiallyPaid => paidAmount > 0 && paidAmount < total;
 
   // هل الفاتورة غير مدفوعة؟
   bool get isUnpaid => paidAmount <= 0;

@@ -1,504 +1,236 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:grocery_pos/features/inventory/domain/entities/stock_movement_entity.dart';
-import 'package:grocery_pos/features/inventory/presentation/bloc/inventory_bloc.dart';
-import 'package:grocery_pos/features/inventory/presentation/bloc/inventory_event.dart';
-import 'package:grocery_pos/features/inventory/presentation/bloc/inventory_state.dart';
+import '../../../../../core/di/injection.dart';
 
-class StockMovementsPage extends StatefulWidget {
-  final int? productId;
-  final String? productName;
+import '../bloc/inventory_bloc.dart';
+import '../bloc/inventory_event.dart';
+import '../bloc/inventory_state.dart';
 
-  const StockMovementsPage({
-    super.key,
-    this.productId,
-    this.productName,
-  });
+import '../movements/movement_card.dart';
+import '../movements/movement_empty_state.dart';
+import '../movements/movements_summary.dart';
+import '../widgets/inventory_empty_state.dart';
+import '../widgets/stock_movement_tile.dart';
 
-  @override
-  State<StockMovementsPage> createState() =>
-      _StockMovementsPageState();
-}
-
-class _StockMovementsPageState extends State<StockMovementsPage> {
-  // static const Color primary = Color(0xFF1565C0);
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      context.read<InventoryBloc>().add(
-            InventoryEvent.movementsFilterChanged(
-              productId: widget.productId,
-              limit: 100,
-            ),
-          );
-    });
-  }
-
-  void _refresh() {
-    context.read<InventoryBloc>().add(
-          InventoryEvent.movementsFilterChanged(
-            productId: widget.productId,
-            limit: 100,
-          ),
-        );
-  }
+class StockMovementsPage extends StatelessWidget {
+  const StockMovementsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.productName == null
-        ? 'حركات المخزون'
-        : 'حركات ${widget.productName}';
+    return BlocProvider(
+      create: (_) => getIt<InventoryBloc>()
+        ..add(const InventoryEvent.started()),
+      child: const _StockMovementsView(),
+    );
+  }
+}
 
+class _StockMovementsView extends StatelessWidget {
+  const _StockMovementsView();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: Text(
-          title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        title: const Text('حركات المخزون'),
         actions: [
           IconButton(
-            tooltip: 'تحديث الحركات',
-            onPressed: _refresh,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: BlocBuilder<InventoryBloc, InventoryState>(
-        builder: (context, state) {
-          final movements = state.movements;
-
-          if (state.isLoading && movements.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              _refresh();
-              await context.read<InventoryBloc>().stream.firstWhere(
-                    (state) => !state.isLoading,
+            tooltip: 'تحديث',
+            onPressed: () {
+              context.read<InventoryBloc>().add(
+                    const InventoryEvent.refreshRequested(),
                   );
             },
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: _MovementsSummary(
-                      movements: movements,
-                    ),
-                  ),
-                ),
-                if (state.errorMessage != null && movements.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _MovementsError(
-                      message: state.errorMessage!,
-                      onRetry: _refresh,
-                    ),
-                  )
-                else if (movements.isEmpty)
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _MovementsEmpty(),
-                  )
-                else
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                    sliver: SliverList.separated(
-                      itemCount: movements.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        return _MovementCard(
-                          movement: movements[index],
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: BlocBuilder<InventoryBloc, InventoryState>(
+          builder: (context, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<InventoryBloc>().add(
+                      const InventoryEvent.refreshRequested(),
+                    );
+              },
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(18),
+                children: [
+                  _buildFilters(context, state),
+
+                  const SizedBox(height: 20),
+                  Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    MovementsSummary(
+      movements: state.movements,
+    ),
+
+    const SizedBox(height: 22),
+
+    if (state.movements.isEmpty)
+      const MovementEmptyState()
+    else
+      ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: state.movements.length,
+        itemBuilder: (context, index) {
+          final movement = state.movements[index];
+
+          return MovementCard(
+            movement: movement,
           );
         },
       ),
-    );
-  }
-}
+  ],
+),
 
-// ============================================================
-// Summary
-// ============================================================
 
-class _MovementsSummary extends StatelessWidget {
-  final List<StockMovement> movements;
+                    const SizedBox(height: 20),
 
-  const _MovementsSummary({
-    required this.movements,
-  });
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'سجل العمليات',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '${state.movements.length} حركة',
+                      ),
+                    ],
+                  ),
 
-  @override
-  Widget build(BuildContext context) {
-    final incoming = movements
-        .where((movement) => movement.isIncoming)
-        .fold<double>(0, (sum, movement) => sum + movement.quantity);
+                  const SizedBox(height: 14),
 
-    final outgoing = movements
-        .where((movement) => movement.isOutgoing)
-        .fold<double>(0, (sum, movement) => sum + movement.quantity);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'ملخص الحركات',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _MovementStat(
-                  title: 'الوارد',
-                  value: _formatQuantity(incoming),
-                  icon: Icons.arrow_downward_rounded,
-                  color: Colors.green,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MovementStat(
-                  title: 'الصادر',
-                  value: _formatQuantity(outgoing),
-                  icon: Icons.arrow_upward_rounded,
-                  color: Colors.red,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MovementStat(
-                  title: 'عدد الحركات',
-                  value: '${movements.length}',
-                  icon: Icons.swap_vert_rounded,
-                  color: const Color(0xFF1565C0),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatQuantity(double value) {
-    return value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toStringAsFixed(2);
-  }
-}
-
-class _MovementStat extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
-
-  const _MovementStat({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: color, size: 21),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 11,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ============================================================
-// Movement card
-// ============================================================
-
-class _MovementCard extends StatelessWidget {
-  final StockMovement movement;
-
-  const _MovementCard({
-    required this.movement,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final incoming = movement.isIncoming;
-    final color = incoming ? Colors.green : Colors.red;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Icon(
-                  incoming
-                      ? Icons.arrow_downward_rounded
-                      : Icons.arrow_upward_rounded,
-                  color: color,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _movementType(movement.type),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                  if (state.isLoading && state.movements.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(40),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (state.movements.isEmpty)
+                    const InventoryEmptyState(
+                      title: 'لا توجد حركات',
+                      message: 'لم يتم تسجيل أي حركة للمخزون.',
+                      icon: Icons.history_rounded,
+                    )
+                  else
+                    ...state.movements.map(
+                      (movement) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: StockMovementTile(
+                          movement: movement,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _formatDate(movement.createdAt),
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              Text(
-                '${incoming ? '+' : '-'}${_formatQuantity(movement.quantity)}',
-                style: TextStyle(
-                  color: color,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          if (movement.reference != null ||
-              movement.note != null) ...[
-            const SizedBox(height: 12),
-            const Divider(height: 1),
-            const SizedBox(height: 10),
-            if (movement.reference != null)
-              _MovementDetail(
-                icon: Icons.receipt_long_outlined,
-                text: 'المرجع: ${movement.reference}',
-              ),
-            if (movement.note != null)
-              _MovementDetail(
-                icon: Icons.notes_rounded,
-                text: movement.note!,
-              ),
-          ],
-        ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  String _movementType(String type) {
-    switch (type) {
-      case 'in':
-        return 'إضافة مخزون';
-      case 'out':
-        return 'إخراج مخزون';
-      case 'sale':
-        return 'عملية بيع';
-      case 'return':
-        return 'مرتجع';
-      default:
-        return 'حركة مخزون';
-    }
-  }
-
-  String _formatQuantity(double value) {
-    return value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toStringAsFixed(2);
-  }
-
-  String _formatDate(DateTime date) {
-    final local = date.toLocal();
-
-    final day = local.day.toString().padLeft(2, '0');
-    final month = local.month.toString().padLeft(2, '0');
-    final year = local.year;
-
-    final hour = local.hour.toString().padLeft(2, '0');
-    final minute = local.minute.toString().padLeft(2, '0');
-
-    return '$day/$month/$year - $hour:$minute';
-  }
-}
-
-class _MovementDetail extends StatelessWidget {
-  final IconData icon;
-  final String text;
-
-  const _MovementDetail({
-    required this.icon,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: Colors.grey.shade600,
-          ),
-          const SizedBox(width: 7),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ============================================================
-// Empty and error
-// ============================================================
-
-class _MovementsEmpty extends StatelessWidget {
-  const _MovementsEmpty();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget _buildFilters(
+    BuildContext context,
+    InventoryState state,
+  ) {
+    return Card(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.history_rounded,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
-            const SizedBox(height: 14),
             const Text(
-              'لا توجد حركات مخزون',
+              'تصفية الحركات',
               style: TextStyle(
-                fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'ستظهر هنا جميع عمليات الإضافة والإخراج والبيع والمرتجعات',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class _MovementsError extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-
-  const _MovementsError({
-    required this.message,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              color: Colors.red,
-              size: 48,
-            ),
             const SizedBox(height: 12),
-            Text(
-              message,
-              textAlign: TextAlign.center,
+
+            DropdownButtonFormField<int?>(
+              initialValue: state.selectedProductId,
+              decoration: const InputDecoration(
+                labelText: 'المنتج',
+                prefixIcon: Icon(Icons.inventory_2_outlined),
+              ),
+              items: [
+                const DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text('جميع المنتجات'),
+                ),
+                // يمكن إضافة قائمة المنتجات هنا لاحقًا
+                // باستخدام state.inventory.
+                ...state.inventory.map(
+                  (product) => DropdownMenuItem<int?>(
+                    value: product.id,
+                    child: Text(product.name),
+                  ),
+                ),
+              ],
+              onChanged: (productId) {
+                context.read<InventoryBloc>().add(
+                      InventoryEvent.movementsFilterChanged(
+                        productId: productId,
+                        limit: state.movementsLimit,
+                      ),
+                    );
+              },
             ),
-            const SizedBox(height: 14),
-            ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('إعادة المحاولة'),
+
+            const SizedBox(height: 12),
+
+            DropdownButtonFormField<int>(
+              initialValue: state.movementsLimit,
+              decoration: const InputDecoration(
+                labelText: 'عدد الحركات',
+                prefixIcon: Icon(Icons.format_list_numbered),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: 20,
+                  child: Text('20 حركة'),
+                ),
+                DropdownMenuItem(
+                  value: 50,
+                  child: Text('50 حركة'),
+                ),
+                DropdownMenuItem(
+                  value: 100,
+                  child: Text('100 حركة'),
+                ),
+                DropdownMenuItem(
+                  value: 200,
+                  child: Text('200 حركة'),
+                ),
+                DropdownMenuItem(
+                  value: 500,
+                  child: Text('500 حركة'),
+                ),
+              ],
+              onChanged: (limit) {
+                if (limit == null) return;
+
+                context.read<InventoryBloc>().add(
+                      InventoryEvent.movementsFilterChanged(
+                        productId: state.selectedProductId,
+                        limit: limit,
+                      ),
+                    );
+              },
             ),
           ],
         ),

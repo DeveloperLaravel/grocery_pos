@@ -23,7 +23,6 @@ import '../../features/inventory/presentation/pages/stock_movements_page.dart';
 // Sales
 import '../../features/sales/presentation/pages/sales_page.dart';
 import '../../features/sales/presentation/pages/sale_details_page.dart';
-import '../../features/sales/presentation/pages/receipt_print_preview_page.dart';
 
 // Reports
 import '../../features/reports/presentation/pages/reports_page.dart';
@@ -125,33 +124,40 @@ class AppRouter {
         // 3 - Inventory
         // =====================================
 
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/inventory',
-              name: AppRoutes.inventory,
-              builder: (context, state) => const InventoryPage(),
-              routes: [
-                GoRoute(
-                  path: 'movements',
-                  name: AppRoutes.stockMovements,
-                  builder: (context, state) {
-                    return const StockMovementsPage();
-                  },
-                ),
+ // =====================================
+// 3 - Inventory
+// =====================================
 
-                GoRoute(
-                  path: 'low-stock',
-                  name: AppRoutes.lowStock,
-                  builder: (context, state) {
-                    // استبدلها بصفحة المنتجات منخفضة المخزون.
-                    return const InventoryPage();
-                  },
-                ),
-              ],
-            ),
-          ],
+StatefulShellBranch(
+  routes: [
+    GoRoute(
+      path: '/inventory',
+      name: AppRoutes.inventory,
+      builder: (context, state) {
+        return const InventoryPage();
+      },
+      routes: [
+        GoRoute(
+          path: 'movements',
+          name: AppRoutes.stockMovements,
+          builder: (context, state) {
+            return const StockMovementsPage();
+          },
         ),
+
+        GoRoute(
+          path: 'low-stock',
+          name: AppRoutes.lowStock,
+          builder: (context, state) {
+            return const InventoryPage(
+              initialLowStockOnly: true,
+            );
+          },
+        ),
+      ],
+    ),
+  ],
+),
 
         // =====================================
         // 4 - Sales

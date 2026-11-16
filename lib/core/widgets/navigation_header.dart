@@ -17,25 +17,36 @@ class NavigationHeader extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 46,
-            height: 46,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: colors.onSurface,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.storefront_rounded,
-              color: Colors.white,
-              size: 25,
-            ),
-          ),
+            child:   ClipRRect(
+  borderRadius: BorderRadius.circular(1),
+  child: Image.asset(
+    'assets/images/10.png',
+    width: 27,
+    height: 27,
+    fit: BoxFit.contain,
+    errorBuilder: (context, error, stackTrace) {
+      return Icon(
+        Icons.storefront_rounded,
+        color: colors.primary,
+        size: 27,
+      );
+    },
+  ),
+),
+),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Grocery POS',
+                  'شركة كوّاد البراق',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -44,7 +55,7 @@ class NavigationHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'نظام إدارة المتجر',
+                  ' نظام إدارة المتجر كامل',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),

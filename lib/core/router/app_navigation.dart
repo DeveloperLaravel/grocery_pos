@@ -99,11 +99,13 @@ class AppNavigation {
     );
   }
 
-  // Other Pages
+  // Reports
 
   static void reports(BuildContext context) {
     context.pushNamed(AppRoutes.reports);
   }
+
+  // Settings
 
   static void settings(BuildContext context) {
     context.pushNamed(AppRoutes.settings);

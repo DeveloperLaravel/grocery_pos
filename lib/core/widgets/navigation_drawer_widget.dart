@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../router/app_navigation.dart';
@@ -42,6 +43,14 @@ class NavigationDrawerWidget extends StatelessWidget {
     ),
   ];
 
+  void _openReports(BuildContext context) {
+    AppNavigation.reports(context);
+  }
+
+  void _openSettings(BuildContext context) {
+    AppNavigation.settings(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -80,7 +89,8 @@ class NavigationDrawerWidget extends StatelessWidget {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 5),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: 5),
                 itemBuilder: (context, index) {
                   return NavigationItemWidget(
                     item: items[index],
@@ -103,12 +113,12 @@ class NavigationDrawerWidget extends StatelessWidget {
                   _DrawerAction(
                     icon: Icons.analytics_outlined,
                     label: 'التقارير',
-                    onTap: () => AppNavigation.reports(context),
+                    onTap: () => _openReports(context),
                   ),
                   _DrawerAction(
                     icon: Icons.settings_outlined,
                     label: 'الإعدادات',
-                    onTap: () => AppNavigation.settings(context),
+                    onTap: () => _openSettings(context),
                   ),
                 ],
               ),

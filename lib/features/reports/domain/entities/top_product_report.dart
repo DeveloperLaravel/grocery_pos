@@ -5,7 +5,7 @@ class TopProductReport {
   final double quantitySold;
   final double salesTotal;
   final double costTotal;
-  final double profit;
+  final double grossProfit;
 
   const TopProductReport({
     required this.productId,
@@ -13,11 +13,6 @@ class TopProductReport {
     required this.quantitySold,
     required this.salesTotal,
     required this.costTotal,
-    required this.profit,
+    required this.grossProfit,
   });
-
-  double get profitMargin {
-    if (salesTotal <= 0) return 0;
-    return (profit / salesTotal) * 100;
-  }
 }

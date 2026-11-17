@@ -1,4 +1,5 @@
 
+import '../models/daily_sales_report_model.dart';
 import '../models/sales_report_model.dart';
 import '../models/top_product_report_model.dart';
 
@@ -12,5 +13,10 @@ abstract class ReportsLocalDataSource {
     required DateTime startDate,
     required DateTime endDate,
     int limit = 10,
+  });
+
+  Future<List<DailySalesReportModel>> getDailySales({
+    required DateTime startDate,
+    required DateTime endDate,
   });
 }

@@ -14,22 +14,14 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$SalesReportModel {
-  @JsonKey(name: 'sales_count')
   int get salesCount;
-  @JsonKey(name: 'gross_sales')
   double get grossSales;
   double get discounts;
-  @JsonKey(name: 'net_sales')
-  double get netSales;
-  @JsonKey(name: 'returns_total')
+  double get salesTotal;
   double get returnsTotal;
-  @JsonKey(name: 'cost_of_goods_sold')
+  double get netSales;
   double get costOfGoodsSold;
-  @JsonKey(name: 'gross_profit')
-  double get grossProfit;
-  @JsonKey(name: 'net_profit')
   double get netProfit;
-  @JsonKey(name: 'average_sale')
   double get averageSale;
 
   /// Create a copy of SalesReportModel
@@ -54,14 +46,14 @@ mixin _$SalesReportModel {
                 other.grossSales == grossSales) &&
             (identical(other.discounts, discounts) ||
                 other.discounts == discounts) &&
-            (identical(other.netSales, netSales) ||
-                other.netSales == netSales) &&
+            (identical(other.salesTotal, salesTotal) ||
+                other.salesTotal == salesTotal) &&
             (identical(other.returnsTotal, returnsTotal) ||
                 other.returnsTotal == returnsTotal) &&
+            (identical(other.netSales, netSales) ||
+                other.netSales == netSales) &&
             (identical(other.costOfGoodsSold, costOfGoodsSold) ||
                 other.costOfGoodsSold == costOfGoodsSold) &&
-            (identical(other.grossProfit, grossProfit) ||
-                other.grossProfit == grossProfit) &&
             (identical(other.netProfit, netProfit) ||
                 other.netProfit == netProfit) &&
             (identical(other.averageSale, averageSale) ||
@@ -75,16 +67,16 @@ mixin _$SalesReportModel {
       salesCount,
       grossSales,
       discounts,
-      netSales,
+      salesTotal,
       returnsTotal,
+      netSales,
       costOfGoodsSold,
-      grossProfit,
       netProfit,
       averageSale);
 
   @override
   String toString() {
-    return 'SalesReportModel(salesCount: $salesCount, grossSales: $grossSales, discounts: $discounts, netSales: $netSales, returnsTotal: $returnsTotal, costOfGoodsSold: $costOfGoodsSold, grossProfit: $grossProfit, netProfit: $netProfit, averageSale: $averageSale)';
+    return 'SalesReportModel(salesCount: $salesCount, grossSales: $grossSales, discounts: $discounts, salesTotal: $salesTotal, returnsTotal: $returnsTotal, netSales: $netSales, costOfGoodsSold: $costOfGoodsSold, netProfit: $netProfit, averageSale: $averageSale)';
   }
 }
 
@@ -95,15 +87,15 @@ abstract mixin class $SalesReportModelCopyWith<$Res> {
       _$SalesReportModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'sales_count') int salesCount,
-      @JsonKey(name: 'gross_sales') double grossSales,
+      {int salesCount,
+      double grossSales,
       double discounts,
-      @JsonKey(name: 'net_sales') double netSales,
-      @JsonKey(name: 'returns_total') double returnsTotal,
-      @JsonKey(name: 'cost_of_goods_sold') double costOfGoodsSold,
-      @JsonKey(name: 'gross_profit') double grossProfit,
-      @JsonKey(name: 'net_profit') double netProfit,
-      @JsonKey(name: 'average_sale') double averageSale});
+      double salesTotal,
+      double returnsTotal,
+      double netSales,
+      double costOfGoodsSold,
+      double netProfit,
+      double averageSale});
 }
 
 /// @nodoc
@@ -122,10 +114,10 @@ class _$SalesReportModelCopyWithImpl<$Res>
     Object? salesCount = null,
     Object? grossSales = null,
     Object? discounts = null,
-    Object? netSales = null,
+    Object? salesTotal = null,
     Object? returnsTotal = null,
+    Object? netSales = null,
     Object? costOfGoodsSold = null,
-    Object? grossProfit = null,
     Object? netProfit = null,
     Object? averageSale = null,
   }) {
@@ -142,21 +134,21 @@ class _$SalesReportModelCopyWithImpl<$Res>
           ? _self.discounts
           : discounts // ignore: cast_nullable_to_non_nullable
               as double,
-      netSales: null == netSales
-          ? _self.netSales
-          : netSales // ignore: cast_nullable_to_non_nullable
+      salesTotal: null == salesTotal
+          ? _self.salesTotal
+          : salesTotal // ignore: cast_nullable_to_non_nullable
               as double,
       returnsTotal: null == returnsTotal
           ? _self.returnsTotal
           : returnsTotal // ignore: cast_nullable_to_non_nullable
               as double,
+      netSales: null == netSales
+          ? _self.netSales
+          : netSales // ignore: cast_nullable_to_non_nullable
+              as double,
       costOfGoodsSold: null == costOfGoodsSold
           ? _self.costOfGoodsSold
           : costOfGoodsSold // ignore: cast_nullable_to_non_nullable
-              as double,
-      grossProfit: null == grossProfit
-          ? _self.grossProfit
-          : grossProfit // ignore: cast_nullable_to_non_nullable
               as double,
       netProfit: null == netProfit
           ? _self.netProfit
@@ -264,15 +256,15 @@ extension SalesReportModelPatterns on SalesReportModel {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            @JsonKey(name: 'sales_count') int salesCount,
-            @JsonKey(name: 'gross_sales') double grossSales,
+            int salesCount,
+            double grossSales,
             double discounts,
-            @JsonKey(name: 'net_sales') double netSales,
-            @JsonKey(name: 'returns_total') double returnsTotal,
-            @JsonKey(name: 'cost_of_goods_sold') double costOfGoodsSold,
-            @JsonKey(name: 'gross_profit') double grossProfit,
-            @JsonKey(name: 'net_profit') double netProfit,
-            @JsonKey(name: 'average_sale') double averageSale)?
+            double salesTotal,
+            double returnsTotal,
+            double netSales,
+            double costOfGoodsSold,
+            double netProfit,
+            double averageSale)?
         $default, {
     required TResult orElse(),
   }) {
@@ -283,10 +275,10 @@ extension SalesReportModelPatterns on SalesReportModel {
             _that.salesCount,
             _that.grossSales,
             _that.discounts,
-            _that.netSales,
+            _that.salesTotal,
             _that.returnsTotal,
+            _that.netSales,
             _that.costOfGoodsSold,
-            _that.grossProfit,
             _that.netProfit,
             _that.averageSale);
       case _:
@@ -310,15 +302,15 @@ extension SalesReportModelPatterns on SalesReportModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            @JsonKey(name: 'sales_count') int salesCount,
-            @JsonKey(name: 'gross_sales') double grossSales,
+            int salesCount,
+            double grossSales,
             double discounts,
-            @JsonKey(name: 'net_sales') double netSales,
-            @JsonKey(name: 'returns_total') double returnsTotal,
-            @JsonKey(name: 'cost_of_goods_sold') double costOfGoodsSold,
-            @JsonKey(name: 'gross_profit') double grossProfit,
-            @JsonKey(name: 'net_profit') double netProfit,
-            @JsonKey(name: 'average_sale') double averageSale)
+            double salesTotal,
+            double returnsTotal,
+            double netSales,
+            double costOfGoodsSold,
+            double netProfit,
+            double averageSale)
         $default,
   ) {
     final _that = this;
@@ -328,10 +320,10 @@ extension SalesReportModelPatterns on SalesReportModel {
             _that.salesCount,
             _that.grossSales,
             _that.discounts,
-            _that.netSales,
+            _that.salesTotal,
             _that.returnsTotal,
+            _that.netSales,
             _that.costOfGoodsSold,
-            _that.grossProfit,
             _that.netProfit,
             _that.averageSale);
       case _:
@@ -354,15 +346,15 @@ extension SalesReportModelPatterns on SalesReportModel {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            @JsonKey(name: 'sales_count') int salesCount,
-            @JsonKey(name: 'gross_sales') double grossSales,
+            int salesCount,
+            double grossSales,
             double discounts,
-            @JsonKey(name: 'net_sales') double netSales,
-            @JsonKey(name: 'returns_total') double returnsTotal,
-            @JsonKey(name: 'cost_of_goods_sold') double costOfGoodsSold,
-            @JsonKey(name: 'gross_profit') double grossProfit,
-            @JsonKey(name: 'net_profit') double netProfit,
-            @JsonKey(name: 'average_sale') double averageSale)?
+            double salesTotal,
+            double returnsTotal,
+            double netSales,
+            double costOfGoodsSold,
+            double netProfit,
+            double averageSale)?
         $default,
   ) {
     final _that = this;
@@ -372,10 +364,10 @@ extension SalesReportModelPatterns on SalesReportModel {
             _that.salesCount,
             _that.grossSales,
             _that.discounts,
-            _that.netSales,
+            _that.salesTotal,
             _that.returnsTotal,
+            _that.netSales,
             _that.costOfGoodsSold,
-            _that.grossProfit,
             _that.netProfit,
             _that.averageSale);
       case _:
@@ -388,43 +380,35 @@ extension SalesReportModelPatterns on SalesReportModel {
 @JsonSerializable()
 class _SalesReportModel implements SalesReportModel {
   const _SalesReportModel(
-      {@JsonKey(name: 'sales_count') required this.salesCount,
-      @JsonKey(name: 'gross_sales') required this.grossSales,
+      {required this.salesCount,
+      required this.grossSales,
       required this.discounts,
-      @JsonKey(name: 'net_sales') required this.netSales,
-      @JsonKey(name: 'returns_total') required this.returnsTotal,
-      @JsonKey(name: 'cost_of_goods_sold') required this.costOfGoodsSold,
-      @JsonKey(name: 'gross_profit') required this.grossProfit,
-      @JsonKey(name: 'net_profit') required this.netProfit,
-      @JsonKey(name: 'average_sale') required this.averageSale});
+      required this.salesTotal,
+      required this.returnsTotal,
+      required this.netSales,
+      required this.costOfGoodsSold,
+      required this.netProfit,
+      required this.averageSale});
   factory _SalesReportModel.fromJson(Map<String, dynamic> json) =>
       _$SalesReportModelFromJson(json);
 
   @override
-  @JsonKey(name: 'sales_count')
   final int salesCount;
   @override
-  @JsonKey(name: 'gross_sales')
   final double grossSales;
   @override
   final double discounts;
   @override
-  @JsonKey(name: 'net_sales')
-  final double netSales;
+  final double salesTotal;
   @override
-  @JsonKey(name: 'returns_total')
   final double returnsTotal;
   @override
-  @JsonKey(name: 'cost_of_goods_sold')
+  final double netSales;
+  @override
   final double costOfGoodsSold;
   @override
-  @JsonKey(name: 'gross_profit')
-  final double grossProfit;
-  @override
-  @JsonKey(name: 'net_profit')
   final double netProfit;
   @override
-  @JsonKey(name: 'average_sale')
   final double averageSale;
 
   /// Create a copy of SalesReportModel
@@ -453,14 +437,14 @@ class _SalesReportModel implements SalesReportModel {
                 other.grossSales == grossSales) &&
             (identical(other.discounts, discounts) ||
                 other.discounts == discounts) &&
-            (identical(other.netSales, netSales) ||
-                other.netSales == netSales) &&
+            (identical(other.salesTotal, salesTotal) ||
+                other.salesTotal == salesTotal) &&
             (identical(other.returnsTotal, returnsTotal) ||
                 other.returnsTotal == returnsTotal) &&
+            (identical(other.netSales, netSales) ||
+                other.netSales == netSales) &&
             (identical(other.costOfGoodsSold, costOfGoodsSold) ||
                 other.costOfGoodsSold == costOfGoodsSold) &&
-            (identical(other.grossProfit, grossProfit) ||
-                other.grossProfit == grossProfit) &&
             (identical(other.netProfit, netProfit) ||
                 other.netProfit == netProfit) &&
             (identical(other.averageSale, averageSale) ||
@@ -474,16 +458,16 @@ class _SalesReportModel implements SalesReportModel {
       salesCount,
       grossSales,
       discounts,
-      netSales,
+      salesTotal,
       returnsTotal,
+      netSales,
       costOfGoodsSold,
-      grossProfit,
       netProfit,
       averageSale);
 
   @override
   String toString() {
-    return 'SalesReportModel(salesCount: $salesCount, grossSales: $grossSales, discounts: $discounts, netSales: $netSales, returnsTotal: $returnsTotal, costOfGoodsSold: $costOfGoodsSold, grossProfit: $grossProfit, netProfit: $netProfit, averageSale: $averageSale)';
+    return 'SalesReportModel(salesCount: $salesCount, grossSales: $grossSales, discounts: $discounts, salesTotal: $salesTotal, returnsTotal: $returnsTotal, netSales: $netSales, costOfGoodsSold: $costOfGoodsSold, netProfit: $netProfit, averageSale: $averageSale)';
   }
 }
 
@@ -496,15 +480,15 @@ abstract mixin class _$SalesReportModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'sales_count') int salesCount,
-      @JsonKey(name: 'gross_sales') double grossSales,
+      {int salesCount,
+      double grossSales,
       double discounts,
-      @JsonKey(name: 'net_sales') double netSales,
-      @JsonKey(name: 'returns_total') double returnsTotal,
-      @JsonKey(name: 'cost_of_goods_sold') double costOfGoodsSold,
-      @JsonKey(name: 'gross_profit') double grossProfit,
-      @JsonKey(name: 'net_profit') double netProfit,
-      @JsonKey(name: 'average_sale') double averageSale});
+      double salesTotal,
+      double returnsTotal,
+      double netSales,
+      double costOfGoodsSold,
+      double netProfit,
+      double averageSale});
 }
 
 /// @nodoc
@@ -523,10 +507,10 @@ class __$SalesReportModelCopyWithImpl<$Res>
     Object? salesCount = null,
     Object? grossSales = null,
     Object? discounts = null,
-    Object? netSales = null,
+    Object? salesTotal = null,
     Object? returnsTotal = null,
+    Object? netSales = null,
     Object? costOfGoodsSold = null,
-    Object? grossProfit = null,
     Object? netProfit = null,
     Object? averageSale = null,
   }) {
@@ -543,21 +527,21 @@ class __$SalesReportModelCopyWithImpl<$Res>
           ? _self.discounts
           : discounts // ignore: cast_nullable_to_non_nullable
               as double,
-      netSales: null == netSales
-          ? _self.netSales
-          : netSales // ignore: cast_nullable_to_non_nullable
+      salesTotal: null == salesTotal
+          ? _self.salesTotal
+          : salesTotal // ignore: cast_nullable_to_non_nullable
               as double,
       returnsTotal: null == returnsTotal
           ? _self.returnsTotal
           : returnsTotal // ignore: cast_nullable_to_non_nullable
               as double,
+      netSales: null == netSales
+          ? _self.netSales
+          : netSales // ignore: cast_nullable_to_non_nullable
+              as double,
       costOfGoodsSold: null == costOfGoodsSold
           ? _self.costOfGoodsSold
           : costOfGoodsSold // ignore: cast_nullable_to_non_nullable
-              as double,
-      grossProfit: null == grossProfit
-          ? _self.grossProfit
-          : grossProfit // ignore: cast_nullable_to_non_nullable
               as double,
       netProfit: null == netProfit
           ? _self.netProfit

@@ -9,21 +9,21 @@ part of 'top_product_report_model.dart';
 _TopProductReportModel _$TopProductReportModelFromJson(
         Map<String, dynamic> json) =>
     _TopProductReportModel(
-      productId: (json['product_id'] as num).toInt(),
-      productName: json['product_name'] as String,
-      quantitySold: (json['quantity_sold'] as num).toDouble(),
-      salesTotal: (json['sales_total'] as num).toDouble(),
-      costTotal: (json['cost_total'] as num).toDouble(),
-      profit: (json['profit'] as num).toDouble(),
+      productId: (json['productId'] as num).toInt(),
+      productName: json['productName'] as String,
+      quantitySold: (json['quantitySold'] as num).toDouble(),
+      salesTotal: (json['salesTotal'] as num).toDouble(),
+      costTotal: (json['costTotal'] as num).toDouble(),
+      grossProfit: (json['grossProfit'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$TopProductReportModelToJson(
         _TopProductReportModel instance) =>
     <String, dynamic>{
-      'product_id': instance.productId,
-      'product_name': instance.productName,
-      'quantity_sold': instance.quantitySold,
-      'sales_total': instance.salesTotal,
-      'cost_total': instance.costTotal,
-      'profit': instance.profit,
+      'productId': instance.productId,
+      'productName': instance.productName,
+      'quantitySold': instance.quantitySold,
+      'salesTotal': instance.salesTotal,
+      'costTotal': instance.costTotal,
+      'grossProfit': instance.grossProfit,
     };

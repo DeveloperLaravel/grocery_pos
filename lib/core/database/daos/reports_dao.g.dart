@@ -7,7 +7,7 @@ mixin _$ReportsDaoMixin on DatabaseAccessor<AppDatabase> {
   $SalesTable get sales => attachedDatabase.sales;
   $SaleItemsTable get saleItems => attachedDatabase.saleItems;
   $ReturnsTable get returns => attachedDatabase.returns;
-  $ReturnItemsTable get returnItems => attachedDatabase.returnItems;
+  $ProductsTable get products => attachedDatabase.products;
   ReportsDaoManager get managers => ReportsDaoManager(this);
 }
 
@@ -20,6 +20,6 @@ class ReportsDaoManager {
       $$SaleItemsTableTableManager(_db.attachedDatabase, _db.saleItems);
   $$ReturnsTableTableManager get returns =>
       $$ReturnsTableTableManager(_db.attachedDatabase, _db.returns);
-  $$ReturnItemsTableTableManager get returnItems =>
-      $$ReturnItemsTableTableManager(_db.attachedDatabase, _db.returnItems);
+  $$ProductsTableTableManager get products =>
+      $$ProductsTableTableManager(_db.attachedDatabase, _db.products);
 }

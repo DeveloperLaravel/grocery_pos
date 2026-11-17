@@ -1,26 +1,21 @@
-
 import '../../domain/entities/top_product_report.dart';
 import '../models/top_product_report_model.dart';
 
-class TopProductReportMapper {
-  const TopProductReportMapper._();
-
-  static TopProductReport toEntity(
-    TopProductReportModel model,
-  ) {
+extension TopProductReportMapper on TopProductReportModel {
+  TopProductReport toEntity() {
     return TopProductReport(
-      productId: model.productId,
-      productName: model.productName,
-      quantitySold: model.quantitySold,
-      salesTotal: model.salesTotal,
-      costTotal: model.costTotal,
-      profit: model.profit,
+      productId: productId,
+      productName: productName,
+      quantitySold: quantitySold,
+      salesTotal: salesTotal,
+      costTotal: costTotal,
+      grossProfit: grossProfit,
     );
   }
+}
 
-  static List<TopProductReport> toEntityList(
-    List<TopProductReportModel> models,
-  ) {
-    return models.map(toEntity).toList();
+extension TopProductReportListMapper on List<TopProductReportModel> {
+  List<TopProductReport> toEntities() {
+    return map((model) => model.toEntity()).toList();
   }
 }

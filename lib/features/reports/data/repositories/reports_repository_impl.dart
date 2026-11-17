@@ -1,14 +1,13 @@
 
-import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/error/failure.dart';
-
+import '../../domain/entities/daily_sales_report.dart';
 import '../../domain/entities/sales_report.dart';
 import '../../domain/entities/top_product_report.dart';
 import '../../domain/repositories/reports_repository.dart';
 
 import '../database/reports_local_data_source.dart';
+import '../mappers/daily_sales_report_mapper.dart';
 import '../mappers/sales_report_mapper.dart';
 import '../mappers/top_product_report_mapper.dart';
 
@@ -19,66 +18,43 @@ class ReportsRepositoryImpl implements ReportsRepository {
   ReportsRepositoryImpl(this._localDataSource);
 
   @override
-  TaskEither<Failure, SalesReport> getSalesReport({
+  Future<SalesReport> getSalesReport({
     required DateTime startDate,
     required DateTime endDate,
-  }) {
-    return TaskEither.tryCatch(
-      () async {
-        if (startDate.isAfter(endDate)) {
-          throw ArgumentError(
-            'تاريخ البداية يجب ألا يكون بعد تاريخ النهاية',
-          );
-        }
-
-        final model = await _localDataSource.getSalesReport(
-          startDate: startDate,
-          endDate: endDate,
-        );
-
-        return SalesReportMapper.toEntity(model);
-      },
-      (error, stackTrace) {
-        return Failure(
-         error.toString(),
-        );
-      },
+  }) async {
+    final model = await _localDataSource.getSalesReport(
+      startDate: startDate,
+      endDate: endDate,
     );
+
+    return model.toEntity();
   }
 
   @override
-  TaskEither<Failure, List<TopProductReport>> getTopProducts({
+  Future<List<TopProductReport>> getTopProducts({
     required DateTime startDate,
     required DateTime endDate,
     int limit = 10,
-  }) {
-    return TaskEither.tryCatch(
-      () async {
-        if (startDate.isAfter(endDate)) {
-          throw ArgumentError(
-            'تاريخ البداية يجب ألا يكون بعد تاريخ النهاية',
-          );
-        }
-
-        if (limit <= 0) {
-          throw ArgumentError(
-            'عدد المنتجات يجب أن يكون أكبر من صفر',
-          );
-        }
-
-        final models = await _localDataSource.getTopProducts(
-          startDate: startDate,
-          endDate: endDate,
-          limit: limit,
-        );
-
-        return TopProductReportMapper.toEntityList(models);
-      },
-      (error, stackTrace) {
-        return Failure(
-          error.toString(),
-        );
-      },
+  }) async {
+    final models = await _localDataSource.getTopProducts(
+      startDate: startDate,
+      endDate: endDate,
+      limit: limit,
     );
+
+    return models.toEntities();
+  }
+
+  @override
+  Future<List<DailySalesReport>> getDailySales({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final models = await _localDataSource.getDailySales(
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    return models.toEntities();
   }
 }

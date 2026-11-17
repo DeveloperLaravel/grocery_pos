@@ -3,11 +3,10 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
-
 import '../tables/sales_table.dart';
 import '../tables/sale_items_table.dart';
 import '../tables/returns_table.dart';
-import '../tables/return_items_table.dart';
+import '../tables/products_table.dart';
 
 part 'reports_dao.g.dart';
 
@@ -16,7 +15,7 @@ part 'reports_dao.g.dart';
     Sales,
     SaleItems,
     Returns,
-    ReturnItems,
+    Products,
   ],
 )
 @lazySingleton
@@ -24,137 +23,144 @@ class ReportsDao extends DatabaseAccessor<AppDatabase>
     with _$ReportsDaoMixin {
   ReportsDao(super.db);
 
-  DateTime _endExclusive(DateTime date) {
-    return DateTime(
-      date.year,
-      date.month,
-      date.day + 1,
-    );
+  DateTime _startOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
+  DateTime _endExclusive(DateTime date) =>
+      _startOfDay(date).add(const Duration(days: 1));
+
+  void _validateDates(DateTime start, DateTime end) {
+    if (start.isAfter(end)) {
+      throw ArgumentError(
+        'تاريخ البداية يجب ألا يتجاوز تاريخ النهاية.',
+      );
+    }
   }
 
-  // تقرير المبيعات والأرباح لفترة محددة.
+  // =========================================
+  // Sales Summary
+  // =========================================
+
   Future<Map<String, dynamic>> getSalesReport({
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    final endExclusive = _endExclusive(endDate);
+    _validateDates(startDate, endDate);
+
+    final start = _startOfDay(startDate);
+    final end = _endExclusive(endDate);
 
     final query = customSelect(
       '''
       SELECT
-        (
-          SELECT COUNT(*)
-          FROM sales s
-          WHERE s.created_at >= ?
-            AND s.created_at < ?
-        ) AS sales_count,
+        COUNT(*) AS sales_count,
 
-        (
-          SELECT COALESCE(SUM(s.subtotal), 0)
-          FROM sales s
-          WHERE s.created_at >= ?
-            AND s.created_at < ?
-        ) AS gross_sales,
+        COALESCE(SUM(s.subtotal), 0)
+          AS gross_sales,
 
-        (
-          SELECT COALESCE(SUM(s.discount), 0)
-          FROM sales s
-          WHERE s.created_at >= ?
-            AND s.created_at < ?
-        ) AS discounts,
+        COALESCE(SUM(s.discount), 0)
+          AS discounts,
 
-        (
-          SELECT COALESCE(SUM(s.total), 0)
-          FROM sales s
-          WHERE s.created_at >= ?
-            AND s.created_at < ?
-        ) AS net_sales,
+        COALESCE(SUM(s.total), 0)
+          AS sales_total,
 
-        (
-          SELECT COALESCE(SUM(r.total), 0)
-          FROM returns r
-          WHERE r.created_at >= ?
-            AND r.created_at < ?
+        COALESCE(
+          (
+            SELECT SUM(r.total)
+            FROM returns r
+            WHERE r.created_at >= ?
+              AND r.created_at < ?
+          ), 0
         ) AS returns_total,
 
-        (
-          SELECT COALESCE(
-            SUM(si.quantity * si.cost_price),
-            0
-          )
-          FROM sale_items si
-          INNER JOIN sales s
-            ON s.id = si.sale_id
-          WHERE s.created_at >= ?
-            AND s.created_at < ?
+        COALESCE(
+          (
+            SELECT SUM(si.quantity * si.cost_price)
+            FROM sale_items si
+            INNER JOIN sales ss
+              ON ss.id = si.sale_id
+            WHERE ss.created_at >= ?
+              AND ss.created_at < ?
+          ), 0
         ) AS cost_of_goods_sold
+
+      FROM sales s
+
+      WHERE s.created_at >= ?
+        AND s.created_at < ?
       ''',
       variables: [
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
-
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
-
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
-
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
-
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
-
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
+        Variable<DateTime>(start),
+        Variable<DateTime>(end),
+        Variable<DateTime>(start),
+        Variable<DateTime>(end),
+        Variable<DateTime>(start),
+        Variable<DateTime>(end),
       ],
       readsFrom: {
         sales,
-        saleItems,
         returns,
+        saleItems,
       },
     );
 
     final row = await query.getSingle();
 
-    final salesCount = row.read<int>('sales_count');
-    final grossSales = row.read<double>('gross_sales');
-    final discounts = row.read<double>('discounts');
-    final netSales = row.read<double>('net_sales');
-    final returnsTotal = row.read<double>('returns_total');
-    final cost = row.read<double>('cost_of_goods_sold');
+    double number(String key) =>
+        (row.data[key] as num?)?.toDouble() ?? 0.0;
+
+    int integer(String key) =>
+        (row.data[key] as num?)?.toInt() ?? 0;
+
+    final count = integer('sales_count');
+    final grossSales = number('gross_sales');
+    final discounts = number('discounts');
+    final salesTotal = number('sales_total');
+    final returnsTotal = number('returns_total');
+    final cost = number('cost_of_goods_sold');
+
+    // المبيعات بعد الخصومات والمرتجعات.
+    final netSales = salesTotal - returnsTotal;
+
+    // الربح بعد خصم تكلفة البضاعة.
+    final netProfit = netSales - cost;
 
     return {
-      'sales_count': salesCount,
+      'sales_count': count,
       'gross_sales': grossSales,
       'discounts': discounts,
-      'net_sales': netSales,
+      'sales_total': salesTotal,
       'returns_total': returnsTotal,
+      'net_sales': netSales,
       'cost_of_goods_sold': cost,
-      'gross_profit': netSales - cost,
-      'net_profit': netSales - returnsTotal - cost,
+      'net_profit': netProfit,
       'average_sale':
-          salesCount == 0 ? 0.0 : netSales / salesCount,
+          count == 0 ? 0.0 : salesTotal / count,
     };
   }
 
-  // أكثر المنتجات مبيعاً خلال فترة محددة.
+  // =========================================
+  // Top Products
+  // =========================================
+
   Future<List<Map<String, dynamic>>> getTopProducts({
     required DateTime startDate,
     required DateTime endDate,
     int limit = 10,
   }) async {
+    _validateDates(startDate, endDate);
+
     if (limit <= 0) {
-      throw ArgumentError('عدد المنتجات يجب أن يكون أكبر من صفر');
+      throw ArgumentError('عدد النتائج غير صالح.');
     }
 
-    final endExclusive = _endExclusive(endDate);
+    final start = _startOfDay(startDate);
+    final end = _endExclusive(endDate);
 
     final query = customSelect(
       '''
       SELECT
         si.product_id AS product_id,
-
         si.product_name AS product_name,
 
         COALESCE(SUM(si.quantity), 0)
@@ -164,14 +170,12 @@ class ReportsDao extends DatabaseAccessor<AppDatabase>
           AS sales_total,
 
         COALESCE(
-          SUM(si.quantity * si.cost_price),
-          0
+          SUM(si.quantity * si.cost_price), 0
         ) AS cost_total,
 
         COALESCE(
-          SUM(si.total - (si.quantity * si.cost_price)),
-          0
-        ) AS profit
+          SUM(si.total - (si.quantity * si.cost_price)), 0
+        ) AS gross_profit
 
       FROM sale_items si
 
@@ -181,19 +185,15 @@ class ReportsDao extends DatabaseAccessor<AppDatabase>
       WHERE s.created_at >= ?
         AND s.created_at < ?
 
-      GROUP BY
-        si.product_id,
-        si.product_name
+      GROUP BY si.product_id, si.product_name
 
-      ORDER BY
-        quantity_sold DESC,
-        sales_total DESC
+      ORDER BY quantity_sold DESC
 
       LIMIT ?
       ''',
       variables: [
-        Variable<DateTime>(startDate),
-        Variable<DateTime>(endExclusive),
+        Variable<DateTime>(start),
+        Variable<DateTime>(end),
         Variable<int>(limit),
       ],
       readsFrom: {
@@ -206,4 +206,59 @@ class ReportsDao extends DatabaseAccessor<AppDatabase>
 
     return rows.map((row) => row.data).toList();
   }
+
+  // =========================================
+  // Daily Sales
+  // =========================================
+
+ 
+Future<List<Map<String, dynamic>>> getDailySales({
+  required DateTime startDate,
+  required DateTime endDate,
+}) async {
+  _validateDates(startDate, endDate);
+
+  final start = _startOfDay(startDate);
+  final end = _endExclusive(endDate);
+
+  final query = customSelect(
+    '''
+    SELECT
+      date(
+        created_at / 1000,
+        'unixepoch',
+        'localtime'
+      ) AS sale_date,
+
+      COUNT(*) AS sales_count,
+
+      COALESCE(SUM(total), 0) AS total_sales
+
+    FROM sales
+
+    WHERE created_at >= ?
+      AND created_at < ?
+
+    GROUP BY date(
+      created_at / 1000,
+      'unixepoch',
+      'localtime'
+    )
+
+    ORDER BY sale_date ASC
+    ''',
+    variables: [
+      Variable<DateTime>(start),
+      Variable<DateTime>(end),
+    ],
+    readsFrom: {sales},
+  );
+
+  final rows = await query.get();
+
+  return rows
+      .map((row) => row.data)
+      .toList(growable: false);
+}
+
 }

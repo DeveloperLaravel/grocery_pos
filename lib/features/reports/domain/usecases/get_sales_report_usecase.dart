@@ -1,23 +1,20 @@
 
 import 'package:injectable/injectable.dart';
-import 'package:fpdart/fpdart.dart';
-
-import '../../../../core/error/failure.dart';
 
 import '../entities/sales_report.dart';
 import '../repositories/reports_repository.dart';
 
 @lazySingleton
 class GetSalesReportUseCase {
-  final ReportsRepository _repository;
+  final ReportsRepository repository;
 
-  GetSalesReportUseCase(this._repository);
+  GetSalesReportUseCase(this.repository);
 
-  TaskEither<Failure, SalesReport> call({
+  Future<SalesReport> call({
     required DateTime startDate,
     required DateTime endDate,
   }) {
-    return _repository.getSalesReport(
+    return repository.getSalesReport(
       startDate: startDate,
       endDate: endDate,
     );

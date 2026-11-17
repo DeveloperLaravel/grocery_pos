@@ -14,17 +14,12 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$TopProductReportModel {
-  @JsonKey(name: 'product_id')
   int get productId;
-  @JsonKey(name: 'product_name')
   String get productName;
-  @JsonKey(name: 'quantity_sold')
   double get quantitySold;
-  @JsonKey(name: 'sales_total')
   double get salesTotal;
-  @JsonKey(name: 'cost_total')
   double get costTotal;
-  double get profit;
+  double get grossProfit;
 
   /// Create a copy of TopProductReportModel
   /// with the given fields replaced by the non-null parameter values.
@@ -52,17 +47,18 @@ mixin _$TopProductReportModel {
                 other.salesTotal == salesTotal) &&
             (identical(other.costTotal, costTotal) ||
                 other.costTotal == costTotal) &&
-            (identical(other.profit, profit) || other.profit == profit));
+            (identical(other.grossProfit, grossProfit) ||
+                other.grossProfit == grossProfit));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, productId, productName,
-      quantitySold, salesTotal, costTotal, profit);
+      quantitySold, salesTotal, costTotal, grossProfit);
 
   @override
   String toString() {
-    return 'TopProductReportModel(productId: $productId, productName: $productName, quantitySold: $quantitySold, salesTotal: $salesTotal, costTotal: $costTotal, profit: $profit)';
+    return 'TopProductReportModel(productId: $productId, productName: $productName, quantitySold: $quantitySold, salesTotal: $salesTotal, costTotal: $costTotal, grossProfit: $grossProfit)';
   }
 }
 
@@ -73,12 +69,12 @@ abstract mixin class $TopProductReportModelCopyWith<$Res> {
       _$TopProductReportModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'product_id') int productId,
-      @JsonKey(name: 'product_name') String productName,
-      @JsonKey(name: 'quantity_sold') double quantitySold,
-      @JsonKey(name: 'sales_total') double salesTotal,
-      @JsonKey(name: 'cost_total') double costTotal,
-      double profit});
+      {int productId,
+      String productName,
+      double quantitySold,
+      double salesTotal,
+      double costTotal,
+      double grossProfit});
 }
 
 /// @nodoc
@@ -99,7 +95,7 @@ class _$TopProductReportModelCopyWithImpl<$Res>
     Object? quantitySold = null,
     Object? salesTotal = null,
     Object? costTotal = null,
-    Object? profit = null,
+    Object? grossProfit = null,
   }) {
     return _then(_self.copyWith(
       productId: null == productId
@@ -122,9 +118,9 @@ class _$TopProductReportModelCopyWithImpl<$Res>
           ? _self.costTotal
           : costTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      profit: null == profit
-          ? _self.profit
-          : profit // ignore: cast_nullable_to_non_nullable
+      grossProfit: null == grossProfit
+          ? _self.grossProfit
+          : grossProfit // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
@@ -223,13 +219,8 @@ extension TopProductReportModelPatterns on TopProductReportModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            @JsonKey(name: 'product_id') int productId,
-            @JsonKey(name: 'product_name') String productName,
-            @JsonKey(name: 'quantity_sold') double quantitySold,
-            @JsonKey(name: 'sales_total') double salesTotal,
-            @JsonKey(name: 'cost_total') double costTotal,
-            double profit)?
+    TResult Function(int productId, String productName, double quantitySold,
+            double salesTotal, double costTotal, double grossProfit)?
         $default, {
     required TResult orElse(),
   }) {
@@ -237,7 +228,7 @@ extension TopProductReportModelPatterns on TopProductReportModel {
     switch (_that) {
       case _TopProductReportModel() when $default != null:
         return $default(_that.productId, _that.productName, _that.quantitySold,
-            _that.salesTotal, _that.costTotal, _that.profit);
+            _that.salesTotal, _that.costTotal, _that.grossProfit);
       case _:
         return orElse();
     }
@@ -258,20 +249,15 @@ extension TopProductReportModelPatterns on TopProductReportModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(
-            @JsonKey(name: 'product_id') int productId,
-            @JsonKey(name: 'product_name') String productName,
-            @JsonKey(name: 'quantity_sold') double quantitySold,
-            @JsonKey(name: 'sales_total') double salesTotal,
-            @JsonKey(name: 'cost_total') double costTotal,
-            double profit)
+    TResult Function(int productId, String productName, double quantitySold,
+            double salesTotal, double costTotal, double grossProfit)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _TopProductReportModel():
         return $default(_that.productId, _that.productName, _that.quantitySold,
-            _that.salesTotal, _that.costTotal, _that.profit);
+            _that.salesTotal, _that.costTotal, _that.grossProfit);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -291,20 +277,15 @@ extension TopProductReportModelPatterns on TopProductReportModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            @JsonKey(name: 'product_id') int productId,
-            @JsonKey(name: 'product_name') String productName,
-            @JsonKey(name: 'quantity_sold') double quantitySold,
-            @JsonKey(name: 'sales_total') double salesTotal,
-            @JsonKey(name: 'cost_total') double costTotal,
-            double profit)?
+    TResult? Function(int productId, String productName, double quantitySold,
+            double salesTotal, double costTotal, double grossProfit)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _TopProductReportModel() when $default != null:
         return $default(_that.productId, _that.productName, _that.quantitySold,
-            _that.salesTotal, _that.costTotal, _that.profit);
+            _that.salesTotal, _that.costTotal, _that.grossProfit);
       case _:
         return null;
     }
@@ -315,32 +296,27 @@ extension TopProductReportModelPatterns on TopProductReportModel {
 @JsonSerializable()
 class _TopProductReportModel implements TopProductReportModel {
   const _TopProductReportModel(
-      {@JsonKey(name: 'product_id') required this.productId,
-      @JsonKey(name: 'product_name') required this.productName,
-      @JsonKey(name: 'quantity_sold') required this.quantitySold,
-      @JsonKey(name: 'sales_total') required this.salesTotal,
-      @JsonKey(name: 'cost_total') required this.costTotal,
-      required this.profit});
+      {required this.productId,
+      required this.productName,
+      required this.quantitySold,
+      required this.salesTotal,
+      required this.costTotal,
+      required this.grossProfit});
   factory _TopProductReportModel.fromJson(Map<String, dynamic> json) =>
       _$TopProductReportModelFromJson(json);
 
   @override
-  @JsonKey(name: 'product_id')
   final int productId;
   @override
-  @JsonKey(name: 'product_name')
   final String productName;
   @override
-  @JsonKey(name: 'quantity_sold')
   final double quantitySold;
   @override
-  @JsonKey(name: 'sales_total')
   final double salesTotal;
   @override
-  @JsonKey(name: 'cost_total')
   final double costTotal;
   @override
-  final double profit;
+  final double grossProfit;
 
   /// Create a copy of TopProductReportModel
   /// with the given fields replaced by the non-null parameter values.
@@ -373,17 +349,18 @@ class _TopProductReportModel implements TopProductReportModel {
                 other.salesTotal == salesTotal) &&
             (identical(other.costTotal, costTotal) ||
                 other.costTotal == costTotal) &&
-            (identical(other.profit, profit) || other.profit == profit));
+            (identical(other.grossProfit, grossProfit) ||
+                other.grossProfit == grossProfit));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, productId, productName,
-      quantitySold, salesTotal, costTotal, profit);
+      quantitySold, salesTotal, costTotal, grossProfit);
 
   @override
   String toString() {
-    return 'TopProductReportModel(productId: $productId, productName: $productName, quantitySold: $quantitySold, salesTotal: $salesTotal, costTotal: $costTotal, profit: $profit)';
+    return 'TopProductReportModel(productId: $productId, productName: $productName, quantitySold: $quantitySold, salesTotal: $salesTotal, costTotal: $costTotal, grossProfit: $grossProfit)';
   }
 }
 
@@ -396,12 +373,12 @@ abstract mixin class _$TopProductReportModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'product_id') int productId,
-      @JsonKey(name: 'product_name') String productName,
-      @JsonKey(name: 'quantity_sold') double quantitySold,
-      @JsonKey(name: 'sales_total') double salesTotal,
-      @JsonKey(name: 'cost_total') double costTotal,
-      double profit});
+      {int productId,
+      String productName,
+      double quantitySold,
+      double salesTotal,
+      double costTotal,
+      double grossProfit});
 }
 
 /// @nodoc
@@ -422,7 +399,7 @@ class __$TopProductReportModelCopyWithImpl<$Res>
     Object? quantitySold = null,
     Object? salesTotal = null,
     Object? costTotal = null,
-    Object? profit = null,
+    Object? grossProfit = null,
   }) {
     return _then(_TopProductReportModel(
       productId: null == productId
@@ -445,9 +422,9 @@ class __$TopProductReportModelCopyWithImpl<$Res>
           ? _self.costTotal
           : costTotal // ignore: cast_nullable_to_non_nullable
               as double,
-      profit: null == profit
-          ? _self.profit
-          : profit // ignore: cast_nullable_to_non_nullable
+      grossProfit: null == grossProfit
+          ? _self.grossProfit
+          : grossProfit // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }

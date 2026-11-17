@@ -113,10 +113,13 @@ import '../../features/reports/data/repositories/reports_repository_impl.dart'
     as _i227;
 import '../../features/reports/domain/repositories/reports_repository.dart'
     as _i808;
+import '../../features/reports/domain/usecases/get_daily_sales_usecase.dart'
+    as _i207;
 import '../../features/reports/domain/usecases/get_sales_report_usecase.dart'
     as _i505;
 import '../../features/reports/domain/usecases/get_top_products_usecase.dart'
     as _i61;
+import '../../features/reports/presentation/cubit/reports_cubit.dart' as _i671;
 import '../../features/sales/data/database/sales_local_data_source.dart'
     as _i1035;
 import '../../features/sales/data/database/sales_local_data_source_impl.dart'
@@ -201,10 +204,10 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i44.LocalBackupDataSource>(),
           gh<_i982.AppDatabase>(),
         ));
-    gh.lazySingleton<_i637.ReportsLocalDataSource>(
-        () => _i430.ReportsLocalDataSourceImpl(gh<_i534.ReportsDao>()));
     gh.factory<_i202.HomeBloc>(
         () => _i202.HomeBloc(gh<_i871.GetHomeDashboardUseCase>()));
+    gh.lazySingleton<_i637.ReportsLocalDataSource>(
+        () => _i430.ReportsLocalDataSourceImpl(gh<_i534.ReportsDao>()));
     gh.lazySingleton<_i740.PosLocalDataSource>(
         () => _i679.PosLocalDataSourceImpl(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i434.SalesRepository>(
@@ -213,6 +216,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i227.ReportsRepositoryImpl(gh<_i637.ReportsLocalDataSource>()));
     gh.lazySingleton<_i963.ProductRepository>(
         () => _i764.ProductRepositoryImpl(gh<_i351.ProductLocalDataSource>()));
+    gh.lazySingleton<_i207.GetDailySalesUseCase>(
+        () => _i207.GetDailySalesUseCase(gh<_i808.ReportsRepository>()));
     gh.lazySingleton<_i505.GetSalesReportUseCase>(
         () => _i505.GetSalesReportUseCase(gh<_i808.ReportsRepository>()));
     gh.lazySingleton<_i61.GetTopProductsUseCase>(
@@ -233,6 +238,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i105.DeleteBackup(gh<_i979.BackupRepository>()));
     gh.lazySingleton<_i422.InventoryRepository>(() =>
         _i572.InventoryRepositoryImpl(gh<_i814.InventoryLocalDataSource>()));
+    gh.factory<_i671.ReportsCubit>(() => _i671.ReportsCubit(
+          gh<_i505.GetSalesReportUseCase>(),
+          gh<_i61.GetTopProductsUseCase>(),
+          gh<_i207.GetDailySalesUseCase>(),
+        ));
     gh.lazySingleton<_i363.AddProductUseCase>(
         () => _i363.AddProductUseCase(gh<_i963.ProductRepository>()));
     gh.lazySingleton<_i290.DeleteProductUseCase>(

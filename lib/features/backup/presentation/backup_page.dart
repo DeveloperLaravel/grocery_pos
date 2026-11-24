@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/di/injection.dart';
+import '../../../core/database/di/injection.dart';
 import 'bloc/backup_bloc.dart';
 import 'bloc/backup_event.dart';
 import 'bloc/backup_state.dart';

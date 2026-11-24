@@ -10,7 +10,7 @@ class MovementCard extends StatelessWidget {
     this.productName,
   });
 
-  final StockMovement movement;
+  final StockMovementEntity movement;
   final String? productName;
 
   @override

@@ -1,73 +1,61 @@
 
 class Product {
-  // Product ID
-  final int? id;
-
-  // Product Information
+  final int id;
   final String name;
-  final String barcode;
+  final String? description;
 
-  // Pricing
+  final int? categoryId;
+  final int? brandId;
+
+  final String? barcode;
+
+  final String productType;
+  final String baseUnit;
+  final bool allowDecimalQuantity;
+
   final double costPrice;
   final double salePrice;
 
-  // Inventory
   final double quantity;
   final double minStock;
 
-  // Timestamps
+  final String? imagePath;
+  final String? imageName;
+  final DateTime? imageUpdatedAt;
+
+  final bool isActive;
+
   final DateTime createdAt;
   final DateTime updatedAt;
 
   const Product({
-    this.id,
+    required this.id,
     required this.name,
-    required this.barcode,
-    this.costPrice = 0.0,
+    this.description,
+    this.categoryId,
+    this.brandId,
+    this.barcode,
+    required this.productType,
+    required this.baseUnit,
+    required this.allowDecimalQuantity,
+    required this.costPrice,
     required this.salePrice,
-    this.quantity = 0.0,
-    this.minStock = 5.0,
+    required this.quantity,
+    required this.minStock,
+    this.imagePath,
+    this.imageName,
+    this.imageUpdatedAt,
+    required this.isActive,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  // Copy Product with updated values
-  Product copyWith({
-    int? id,
-    String? name,
-    String? barcode,
-    double? costPrice,
-    double? salePrice,
-    double? quantity,
-    double? minStock,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return Product(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      barcode: barcode ?? this.barcode,
-      costPrice: costPrice ?? this.costPrice,
-      salePrice: salePrice ?? this.salePrice,
-      quantity: quantity ?? this.quantity,
-      minStock: minStock ?? this.minStock,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
-
-  // Calculate profit per unit
-  double get profit => salePrice - costPrice;
-
-  // Calculate total inventory value
-  double get totalCostValue => quantity * costPrice;
-
-  // Calculate total selling value
-  double get totalSaleValue => quantity * salePrice;
-
-  // Check low stock
   bool get isLowStock => quantity <= minStock;
 
-  // Check available stock
-  bool get isAvailable => quantity > 0;
+  bool get hasBarcode =>
+      barcode != null && barcode!.trim().isNotEmpty;
+
+  double get stockValue => quantity * costPrice;
+
+  double get potentialSalesValue => quantity * salePrice;
 }

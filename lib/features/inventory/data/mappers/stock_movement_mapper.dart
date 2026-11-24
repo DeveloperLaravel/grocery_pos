@@ -19,8 +19,8 @@ extension StockMovementDbMapper on StockMovementDb {
 }
 
 extension StockMovementModelMapper on StockMovementModel {
-  StockMovement toEntity() {
-    return StockMovement(
+  StockMovementEntity toEntity() {
+    return StockMovementEntity(
       id: id,
       productId: productId,
       type: type,

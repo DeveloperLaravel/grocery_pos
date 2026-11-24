@@ -16,7 +16,16 @@ class AppNavigation {
   static void pos(BuildContext context) {
     context.goNamed(AppRoutes.pos);
   }
-
+static Future<String?> scanProductBarcode(
+  BuildContext context,
+) {
+  return context.pushNamed<String>(
+    'productBarcodeScanner',
+  );
+}
+static void brands(BuildContext context) {
+  context.goNamed(AppRoutes.brands);
+}
   static void products(BuildContext context) {
     context.goNamed(AppRoutes.products);
   }

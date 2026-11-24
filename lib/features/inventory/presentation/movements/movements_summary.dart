@@ -9,7 +9,7 @@ class MovementsSummary extends StatelessWidget {
     required this.movements,
   });
 
-  final List<StockMovement> movements;
+  final List<StockMovementEntity> movements;
 
   @override
   Widget build(BuildContext context) {

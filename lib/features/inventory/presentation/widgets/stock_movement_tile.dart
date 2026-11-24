@@ -9,7 +9,7 @@ class StockMovementTile extends StatelessWidget {
     required this.movement,
   });
 
-  final StockMovement movement;
+  final StockMovementEntity movement;
 
   @override
   Widget build(BuildContext context) {

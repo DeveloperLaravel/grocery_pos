@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/home_dashboard.dart';
+import '../../domain/entities/recent_sale.dart';
 
 class RecentSales extends StatelessWidget {
-  final List<HomeSale> sales;
+  final List<RecentSale> sales;
 
   const RecentSales({
     super.key,
@@ -28,7 +29,7 @@ class RecentSales extends StatelessWidget {
 }
 
 class _SaleItem extends StatelessWidget {
-  final HomeSale sale;
+  final RecentSale sale;
 
   const _SaleItem({
     required this.sale,

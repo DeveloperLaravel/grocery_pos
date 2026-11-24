@@ -1,0 +1,15 @@
+
+import 'package:injectable/injectable.dart';
+
+import '../../repositories/product_repository.dart';
+
+@lazySingleton
+class DeleteProductUseCase {
+  final ProductRepository repository;
+
+  DeleteProductUseCase(this.repository);
+
+  Future<bool> call(int id) {
+    return repository.deleteProduct(id);
+  }
+}

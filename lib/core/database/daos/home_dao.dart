@@ -1,10 +1,9 @@
 
 import 'package:drift/drift.dart';
-import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
-import '../tables/products_table.dart';
-import '../tables/sales_table.dart';
+import '../tables/master_data/products/products_table.dart';
+import '../tables/sales_inventory/sales/sales_table.dart';
 
 part 'home_dao.g.dart';
 
@@ -14,7 +13,6 @@ part 'home_dao.g.dart';
     Sales,
   ],
 )
-@lazySingleton
 class HomeDao extends DatabaseAccessor<AppDatabase>
     with _$HomeDaoMixin {
   HomeDao(super.db);
@@ -59,7 +57,7 @@ class HomeDao extends DatabaseAccessor<AppDatabase>
     final start = DateTime(now.year, now.month, now.day);
     final end = start.add(const Duration(days: 1));
 
-    final totalExpression = sales.total.sum();
+    final totalExpression = sales.rowId.sum();
 
     final query = selectOnly(sales)
       ..addColumns([totalExpression])

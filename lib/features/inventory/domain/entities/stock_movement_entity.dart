@@ -1,4 +1,4 @@
-class StockMovement {
+class StockMovementEntity {
   final int id;
   final int productId;
   final String type;
@@ -7,7 +7,7 @@ class StockMovement {
   final String? note;
   final DateTime createdAt;
 
-  const StockMovement({
+  const StockMovementEntity({
     required this.id,
     required this.productId,
     required this.type,

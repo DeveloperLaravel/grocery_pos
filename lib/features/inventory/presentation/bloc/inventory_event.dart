@@ -46,7 +46,7 @@ sealed class InventoryEvent with _$InventoryEvent {
   ) = LowStockChanged;
 
   const factory InventoryEvent.movementsChanged(
-    List<StockMovement> movements,
+    List<StockMovementEntity> movements,
   ) = StockMovementsChanged;
 
   const factory InventoryEvent.streamFailed(

@@ -13,7 +13,7 @@ class GetStockMovementsUseCase {
 
   const GetStockMovementsUseCase(this.repository);
 
-  TaskEither<Failure, List<StockMovement>> call({
+  TaskEither<Failure, List<StockMovementEntity>> call({
     int? productId,
     int limit = 50,
   }) {

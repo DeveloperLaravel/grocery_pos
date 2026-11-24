@@ -31,4 +31,5 @@ class AppConfig {
 
   // Database
   static const bool enableForeignKeys = true;
+  
 }

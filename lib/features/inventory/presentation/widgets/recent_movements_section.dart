@@ -11,7 +11,7 @@ class RecentMovementsSection extends StatelessWidget {
     required this.onViewAll,
   });
 
-  final List<StockMovement> movements;
+  final List<StockMovementEntity> movements;
   final VoidCallback onViewAll;
 
   @override

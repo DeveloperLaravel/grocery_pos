@@ -41,7 +41,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   StreamSubscription<List<InventoryItem>>? _inventorySub;
   StreamSubscription<InventorySummary>? _summarySub;
   StreamSubscription<List<InventoryItem>>? _lowStockSub;
-  StreamSubscription<List<StockMovement>>? _movementsSub;
+  StreamSubscription<List<StockMovementEntity>>? _movementsSub;
 
   InventoryBloc(
     this._getInventory,

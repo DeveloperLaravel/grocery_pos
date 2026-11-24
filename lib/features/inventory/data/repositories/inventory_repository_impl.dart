@@ -3,15 +3,14 @@ import 'package:fpdart/fpdart.dart';
 import 'package:grocery_pos/core/error/failure.dart';
 import 'package:injectable/injectable.dart';
 
-
 import '../../domain/entities/inventory_item.dart';
 import '../../domain/entities/inventory_summary.dart';
-
 import '../../domain/entities/stock_movement_entity.dart';
 import '../../domain/repositories/inventory_repository.dart';
-
 import '../database/inventory_local_data_source.dart';
 import '../mappers/inventory_mapper.dart';
+
+
 
 @LazySingleton(as: InventoryRepository)
 class InventoryRepositoryImpl implements InventoryRepository {
@@ -115,7 +114,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   // =========================================
 
   @override
-  TaskEither<Failure, List<StockMovement>> getStockMovements({
+  TaskEither<Failure, List<StockMovementEntity>> getStockMovements({
     int? productId,
     int limit = 50,
   }) {
@@ -139,7 +138,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   // =========================================
 
   @override
-  Stream<List<StockMovement>> watchStockMovements({
+  Stream<List<StockMovementEntity>> watchStockMovements({
     int? productId,
     int limit = 50,
   }) {

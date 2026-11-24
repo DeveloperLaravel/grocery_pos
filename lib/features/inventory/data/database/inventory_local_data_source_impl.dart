@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/database/daos/products_dao.dart';
+import '../../../../core/database/daos/master_data/products/products_dao.dart';
 import '../../../../core/database/daos/stock_dao.dart';
 
 import '../models/inventory_item_model.dart';
@@ -13,7 +13,7 @@ import '../models/stock_movement_model.dart';
 import '../mappers/inventory_mapper.dart';
 import 'inventory_local_data_source.dart';
 
-@LazySingleton(as: InventoryLocalDataSource)
+// @LazySingleton(as: InventoryLocalDataSource)
 class InventoryLocalDataSourceImpl
     implements InventoryLocalDataSource {
   final AppDatabase _database;
@@ -36,7 +36,7 @@ class InventoryLocalDataSourceImpl
 
     return products
         .map((product) => product.toModel())
-        .toList();
+        .toList(growable: false);
   }
 
   @override
@@ -44,7 +44,7 @@ class InventoryLocalDataSourceImpl
     return _productsDao.watchAllProducts().map(
       (products) => products
           .map((product) => product.toModel())
-          .toList(),
+          .toList(growable: false),
     );
   }
 
@@ -76,7 +76,7 @@ class InventoryLocalDataSourceImpl
 
     return products
         .map((product) => product.toModel())
-        .toList();
+        .toList(growable: false);
   }
 
   @override
@@ -84,7 +84,7 @@ class InventoryLocalDataSourceImpl
     return _stockDao.watchLowStockProducts().map(
       (products) => products
           .map((product) => product.toModel())
-          .toList(),
+          .toList(growable: false),
     );
   }
 
@@ -97,7 +97,10 @@ class InventoryLocalDataSourceImpl
     int? productId,
     int limit = 50,
   }) async {
-    _validateLimit(limit);
+    _validateMovementQuery(
+      productId: productId,
+      limit: limit,
+    );
 
     final movements = await _stockDao.getStockMovements(
       productId: productId,
@@ -106,7 +109,7 @@ class InventoryLocalDataSourceImpl
 
     return movements
         .map((movement) => movement.toModel())
-        .toList();
+        .toList(growable: false);
   }
 
   @override
@@ -114,7 +117,10 @@ class InventoryLocalDataSourceImpl
     int? productId,
     int limit = 50,
   }) {
-    _validateLimit(limit);
+    _validateMovementQuery(
+      productId: productId,
+      limit: limit,
+    );
 
     return _stockDao
         .watchStockMovements(
@@ -124,7 +130,7 @@ class InventoryLocalDataSourceImpl
         .map(
           (movements) => movements
               .map((movement) => movement.toModel())
-              .toList(),
+              .toList(growable: false),
         );
   }
 
@@ -147,15 +153,15 @@ class InventoryLocalDataSourceImpl
     );
 
     await _database.transaction(() async {
-      // 1. Get product
+      // 1. Get product.
       final product = await _productsDao.getProductById(productId);
 
       if (product == null) {
         throw StateError('المنتج غير موجود');
       }
 
-      // 2. Determine movement direction
-      final isIncoming = type == 'in' || type == 'return';
+      // 2. Determine movement direction.
+      final isIncoming = _isIncoming(type);
 
       final currentQuantity = product.quantity;
 
@@ -163,7 +169,7 @@ class InventoryLocalDataSourceImpl
           ? currentQuantity + quantity
           : currentQuantity - quantity;
 
-      // 3. Prevent negative stock
+      // 3. Prevent negative stock.
       if (newQuantity < 0) {
         throw StateError(
           'الكمية المطلوبة أكبر من الكمية المتوفرة في المخزون',
@@ -172,30 +178,39 @@ class InventoryLocalDataSourceImpl
 
       final now = DateTime.now();
 
-      // 4. Update product quantity
-      final updated = await _productsDao.updateProduct(
-        productId,
-        ProductsCompanion(
-          quantity: Value(newQuantity),
-          updatedAt: Value(now),
-        ),
-      );
+     final updated = await _productsDao.updateProductById(
+  productId,
+  ProductsCompanion(
+    quantity: Value(newQuantity),
+    updatedAt: Value(now),
+  ),
+);
 
-      if (!updated) {
-        throw StateError('تعذر تحديث كمية المنتج');
-      }
+if (!updated) {
+  throw StateError(
+    'تعذر تحديث مخزون المنتج رقم $productId',
+  );
+}
 
-      // 5. Insert stock movement
-      await _stockDao.insertMovement(
-        StockMovementsCompanion.insert(
-          productId: productId,
-          type: type,
-          quantity: quantity,
-          reference: Value(reference),
-          note: Value(note),
-        ),
-      );
+      // 5. Record stock movement.
+      // await _stockDao.insertMovement(
+      //   StockMovementsCompanion.insert(
+      //     productId: productId,
+      //     type: type,
+      //     quantity: quantity,
+      //     reference: Value(reference),
+      //     note: Value(note),
+      //   ),
+      // );
     });
+  }
+
+  // =========================================
+  // Movement Direction
+  // =========================================
+
+  bool _isIncoming(String type) {
+    return type == 'in' || type == 'return';
   }
 
   // =========================================
@@ -239,7 +254,18 @@ class InventoryLocalDataSourceImpl
     }
   }
 
-  void _validateLimit(int limit) {
+  void _validateMovementQuery({
+    required int? productId,
+    required int limit,
+  }) {
+    if (productId != null && productId <= 0) {
+      throw ArgumentError.value(
+        productId,
+        'productId',
+        'معرف المنتج غير صالح',
+      );
+    }
+
     if (limit <= 0) {
       throw ArgumentError.value(
         limit,

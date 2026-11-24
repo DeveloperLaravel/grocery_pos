@@ -36,12 +36,12 @@ abstract class InventoryRepository {
   // Stock Movements
   // =========================================
 
-  TaskEither<Failure, List<StockMovement>> getStockMovements({
+  TaskEither<Failure, List<StockMovementEntity>> getStockMovements({
     int? productId,
     int limit = 50,
   });
 
-  Stream<List<StockMovement>> watchStockMovements({
+  Stream<List<StockMovementEntity>> watchStockMovements({
     int? productId,
     int limit = 50,
   });

@@ -25,4 +25,8 @@ class AppRoutes {
   // Other
   static const reports = 'reports';
   static const settings = 'settings';
+  static const brands = 'brands';
+  static const categories = 'categories';
+static const categoryAdd = 'categoryAdd';
+static const categoryEdit = 'categoryEdit';
 }

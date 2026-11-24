@@ -1,64 +1,150 @@
 
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/database/app_database.dart';
-import '../../../../core/database/daos/products_dao.dart';
 
+import '../../../../core/database/daos/master_data/products/product_barcodes_dao.dart';
+import '../../../../core/database/daos/master_data/products/products_dao.dart';
+import '../mapper/product_mapper.dart';
+import '../models/product_model.dart';
 import 'product_local_data_source.dart';
 
 @LazySingleton(as: ProductLocalDataSource)
 class ProductLocalDataSourceImpl
     implements ProductLocalDataSource {
-  final ProductsDao _productsDao;
+  final ProductsDao productsDao;
+  final ProductBarcodesDao barcodesDao;
 
-  ProductLocalDataSourceImpl(
-    this._productsDao,
-  );
+  ProductLocalDataSourceImpl({
+    required this.productsDao,
+    required this.barcodesDao,
+  });
 
-  // Get all products
+  // ==========================================
+  // Get All Products
+  // ==========================================
+
   @override
-  Future<List<ProductDb>> getAllProducts() {
-    return _productsDao.getAllProducts();
+  Future<List<ProductModel>> getAllProducts() async {
+    final rows = await productsDao.getAllProducts();
+
+    return rows.map(ProductMapper.fromDb).toList();
   }
 
-  // Watch products in real time
+  // ==========================================
+  // Watch All Products
+  // ==========================================
+
   @override
-  Stream<List<ProductDb>> watchAllProducts() {
-    return _productsDao.watchAllProducts();
+  Stream<List<ProductModel>> watchAllProducts() {
+    return productsDao.watchAllProducts().map(
+      (rows) => rows.map(ProductMapper.fromDb).toList(),
+    );
   }
 
-  // Get product by ID
+  // ==========================================
+  // Get Product By ID
+  // ==========================================
+
   @override
-  Future<ProductDb?> getProductById(int id) {
-    return _productsDao.getProductById(id);
+  Future<ProductModel?> getProductById(int id) async {
+    if (id <= 0) {
+      return null;
+    }
+
+    final row = await productsDao.getProductById(id);
+
+    if (row == null) {
+      return null;
+    }
+
+    return ProductMapper.fromDb(row);
   }
 
-  // Get product by barcode
+  // ==========================================
+  // Get Product By Barcode
+  // ==========================================
+
   @override
-  Future<ProductDb?> getProductByBarcode(String barcode) {
-    return _productsDao.findProductByBarcode(barcode);
+  Future<ProductModel?> getProductByBarcode(
+    String barcode,
+  ) async {
+    final value = barcode.trim();
+
+    if (value.isEmpty) {
+      return null;
+    }
+
+    final barcodeRow = await barcodesDao.getByBarcode(value);
+
+    if (barcodeRow == null || !barcodeRow.isActive) {
+      return null;
+    }
+
+    final productRow = await productsDao.getProductById(
+      barcodeRow.productId,
+    );
+
+    if (productRow == null || !productRow.isActive) {
+      return null;
+    }
+
+    return ProductMapper.fromDb(productRow);
   }
 
-  // Insert product
+  // ==========================================
+  // Search Products
+  // ==========================================
+
   @override
-  Future<int> insertProduct(
-    ProductsCompanion product,
-  ) {
-    return _productsDao.insertProduct(product);
+  Future<List<ProductModel>> searchProducts(
+    String query,
+  ) async {
+    final rows = await productsDao.searchProducts(query);
+
+    return rows.map(ProductMapper.fromDb).toList();
   }
 
-  // Update product
+  // ==========================================
+  // Create Product
+  // ==========================================
+
   @override
-  Future<bool> updateProduct(
-    int id,
-    ProductsCompanion product,
-  ) {
-    return _productsDao.updateProduct(id, product);
+  Future<int> createProduct(ProductModel model) {
+    return productsDao.addProduct(
+      ProductMapper.toCreateCompanionFromModel(model),
+    );
   }
 
-  // Delete product
+  // ==========================================
+  // Update Product
+  // ==========================================
+
+  @override
+  Future<bool> updateProduct(ProductModel model) {
+    if (model.id <= 0) {
+      throw ArgumentError(
+        'معرف المنتج غير صالح.',
+      );
+    }
+
+    return productsDao.updateProductById(
+      model.id,
+      ProductMapper.toUpdateCompanionFromModel(model),
+    );
+  }
+
+  // ==========================================
+  // Delete Product
+  // ==========================================
+
   @override
   Future<bool> deleteProduct(int id) {
-    return _productsDao.deleteProductById(id);
+    if (id <= 0) {
+      throw ArgumentError(
+        'معرف المنتج غير صالح.',
+      );
+    }
+
+    return productsDao.deleteProduct(id);
   }
 }

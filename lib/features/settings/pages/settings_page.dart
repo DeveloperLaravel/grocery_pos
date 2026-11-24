@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/di/injection.dart';
+import '../../../core/database/di/injection.dart';
 import '../../../../core/settings/app_settings_controller.dart';
 
 class SettingsPage extends StatelessWidget {

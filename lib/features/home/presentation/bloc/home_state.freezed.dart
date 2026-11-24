@@ -321,8 +321,6 @@ abstract mixin class $HomeLoadedCopyWith<$Res>
       _$HomeLoadedCopyWithImpl;
   @useResult
   $Res call({HomeDashboard dashboard});
-
-  $HomeDashboardCopyWith<$Res> get dashboard;
 }
 
 /// @nodoc
@@ -344,16 +342,6 @@ class _$HomeLoadedCopyWithImpl<$Res> implements $HomeLoadedCopyWith<$Res> {
           : dashboard // ignore: cast_nullable_to_non_nullable
               as HomeDashboard,
     ));
-  }
-
-  /// Create a copy of HomeState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $HomeDashboardCopyWith<$Res> get dashboard {
-    return $HomeDashboardCopyWith<$Res>(_self.dashboard, (value) {
-      return _then(_self.copyWith(dashboard: value));
-    });
   }
 }
 

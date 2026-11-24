@@ -2,96 +2,261 @@
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/product.dart';
+import '../../domain/entities/product_unit.dart';
+import '../../domain/entities/product_barcode.dart';
+import '../../domain/entities/product_image.dart';
+
 import '../../domain/repositories/product_repository.dart';
 
 import '../database/product_local_data_source.dart';
+import '../database/product_units_local_data_source.dart';
+import '../database/product_barcodes_local_data_source.dart';
+import '../database/product_images_local_data_source.dart';
+
 import '../mapper/product_mapper.dart';
-import '../models/product_model.dart';
+import '../mapper/product_unit_mapper.dart';
+import '../mapper/product_barcode_mapper.dart';
+import '../mapper/product_image_mapper.dart';
 
 @LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
-  final ProductLocalDataSource _localDataSource;
+  final ProductLocalDataSource productDataSource;
+  final ProductUnitsLocalDataSource unitsDataSource;
+  final ProductBarcodesLocalDataSource barcodesDataSource;
+  final ProductImagesLocalDataSource imagesDataSource;
 
-  ProductRepositoryImpl(this._localDataSource);
+  ProductRepositoryImpl({
+    required this.productDataSource,
+    required this.unitsDataSource,
+    required this.barcodesDataSource,
+    required this.imagesDataSource,
+  });
 
-  // Get all products
+  // =========================================================
+  // Products
+  // =========================================================
+
   @override
   Future<List<Product>> getAllProducts() async {
-    final products = await _localDataSource.getAllProducts();
+    final models = await productDataSource.getAllProducts();
 
-    return products
-        .map((product) => ProductModel.fromDb(product).toEntity())
-        .toList();
+    return models
+        .map(ProductMapper.toEntity)
+        .toList(growable: false);
   }
 
-  // Watch products in real time
   @override
   Stream<List<Product>> watchAllProducts() {
-    return _localDataSource.watchAllProducts().map(
-      (products) => products
-          .map((product) => ProductModel.fromDb(product).toEntity())
-          .toList(),
+    return productDataSource.watchAllProducts().map(
+      (models) => models
+          .map(ProductMapper.toEntity)
+          .toList(growable: false),
     );
   }
 
-  // Get product by ID
   @override
   Future<Product?> getProductById(int id) async {
-    final product = await _localDataSource.getProductById(id);
+    final model = await productDataSource.getProductById(id);
 
-    if (product == null) return null;
+    if (model == null) return null;
 
-    return ProductModel.fromDb(product).toEntity();
+    return ProductMapper.toEntity(model);
   }
 
-  // Get product by barcode
   @override
   Future<Product?> getProductByBarcode(String barcode) async {
-    final product = await _localDataSource.getProductByBarcode(barcode);
+    final value = barcode.trim();
 
-    if (product == null) return null;
+    if (value.isEmpty) return null;
 
-    return ProductModel.fromDb(product).toEntity();
+    final model = await productDataSource.getProductByBarcode(value);
+
+    if (model == null) return null;
+
+    return ProductMapper.toEntity(model);
   }
 
-  // Add product
   @override
-  Future<int> addProduct(Product product) async {
-    final model = product.toModel();
+  Future<List<Product>> searchProducts(String query) async {
+    final models = await productDataSource.searchProducts(query);
 
-    final companion = model.toInsertCompanion();
-
-    return _localDataSource.insertProduct(companion);
+    return models
+        .map(ProductMapper.toEntity)
+        .toList(growable: false);
   }
 
-  // Update product
   @override
-  Future<bool> updateProduct(Product product) async {
-    final id = product.id;
+  Future<int> createProduct(Product product) {
+    final model = ProductMapper.fromEntity(product);
 
-    if (id == null || id <= 0) {
-      throw ArgumentError(
-        'لا يمكن تحديث منتج بدون معرف صالح.',
-      );
-    }
+    return productDataSource.createProduct(model);
+  }
 
-    final model = product.toModel();
+  @override
+  Future<bool> updateProduct(Product product) {
+    final model = ProductMapper.fromEntity(product);
 
-    final companion = model.toUpdateCompanion();
+    return productDataSource.updateProduct(model);
+  }
 
-    return _localDataSource.updateProduct(
-      id,
-      companion,
+  @override
+  Future<bool> deleteProduct(int id) {
+    return productDataSource.deleteProduct(id);
+  }
+
+  // =========================================================
+  // Product Units
+  // =========================================================
+
+  @override
+  Future<List<ProductUnit>> getProductUnits(int productId) async {
+    final models = await unitsDataSource.getByProductId(productId);
+
+    return models
+        .map(ProductUnitMapper.toEntity)
+        .toList(growable: false);
+  }
+
+  @override
+  Future<int> addProductUnit(ProductUnit unit) {
+    return unitsDataSource.addUnit(
+      productId: unit.productId,
+      unitName: unit.unitName,
+      unitSymbol: unit.unitSymbol,
+      conversionFactor: unit.conversionFactor,
+      salePrice: unit.salePrice,
+      purchasePrice: unit.purchasePrice,
+      isBaseUnit: unit.isBaseUnit,
+      isDefault: unit.isDefault,
+      sortOrder: unit.sortOrder,
     );
   }
 
-  // Delete product
   @override
-  Future<bool> deleteProduct(int id) {
-    if (id <= 0) {
-      return Future.value(false);
-    }
+  Future<bool> updateProductUnit(ProductUnit unit) {
+    return unitsDataSource.updateUnit(
+      id: unit.id,
+      unitName: unit.unitName,
+      unitSymbol: unit.unitSymbol,
+      conversionFactor: unit.conversionFactor,
+      salePrice: unit.salePrice,
+      purchasePrice: unit.purchasePrice,
+      isActive: unit.isActive,
+      sortOrder: unit.sortOrder,
+    );
+  }
 
-    return _localDataSource.deleteProduct(id);
+  @override
+  Future<bool> deleteProductUnit(int id) async {
+    // deactivateUnit يرجع عدد الصفوف التي تم تعديلها.
+    // نحول النتيجة إلى bool حسب عقد ProductRepository.
+    final affectedRows = await unitsDataSource.deactivateUnit(id);
+
+    return affectedRows > 0;
+  }
+
+  @override
+  Future<void> setDefaultProductUnit({
+    required int productId,
+    required int unitId,
+  }) async {
+    await unitsDataSource.setDefaultUnit(
+      productId: productId,
+      unitId: unitId,
+    );
+  }
+
+  // =========================================================
+  // Product Barcodes
+  // =========================================================
+
+  @override
+  Future<List<ProductBarcode>> getProductBarcodes(
+    int productId,
+  ) async {
+    final models = await barcodesDataSource.getByProductId(productId);
+
+    return models
+        .map(ProductBarcodeMapper.toEntity)
+        .toList(growable: false);
+  }
+
+  @override
+  Future<ProductBarcode?> getBarcode(String barcode) async {
+    final value = barcode.trim();
+
+    if (value.isEmpty) return null;
+
+    final model = await barcodesDataSource.getByBarcode(value);
+
+    if (model == null) return null;
+
+    return ProductBarcodeMapper.toEntity(model);
+  }
+
+  @override
+  Future<int> addProductBarcode(ProductBarcode barcode) {
+    return barcodesDataSource.addBarcode(
+      productId: barcode.productId,
+      productUnitId: barcode.productUnitId,
+      barcode: barcode.barcode,
+      barcodeType: barcode.barcodeType,
+      isDefault: barcode.isDefault,
+      source: barcode.source,
+    );
+  }
+
+  @override
+  Future<bool> deleteProductBarcode(int id) async {
+    // DAO يرجع عدد الصفوف المتأثرة.
+    final affectedRows = await barcodesDataSource.deleteBarcode(id);
+
+    return affectedRows > 0;
+  }
+
+  @override
+  Future<void> setDefaultBarcode(int id) {
+    return barcodesDataSource.setDefaultBarcode(id);
+  }
+
+  // =========================================================
+  // Product Images
+  // =========================================================
+
+  @override
+  Future<List<ProductImage>> getProductImages(int productId) async {
+    final models = await imagesDataSource.getByProductId(productId);
+
+    return models
+        .map(ProductImageMapper.toEntity)
+        .toList(growable: false);
+  }
+
+  @override
+  Future<int> addProductImage(ProductImage image) {
+    return imagesDataSource.addImage(
+      productId: image.productId,
+      imagePath: image.imagePath,
+      imageName: image.imageName,
+      isPrimary: image.isPrimary,
+      sortOrder: image.sortOrder,
+    );
+  }
+
+  @override
+  Future<bool> deleteProductImage(int id) {
+    return imagesDataSource.deleteImage(id);
+  }
+
+  @override
+  Future<void> setPrimaryImage(int id) async {
+    // نحتاج productId أيضاً، لذلك نجلب الصورة أولاً.
+    final images = await imagesDataSource.getByProductId(
+      // لا يمكن تحديد productId من id وحده دون استعلام إضافي.
+      // استخدم الدالة التي تجلب الصورة بالمعرف في مصدر البيانات.
+      throw UnimplementedError(
+        'أضف getById إلى ProductImagesLocalDataSource',
+      ),
+    );
   }
 }

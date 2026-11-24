@@ -12,7 +12,7 @@ class WatchStockMovementsUseCase {
 
   const WatchStockMovementsUseCase(this.repository);
 
-  Stream<List<StockMovement>> call({
+  Stream<List<StockMovementEntity>> call({
     int? productId,
     int limit = 50,
   }) {

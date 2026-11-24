@@ -2,7 +2,10 @@
 import 'package:injectable/injectable.dart';
 
 import '../entities/home_dashboard.dart';
+import '../failures/home_failure.dart';
 import '../repositories/home_repository.dart';
+
+import 'package:fpdart/fpdart.dart';
 
 @lazySingleton
 class GetHomeDashboardUseCase {
@@ -10,7 +13,7 @@ class GetHomeDashboardUseCase {
 
   GetHomeDashboardUseCase(this._repository);
 
-  Future<HomeDashboard> call() {
+  Future<Either<HomeFailure, HomeDashboard>> call() {
     return _repository.getDashboard();
   }
 }

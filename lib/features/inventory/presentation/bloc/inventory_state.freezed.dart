@@ -19,7 +19,7 @@ mixin _$InventoryState {
   List<InventoryItem> get inventory;
   InventorySummary get summary;
   List<InventoryItem> get lowStockProducts;
-  List<StockMovement> get movements;
+  List<StockMovementEntity> get movements;
   int? get selectedProductId;
   int get movementsLimit;
   String get query;
@@ -96,7 +96,7 @@ abstract mixin class $InventoryStateCopyWith<$Res> {
       List<InventoryItem> inventory,
       InventorySummary summary,
       List<InventoryItem> lowStockProducts,
-      List<StockMovement> movements,
+      List<StockMovementEntity> movements,
       int? selectedProductId,
       int movementsLimit,
       String query,
@@ -155,7 +155,7 @@ class _$InventoryStateCopyWithImpl<$Res>
       movements: null == movements
           ? _self.movements
           : movements // ignore: cast_nullable_to_non_nullable
-              as List<StockMovement>,
+              as List<StockMovementEntity>,
       selectedProductId: freezed == selectedProductId
           ? _self.selectedProductId
           : selectedProductId // ignore: cast_nullable_to_non_nullable
@@ -283,7 +283,7 @@ extension InventoryStatePatterns on InventoryState {
             List<InventoryItem> inventory,
             InventorySummary summary,
             List<InventoryItem> lowStockProducts,
-            List<StockMovement> movements,
+            List<StockMovementEntity> movements,
             int? selectedProductId,
             int movementsLimit,
             String query,
@@ -335,7 +335,7 @@ extension InventoryStatePatterns on InventoryState {
             List<InventoryItem> inventory,
             InventorySummary summary,
             List<InventoryItem> lowStockProducts,
-            List<StockMovement> movements,
+            List<StockMovementEntity> movements,
             int? selectedProductId,
             int movementsLimit,
             String query,
@@ -385,7 +385,7 @@ extension InventoryStatePatterns on InventoryState {
             List<InventoryItem> inventory,
             InventorySummary summary,
             List<InventoryItem> lowStockProducts,
-            List<StockMovement> movements,
+            List<StockMovementEntity> movements,
             int? selectedProductId,
             int movementsLimit,
             String query,
@@ -425,7 +425,7 @@ class _InventoryState implements InventoryState {
       final List<InventoryItem> inventory = const [],
       this.summary = InventorySummary.empty,
       final List<InventoryItem> lowStockProducts = const [],
-      final List<StockMovement> movements = const [],
+      final List<StockMovementEntity> movements = const [],
       this.selectedProductId,
       this.movementsLimit = 50,
       this.query = '',
@@ -464,10 +464,10 @@ class _InventoryState implements InventoryState {
     return EqualUnmodifiableListView(_lowStockProducts);
   }
 
-  final List<StockMovement> _movements;
+  final List<StockMovementEntity> _movements;
   @override
   @JsonKey()
-  List<StockMovement> get movements {
+  List<StockMovementEntity> get movements {
     if (_movements is EqualUnmodifiableListView) return _movements;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_movements);
@@ -562,7 +562,7 @@ abstract mixin class _$InventoryStateCopyWith<$Res>
       List<InventoryItem> inventory,
       InventorySummary summary,
       List<InventoryItem> lowStockProducts,
-      List<StockMovement> movements,
+      List<StockMovementEntity> movements,
       int? selectedProductId,
       int movementsLimit,
       String query,
@@ -621,7 +621,7 @@ class __$InventoryStateCopyWithImpl<$Res>
       movements: null == movements
           ? _self._movements
           : movements // ignore: cast_nullable_to_non_nullable
-              as List<StockMovement>,
+              as List<StockMovementEntity>,
       selectedProductId: freezed == selectedProductId
           ? _self.selectedProductId
           : selectedProductId // ignore: cast_nullable_to_non_nullable

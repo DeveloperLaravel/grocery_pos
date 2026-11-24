@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class ProductBarcodeScannerPage extends StatefulWidget {
   const ProductBarcodeScannerPage({super.key});
@@ -12,93 +13,38 @@ class ProductBarcodeScannerPage extends StatefulWidget {
 
 class _ProductBarcodeScannerPageState
     extends State<ProductBarcodeScannerPage> {
-  late final MobileScannerController _controller;
-
-  bool _isScanned = false;
-  bool _isFlashOn = false;
-  // ignore: prefer_final_fields
-  bool _isCameraReady = false;
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
 
-    _controller = MobileScannerController(
-      detectionSpeed: DetectionSpeed.noDuplicates,
-      facing: CameraFacing.back,
-      torchEnabled: false,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _focusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  Future<void> _onBarcodeDetected(
-    BarcodeCapture capture,
-  ) async {
-    if (_isScanned) return;
+  void _returnBarcode() {
+    final value = _controller.text.trim();
 
-    final barcode = capture.barcodes
-        .map((item) => item.rawValue)
-        .whereType<String>()
-        .map((value) => value.trim())
-        .firstWhere(
-          (value) => value.isNotEmpty,
-          orElse: () => '',
-        );
-
-    if (barcode.isEmpty) return;
-
-    // منع تكرار القراءة.
-    _isScanned = true;
-
-    try {
-      await _controller.stop();
-    } catch (_) {
-      // لا نمنع إرجاع الباركود إذا تعذر إيقاف الكاميرا.
+    if (value.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('الرجاء إدخال أو قراءة الباركود أولاً'),
+        ),
+      );
+      return;
     }
 
-    if (!mounted) return;
-
-    Navigator.of(context).pop<String>(barcode);
-  }
-
-  Future<void> _toggleFlash() async {
-    try {
-      await _controller.toggleTorch();
-
-      if (!mounted) return;
-
-      setState(() {
-        _isFlashOn = !_isFlashOn;
-      });
-    } catch (_) {
-      if (!mounted) return;
-
-      _showMessage('تعذر تشغيل الفلاش');
-    }
-  }
-
-  Future<void> _switchCamera() async {
-    try {
-      await _controller.switchCamera();
-    } catch (_) {
-      if (!mounted) return;
-
-      _showMessage('تعذر تبديل الكاميرا');
-    }
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    context.pop<String>(value);
   }
 
   @override
@@ -106,234 +52,94 @@ class _ProductBarcodeScannerPageState
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-
       appBar: AppBar(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        title: const Text(
-          'مسح الباركود',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'الفلاش',
-            onPressed: _toggleFlash,
-            icon: Icon(
-              _isFlashOn
-                  ? Icons.flash_on_rounded
-                  : Icons.flash_off_rounded,
-            ),
-          ),
-          IconButton(
-            tooltip: 'تبديل الكاميرا',
-            onPressed: _switchCamera,
-            icon: const Icon(
-              Icons.cameraswitch_rounded,
-            ),
-          ),
-        ],
+        title: const Text('قراءة الباركود'),
       ),
-
-      body: Stack(
-        children: [
-          // عرض الكاميرا.
-         MobileScanner(
-  controller: _controller,
-  onDetect: _onBarcodeDetected,
-),
-
-          // واجهة إطار المسح.
-          Positioned.fill(
-            child: Column(
-              children: [
-                const Spacer(),
-
-                const Text(
-                  'وجّه الكاميرا نحو الباركود',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                Container(
-                  width: 290,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: scheme.primary,
-                      width: 3,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(35),
                     ),
-                    borderRadius: BorderRadius.circular(18),
+                    child: Icon(
+                      Icons.qr_code_scanner_rounded,
+                      size: 85,
+                      color: scheme.primary,
+                    ),
                   ),
-                  child: Stack(
-                    children: [
-                      _buildCorner(
-                        top: 0,
-                        left: 0,
-                      ),
-                      _buildCorner(
-                        top: 0,
-                        right: 0,
-                      ),
-                      _buildCorner(
-                        bottom: 0,
-                        left: 0,
-                      ),
-                      _buildCorner(
-                        bottom: 0,
-                        right: 0,
+                  const SizedBox(height: 26),
+                  Text(
+                    'امسح باركود المنتج',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 9),
+                  Text(
+                    'استخدم قارئ باركود متصلاً بالجهاز أو أدخل الرقم يدوياً',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                  const SizedBox(height: 30),
+                  TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    autofocus: true,
+                    textDirection: TextDirection.ltr,
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(
+                        RegExp(r'\s'),
                       ),
                     ],
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 30,
-                  ),
-                  child: Text(
-                    'ضع الباركود داخل الإطار وسيتم قراءته تلقائياً',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
+                    onSubmitted: (_) => _returnBarcode(),
+                    decoration: InputDecoration(
+                      labelText: 'قيمة الباركود',
+                      hintText: '1234567890123',
+                      prefixIcon: const Icon(Icons.qr_code_2),
+                      suffixIcon: IconButton(
+                        onPressed: _controller.clear,
+                        icon: const Icon(Icons.clear),
+                      ),
                     ),
                   ),
-                ),
-
-                const Spacer(),
-
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.black.withValues(
-                    alpha: 0.65,
-                  ),
-                  child: Text(
-                    _isCameraReady
-                        ? 'الكاميرا جاهزة للمسح'
-                        : 'جاري تشغيل الكاميرا...',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _returnBarcode,
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('تأكيد الباركود'),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCorner({
-    double? top,
-    double? bottom,
-    double? left,
-    double? right,
-  }) {
-    return Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: SizedBox(
-        width: 25,
-        height: 25,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(
-              top: top != null
-                  ? const BorderSide(
-                      color: Colors.white,
-                      width: 4,
-                    )
-                  : BorderSide.none,
-              bottom: bottom != null
-                  ? const BorderSide(
-                      color: Colors.white,
-                      width: 4,
-                    )
-                  : BorderSide.none,
-              left: left != null
-                  ? const BorderSide(
-                      color: Colors.white,
-                      width: 4,
-                    )
-                  : BorderSide.none,
-              right: right != null
-                  ? const BorderSide(
-                      color: Colors.white,
-                      width: 4,
-                    )
-                  : BorderSide.none,
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () => context.pop(),
+                      child: const Text('إلغاء'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  // Widget _buildCameraError(
-  //   BuildContext context,
-  //   MobileScannerException error,
-  // ) {
-  //   return Center(
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(24),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           const Icon(
-  //             Icons.camera_alt_outlined,
-  //             color: Colors.white,
-  //             size: 55,
-  //           ),
-
-  //           const SizedBox(height: 16),
-
-  //           const Text(
-  //             'تعذر تشغيل الكاميرا',
-  //             style: TextStyle(
-  //               color: Colors.white,
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-
-  //           const SizedBox(height: 10),
-
-  //           Text(
-  //             error.errorCode.message,
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               color: Colors.white70,
-  //             ),
-  //           ),
-
-  //           const SizedBox(height: 20),
-
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: const Text('رجوع'),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 // Navigation
+import '../../features/master_data/brands/presentation/pages/brands_page.dart';
+import '../../features/categories/domain/entities/category.dart';
+import '../../features/categories/presentation/pages/categories_page.dart';
+import '../../features/categories/presentation/pages/category_form_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/pos/domain/entities/sale_receipt.dart';
-import '../../features/sales/presentation/pages/receipt_page.dart';
+import '../../features/products/presentation/bloc/products_bloc.dart';
+import '../../features/products/presentation/bloc/products_event.dart';
+import '../../features/products/presentation/pages/add_product_page.dart';
+import '../../features/products/presentation/pages/edit_product_page.dart';
+import '../../features/products/presentation/pages/product_barcode_scanner_page.dart';
+import '../../features/products/presentation/pages/product_details_page.dart';
+import '../../features/sales_inventory/sales/presentation/pages/receipt_page.dart';
+import '../database/di/injection.dart';
 import '../widgets/main_shell_page.dart';
 import 'app_routes.dart';
-import '../../features/sales/presentation/pages/receipt_print_preview_page.dart';
 // Home
 
 // POS
@@ -21,8 +32,7 @@ import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/stock_movements_page.dart';
 
 // Sales
-import '../../features/sales/presentation/pages/sales_page.dart';
-import '../../features/sales/presentation/pages/sale_details_page.dart';
+import '../../features/sales_inventory/sales/presentation/pages/sales_page.dart';
 
 // Reports
 import '../../features/reports/presentation/pages/reports_page.dart';
@@ -62,6 +72,45 @@ class AppRouter {
             ],
           ),
 
+          // =========================================
+// Brands
+// =========================================
+
+StatefulShellBranch(
+  routes: [
+    GoRoute(
+      path: '/brands',
+      name: AppRoutes.brands,
+      builder: (context, state) => const BrandsPage(),
+    ),
+  ],
+),
+    StatefulShellBranch(
+            routes: [
+           GoRoute(
+  path: '/categories',
+  name: AppRoutes.categories,
+  builder: (context, state) => const CategoriesPage(),
+  routes: [
+    GoRoute(
+      path: 'add',
+      name: AppRoutes.categoryAdd,
+      builder: (context, state) => const CategoryFormPage(),
+    ),
+    GoRoute(
+      path: ':id/edit',
+      name: AppRoutes.categoryEdit,
+      builder: (context, state) {
+        final category = state.extra as Category;
+
+        return CategoryFormPage(category: category);
+      },
+    ),
+  ],
+),
+            ],
+          ),
+
           // =====================================
           // 1 - POS
           // =====================================
@@ -97,28 +146,78 @@ class AppRouter {
           // 2 - Products
           // =====================================
 
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/products',
-                name: AppRoutes.products,
-                builder: (context, state) => const ProductsPage(),
-                routes: [
-                  GoRoute(
-                    path: 'add',
-                    name: AppRoutes.addProduct,
-                    builder: (context, state) {
-                      // استبدلها بصفحة AddProductPage عند إنشائها.
-                      return const ProductsPage();
-                    },
-                  ),
+ 
+StatefulShellBranch(
+  routes: [
+    GoRoute(
+      path: '/products',
+      name: AppRoutes.products,
+      builder: (context, state) {
+        return BlocProvider(
+          create: (_) => getIt<ProductsBloc>()
+            ..add(const ProductsEvent.started()),
+          child: const ProductsPage(),
+        );
+      },
+      routes: [
+        GoRoute(
+          path: 'add',
+          name: AppRoutes.addProduct,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (_) => getIt<ProductsBloc>(),
+              child: const AddProductPage(),
+            );
+          },
+        ),
 
-                  // أضف تفاصيل المنتج وتعديله هنا
-                  // بعد إنشاء ProductDetailsPage و EditProductPage.
-                ],
+        GoRoute(
+          path: 'barcode',
+          name: 'productBarcodeScanner',
+          builder: (context, state) {
+            return const ProductBarcodeScannerPage();
+          },
+        ),
+
+        GoRoute(
+          path: ':id',
+          name: AppRoutes.productDetails,
+          builder: (context, state) {
+            final id = int.parse(
+              state.pathParameters['id']!,
+            );
+
+            return BlocProvider(
+              create: (_) => getIt<ProductsBloc>(),
+              child: ProductDetailsPage(
+                productId: id,
               ),
-            ],
-          ),
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'edit',
+              name: AppRoutes.editProduct,
+              builder: (context, state) {
+                final id = int.parse(
+                  state.pathParameters['id']!,
+                );
+
+                return BlocProvider(
+                  create: (_) => getIt<ProductsBloc>(),
+                  child: EditProductPage(
+                    productId: id,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+  ],
+),
+
 
           // =====================================
           // 3 - Inventory

@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/home_dashboard.dart';
+import '../../domain/entities/low_stock_product.dart';
+
 
 class LowStockSection extends StatelessWidget {
-  final List<HomeLowStockProduct> products;
+  final List<LowStockProduct> products;
 
   const LowStockSection({
     super.key,

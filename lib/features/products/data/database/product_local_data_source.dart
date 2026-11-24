@@ -1,28 +1,28 @@
 
-import '../../../../core/database/app_database.dart';
+import '../models/product_model.dart';
 
-abstract class ProductLocalDataSource {
-  // Retrieve all products
-  Future<List<ProductDb>> getAllProducts();
+abstract interface class ProductLocalDataSource {
+  /// جلب جميع المنتجات.
+  Future<List<ProductModel>> getAllProducts();
 
-  // Observe products in real time
-  Stream<List<ProductDb>> watchAllProducts();
+  /// مراقبة المنتجات لحظياً.
+  Stream<List<ProductModel>> watchAllProducts();
 
-  // Retrieve product by ID
-  Future<ProductDb?> getProductById(int id);
+  /// جلب منتج بواسطة المعرف.
+  Future<ProductModel?> getProductById(int id);
 
-  // Retrieve product by barcode
-  Future<ProductDb?> getProductByBarcode(String barcode);
+  /// البحث باستخدام أي باركود فعال مرتبط بالمنتج.
+  Future<ProductModel?> getProductByBarcode(String barcode);
 
-  // Insert a new product
-  Future<int> insertProduct(ProductsCompanion product);
+  /// البحث بالاسم أو الباركود.
+  Future<List<ProductModel>> searchProducts(String query);
 
-  // Update an existing product
-  Future<bool> updateProduct(
-    int id,
-    ProductsCompanion product,
-  );
+  /// إنشاء منتج وإرجاع المعرف.
+  Future<int> createProduct(ProductModel model);
 
-  // Delete a product
+  /// تعديل بيانات المنتج.
+  Future<bool> updateProduct(ProductModel model);
+
+  /// تعطيل المنتج.
   Future<bool> deleteProduct(int id);
 }

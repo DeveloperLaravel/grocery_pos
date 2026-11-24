@@ -14,20 +14,24 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ProductModel {
-// Product ID
-  int? get id; // Product Information
+  int get id;
   String get name;
-  String get barcode; // Pricing
-  @JsonKey(name: 'cost_price')
+  String? get description;
+  int? get categoryId;
+  int? get brandId;
+  String? get barcode;
+  String get productType;
+  String get baseUnit;
+  bool get allowDecimalQuantity;
   double get costPrice;
-  @JsonKey(name: 'sale_price')
-  double get salePrice; // Inventory
+  double get salePrice;
   double get quantity;
-  @JsonKey(name: 'min_stock')
-  double get minStock; // Timestamps
-  @JsonKey(name: 'created_at')
+  double get minStock;
+  String? get imagePath;
+  String? get imageName;
+  DateTime? get imageUpdatedAt;
+  bool get isActive;
   DateTime get createdAt;
-  @JsonKey(name: 'updated_at')
   DateTime get updatedAt;
 
   /// Create a copy of ProductModel
@@ -48,7 +52,18 @@ mixin _$ProductModel {
             other is ProductModel &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.categoryId, categoryId) ||
+                other.categoryId == categoryId) &&
+            (identical(other.brandId, brandId) || other.brandId == brandId) &&
             (identical(other.barcode, barcode) || other.barcode == barcode) &&
+            (identical(other.productType, productType) ||
+                other.productType == productType) &&
+            (identical(other.baseUnit, baseUnit) ||
+                other.baseUnit == baseUnit) &&
+            (identical(other.allowDecimalQuantity, allowDecimalQuantity) ||
+                other.allowDecimalQuantity == allowDecimalQuantity) &&
             (identical(other.costPrice, costPrice) ||
                 other.costPrice == costPrice) &&
             (identical(other.salePrice, salePrice) ||
@@ -57,6 +72,14 @@ mixin _$ProductModel {
                 other.quantity == quantity) &&
             (identical(other.minStock, minStock) ||
                 other.minStock == minStock) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
+            (identical(other.imageName, imageName) ||
+                other.imageName == imageName) &&
+            (identical(other.imageUpdatedAt, imageUpdatedAt) ||
+                other.imageUpdatedAt == imageUpdatedAt) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -65,12 +88,32 @@ mixin _$ProductModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, barcode, costPrice,
-      salePrice, quantity, minStock, createdAt, updatedAt);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        description,
+        categoryId,
+        brandId,
+        barcode,
+        productType,
+        baseUnit,
+        allowDecimalQuantity,
+        costPrice,
+        salePrice,
+        quantity,
+        minStock,
+        imagePath,
+        imageName,
+        imageUpdatedAt,
+        isActive,
+        createdAt,
+        updatedAt
+      ]);
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, barcode: $barcode, costPrice: $costPrice, salePrice: $salePrice, quantity: $quantity, minStock: $minStock, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ProductModel(id: $id, name: $name, description: $description, categoryId: $categoryId, brandId: $brandId, barcode: $barcode, productType: $productType, baseUnit: $baseUnit, allowDecimalQuantity: $allowDecimalQuantity, costPrice: $costPrice, salePrice: $salePrice, quantity: $quantity, minStock: $minStock, imagePath: $imagePath, imageName: $imageName, imageUpdatedAt: $imageUpdatedAt, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
@@ -81,15 +124,25 @@ abstract mixin class $ProductModelCopyWith<$Res> {
       _$ProductModelCopyWithImpl;
   @useResult
   $Res call(
-      {int? id,
+      {int id,
       String name,
-      String barcode,
-      @JsonKey(name: 'cost_price') double costPrice,
-      @JsonKey(name: 'sale_price') double salePrice,
+      String? description,
+      int? categoryId,
+      int? brandId,
+      String? barcode,
+      String productType,
+      String baseUnit,
+      bool allowDecimalQuantity,
+      double costPrice,
+      double salePrice,
       double quantity,
-      @JsonKey(name: 'min_stock') double minStock,
-      @JsonKey(name: 'created_at') DateTime createdAt,
-      @JsonKey(name: 'updated_at') DateTime updatedAt});
+      double minStock,
+      String? imagePath,
+      String? imageName,
+      DateTime? imageUpdatedAt,
+      bool isActive,
+      DateTime createdAt,
+      DateTime updatedAt});
 }
 
 /// @nodoc
@@ -104,29 +157,63 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? name = null,
-    Object? barcode = null,
+    Object? description = freezed,
+    Object? categoryId = freezed,
+    Object? brandId = freezed,
+    Object? barcode = freezed,
+    Object? productType = null,
+    Object? baseUnit = null,
+    Object? allowDecimalQuantity = null,
     Object? costPrice = null,
     Object? salePrice = null,
     Object? quantity = null,
     Object? minStock = null,
+    Object? imagePath = freezed,
+    Object? imageName = freezed,
+    Object? imageUpdatedAt = freezed,
+    Object? isActive = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
     return _then(_self.copyWith(
-      id: freezed == id
+      id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      barcode: null == barcode
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _self.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      brandId: freezed == brandId
+          ? _self.brandId
+          : brandId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      barcode: freezed == barcode
           ? _self.barcode
           : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productType: null == productType
+          ? _self.productType
+          : productType // ignore: cast_nullable_to_non_nullable
               as String,
+      baseUnit: null == baseUnit
+          ? _self.baseUnit
+          : baseUnit // ignore: cast_nullable_to_non_nullable
+              as String,
+      allowDecimalQuantity: null == allowDecimalQuantity
+          ? _self.allowDecimalQuantity
+          : allowDecimalQuantity // ignore: cast_nullable_to_non_nullable
+              as bool,
       costPrice: null == costPrice
           ? _self.costPrice
           : costPrice // ignore: cast_nullable_to_non_nullable
@@ -143,6 +230,22 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
           ? _self.minStock
           : minStock // ignore: cast_nullable_to_non_nullable
               as double,
+      imagePath: freezed == imagePath
+          ? _self.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageName: freezed == imageName
+          ? _self.imageName
+          : imageName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUpdatedAt: freezed == imageUpdatedAt
+          ? _self.imageUpdatedAt
+          : imageUpdatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      isActive: null == isActive
+          ? _self.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -249,15 +352,25 @@ extension ProductModelPatterns on ProductModel {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            int? id,
+            int id,
             String name,
-            String barcode,
-            @JsonKey(name: 'cost_price') double costPrice,
-            @JsonKey(name: 'sale_price') double salePrice,
+            String? description,
+            int? categoryId,
+            int? brandId,
+            String? barcode,
+            String productType,
+            String baseUnit,
+            bool allowDecimalQuantity,
+            double costPrice,
+            double salePrice,
             double quantity,
-            @JsonKey(name: 'min_stock') double minStock,
-            @JsonKey(name: 'created_at') DateTime createdAt,
-            @JsonKey(name: 'updated_at') DateTime updatedAt)?
+            double minStock,
+            String? imagePath,
+            String? imageName,
+            DateTime? imageUpdatedAt,
+            bool isActive,
+            DateTime createdAt,
+            DateTime updatedAt)?
         $default, {
     required TResult orElse(),
   }) {
@@ -267,11 +380,21 @@ extension ProductModelPatterns on ProductModel {
         return $default(
             _that.id,
             _that.name,
+            _that.description,
+            _that.categoryId,
+            _that.brandId,
             _that.barcode,
+            _that.productType,
+            _that.baseUnit,
+            _that.allowDecimalQuantity,
             _that.costPrice,
             _that.salePrice,
             _that.quantity,
             _that.minStock,
+            _that.imagePath,
+            _that.imageName,
+            _that.imageUpdatedAt,
+            _that.isActive,
             _that.createdAt,
             _that.updatedAt);
       case _:
@@ -295,15 +418,25 @@ extension ProductModelPatterns on ProductModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            int? id,
+            int id,
             String name,
-            String barcode,
-            @JsonKey(name: 'cost_price') double costPrice,
-            @JsonKey(name: 'sale_price') double salePrice,
+            String? description,
+            int? categoryId,
+            int? brandId,
+            String? barcode,
+            String productType,
+            String baseUnit,
+            bool allowDecimalQuantity,
+            double costPrice,
+            double salePrice,
             double quantity,
-            @JsonKey(name: 'min_stock') double minStock,
-            @JsonKey(name: 'created_at') DateTime createdAt,
-            @JsonKey(name: 'updated_at') DateTime updatedAt)
+            double minStock,
+            String? imagePath,
+            String? imageName,
+            DateTime? imageUpdatedAt,
+            bool isActive,
+            DateTime createdAt,
+            DateTime updatedAt)
         $default,
   ) {
     final _that = this;
@@ -312,11 +445,21 @@ extension ProductModelPatterns on ProductModel {
         return $default(
             _that.id,
             _that.name,
+            _that.description,
+            _that.categoryId,
+            _that.brandId,
             _that.barcode,
+            _that.productType,
+            _that.baseUnit,
+            _that.allowDecimalQuantity,
             _that.costPrice,
             _that.salePrice,
             _that.quantity,
             _that.minStock,
+            _that.imagePath,
+            _that.imageName,
+            _that.imageUpdatedAt,
+            _that.isActive,
             _that.createdAt,
             _that.updatedAt);
       case _:
@@ -339,15 +482,25 @@ extension ProductModelPatterns on ProductModel {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            int? id,
+            int id,
             String name,
-            String barcode,
-            @JsonKey(name: 'cost_price') double costPrice,
-            @JsonKey(name: 'sale_price') double salePrice,
+            String? description,
+            int? categoryId,
+            int? brandId,
+            String? barcode,
+            String productType,
+            String baseUnit,
+            bool allowDecimalQuantity,
+            double costPrice,
+            double salePrice,
             double quantity,
-            @JsonKey(name: 'min_stock') double minStock,
-            @JsonKey(name: 'created_at') DateTime createdAt,
-            @JsonKey(name: 'updated_at') DateTime updatedAt)?
+            double minStock,
+            String? imagePath,
+            String? imageName,
+            DateTime? imageUpdatedAt,
+            bool isActive,
+            DateTime createdAt,
+            DateTime updatedAt)?
         $default,
   ) {
     final _that = this;
@@ -356,11 +509,21 @@ extension ProductModelPatterns on ProductModel {
         return $default(
             _that.id,
             _that.name,
+            _that.description,
+            _that.categoryId,
+            _that.brandId,
             _that.barcode,
+            _that.productType,
+            _that.baseUnit,
+            _that.allowDecimalQuantity,
             _that.costPrice,
             _that.salePrice,
             _that.quantity,
             _that.minStock,
+            _that.imagePath,
+            _that.imageName,
+            _that.imageUpdatedAt,
+            _that.isActive,
             _that.createdAt,
             _that.updatedAt);
       case _:
@@ -371,49 +534,75 @@ extension ProductModelPatterns on ProductModel {
 
 /// @nodoc
 @JsonSerializable()
-class _ProductModel extends ProductModel {
+class _ProductModel implements ProductModel {
   const _ProductModel(
-      {this.id,
+      {required this.id,
       required this.name,
-      required this.barcode,
-      @JsonKey(name: 'cost_price') this.costPrice = 0.0,
-      @JsonKey(name: 'sale_price') required this.salePrice,
+      this.description,
+      this.categoryId,
+      this.brandId,
+      this.barcode,
+      this.productType = 'piece',
+      this.baseUnit = 'piece',
+      this.allowDecimalQuantity = false,
+      this.costPrice = 0.0,
+      this.salePrice = 0.0,
       this.quantity = 0.0,
-      @JsonKey(name: 'min_stock') this.minStock = 5.0,
-      @JsonKey(name: 'created_at') required this.createdAt,
-      @JsonKey(name: 'updated_at') required this.updatedAt})
-      : super._();
+      this.minStock = 5.0,
+      this.imagePath,
+      this.imageName,
+      this.imageUpdatedAt,
+      this.isActive = true,
+      required this.createdAt,
+      required this.updatedAt});
   factory _ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
 
-// Product ID
   @override
-  final int? id;
-// Product Information
+  final int id;
   @override
   final String name;
   @override
-  final String barcode;
-// Pricing
+  final String? description;
   @override
-  @JsonKey(name: 'cost_price')
+  final int? categoryId;
+  @override
+  final int? brandId;
+  @override
+  final String? barcode;
+  @override
+  @JsonKey()
+  final String productType;
+  @override
+  @JsonKey()
+  final String baseUnit;
+  @override
+  @JsonKey()
+  final bool allowDecimalQuantity;
+  @override
+  @JsonKey()
   final double costPrice;
   @override
-  @JsonKey(name: 'sale_price')
+  @JsonKey()
   final double salePrice;
-// Inventory
   @override
   @JsonKey()
   final double quantity;
   @override
-  @JsonKey(name: 'min_stock')
+  @JsonKey()
   final double minStock;
-// Timestamps
   @override
-  @JsonKey(name: 'created_at')
+  final String? imagePath;
+  @override
+  final String? imageName;
+  @override
+  final DateTime? imageUpdatedAt;
+  @override
+  @JsonKey()
+  final bool isActive;
+  @override
   final DateTime createdAt;
   @override
-  @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
 
   /// Create a copy of ProductModel
@@ -438,7 +627,18 @@ class _ProductModel extends ProductModel {
             other is _ProductModel &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.categoryId, categoryId) ||
+                other.categoryId == categoryId) &&
+            (identical(other.brandId, brandId) || other.brandId == brandId) &&
             (identical(other.barcode, barcode) || other.barcode == barcode) &&
+            (identical(other.productType, productType) ||
+                other.productType == productType) &&
+            (identical(other.baseUnit, baseUnit) ||
+                other.baseUnit == baseUnit) &&
+            (identical(other.allowDecimalQuantity, allowDecimalQuantity) ||
+                other.allowDecimalQuantity == allowDecimalQuantity) &&
             (identical(other.costPrice, costPrice) ||
                 other.costPrice == costPrice) &&
             (identical(other.salePrice, salePrice) ||
@@ -447,6 +647,14 @@ class _ProductModel extends ProductModel {
                 other.quantity == quantity) &&
             (identical(other.minStock, minStock) ||
                 other.minStock == minStock) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
+            (identical(other.imageName, imageName) ||
+                other.imageName == imageName) &&
+            (identical(other.imageUpdatedAt, imageUpdatedAt) ||
+                other.imageUpdatedAt == imageUpdatedAt) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -455,12 +663,32 @@ class _ProductModel extends ProductModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, barcode, costPrice,
-      salePrice, quantity, minStock, createdAt, updatedAt);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        name,
+        description,
+        categoryId,
+        brandId,
+        barcode,
+        productType,
+        baseUnit,
+        allowDecimalQuantity,
+        costPrice,
+        salePrice,
+        quantity,
+        minStock,
+        imagePath,
+        imageName,
+        imageUpdatedAt,
+        isActive,
+        createdAt,
+        updatedAt
+      ]);
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, barcode: $barcode, costPrice: $costPrice, salePrice: $salePrice, quantity: $quantity, minStock: $minStock, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ProductModel(id: $id, name: $name, description: $description, categoryId: $categoryId, brandId: $brandId, barcode: $barcode, productType: $productType, baseUnit: $baseUnit, allowDecimalQuantity: $allowDecimalQuantity, costPrice: $costPrice, salePrice: $salePrice, quantity: $quantity, minStock: $minStock, imagePath: $imagePath, imageName: $imageName, imageUpdatedAt: $imageUpdatedAt, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
@@ -473,15 +701,25 @@ abstract mixin class _$ProductModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {int id,
       String name,
-      String barcode,
-      @JsonKey(name: 'cost_price') double costPrice,
-      @JsonKey(name: 'sale_price') double salePrice,
+      String? description,
+      int? categoryId,
+      int? brandId,
+      String? barcode,
+      String productType,
+      String baseUnit,
+      bool allowDecimalQuantity,
+      double costPrice,
+      double salePrice,
       double quantity,
-      @JsonKey(name: 'min_stock') double minStock,
-      @JsonKey(name: 'created_at') DateTime createdAt,
-      @JsonKey(name: 'updated_at') DateTime updatedAt});
+      double minStock,
+      String? imagePath,
+      String? imageName,
+      DateTime? imageUpdatedAt,
+      bool isActive,
+      DateTime createdAt,
+      DateTime updatedAt});
 }
 
 /// @nodoc
@@ -497,29 +735,63 @@ class __$ProductModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? name = null,
-    Object? barcode = null,
+    Object? description = freezed,
+    Object? categoryId = freezed,
+    Object? brandId = freezed,
+    Object? barcode = freezed,
+    Object? productType = null,
+    Object? baseUnit = null,
+    Object? allowDecimalQuantity = null,
     Object? costPrice = null,
     Object? salePrice = null,
     Object? quantity = null,
     Object? minStock = null,
+    Object? imagePath = freezed,
+    Object? imageName = freezed,
+    Object? imageUpdatedAt = freezed,
+    Object? isActive = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
     return _then(_ProductModel(
-      id: freezed == id
+      id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       name: null == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      barcode: null == barcode
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _self.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      brandId: freezed == brandId
+          ? _self.brandId
+          : brandId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      barcode: freezed == barcode
           ? _self.barcode
           : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productType: null == productType
+          ? _self.productType
+          : productType // ignore: cast_nullable_to_non_nullable
               as String,
+      baseUnit: null == baseUnit
+          ? _self.baseUnit
+          : baseUnit // ignore: cast_nullable_to_non_nullable
+              as String,
+      allowDecimalQuantity: null == allowDecimalQuantity
+          ? _self.allowDecimalQuantity
+          : allowDecimalQuantity // ignore: cast_nullable_to_non_nullable
+              as bool,
       costPrice: null == costPrice
           ? _self.costPrice
           : costPrice // ignore: cast_nullable_to_non_nullable
@@ -536,6 +808,22 @@ class __$ProductModelCopyWithImpl<$Res>
           ? _self.minStock
           : minStock // ignore: cast_nullable_to_non_nullable
               as double,
+      imagePath: freezed == imagePath
+          ? _self.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageName: freezed == imageName
+          ? _self.imageName
+          : imageName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUpdatedAt: freezed == imageUpdatedAt
+          ? _self.imageUpdatedAt
+          : imageUpdatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      isActive: null == isActive
+          ? _self.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable

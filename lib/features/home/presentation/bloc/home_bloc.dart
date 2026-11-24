@@ -2,8 +2,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../domain/usecases/get_home_dashboard_usecase.dart';
 
+import '../../domain/usecases/get_home_dashboard_usecase.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -13,18 +13,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc(this._getHomeDashboard)
       : super(const HomeState.initial()) {
-    on<HomeLoadEvent>(_onLoad);
-    on<HomeRefreshEvent>(_onRefresh);
+    on<HomeLoadEvent>(_onStarted);
+    on<HomeRefreshEvent>(_onRefreshed);
   }
 
-  Future<void> _onLoad(
+  Future<void> _onStarted(
     HomeLoadEvent event,
     Emitter<HomeState> emit,
   ) async {
     await _loadDashboard(emit);
   }
 
-  Future<void> _onRefresh(
+  Future<void> _onRefreshed(
     HomeRefreshEvent event,
     Emitter<HomeState> emit,
   ) async {
@@ -36,20 +36,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(const HomeState.loading());
 
-    try {
-      final dashboard = await _getHomeDashboard();
+    final result = await _getHomeDashboard();
 
-      emit(
-        HomeState.loaded(
-          dashboard: dashboard,
-        ),
-      );
-    } catch (e) {
-      emit(
-        HomeState.error(
-          message: e.toString(),
-        ),
-      );
-    }
+    result.fold(
+      (failure) {
+        emit(
+          HomeState.error(
+            message: failure.message,
+          ),
+        );
+      },
+      (dashboard) {
+        emit(
+          HomeState.loaded(
+            dashboard: dashboard,
+          ),
+        );
+      },
+    );
   }
 }

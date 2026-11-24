@@ -17,7 +17,7 @@ abstract class InventoryState with _$InventoryState {
     @Default(InventorySummary.empty) InventorySummary summary,
     @Default([]) List<InventoryItem> lowStockProducts,
 
-    @Default([]) List<StockMovement> movements,
+    @Default([]) List<StockMovementEntity> movements,
     int? selectedProductId,
     @Default(50) int movementsLimit,
 

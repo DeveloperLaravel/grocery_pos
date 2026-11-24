@@ -1,12 +1,11 @@
 
 import 'package:drift/drift.dart';
-import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
-import '../tables/sales_table.dart';
-import '../tables/sale_items_table.dart';
-import '../tables/returns_table.dart';
-import '../tables/products_table.dart';
+import '../tables/sales_inventory/sales/sales_table.dart';
+import '../tables/sales_inventory/sales/sale_items_table.dart';
+import '../tables/sales_inventory/inventory/returns/returns_table.dart';
+import '../tables/master_data/products/products_table.dart';
 
 part 'reports_dao.g.dart';
 
@@ -18,7 +17,6 @@ part 'reports_dao.g.dart';
     Products,
   ],
 )
-@lazySingleton
 class ReportsDao extends DatabaseAccessor<AppDatabase>
     with _$ReportsDaoMixin {
   ReportsDao(super.db);

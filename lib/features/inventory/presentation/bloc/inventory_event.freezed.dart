@@ -229,7 +229,7 @@ extension InventoryEventPatterns on InventoryEvent {
     TResult Function(List<InventoryItem> inventory)? inventoryChanged,
     TResult Function(InventorySummary summary)? summaryChanged,
     TResult Function(List<InventoryItem> products)? lowStockChanged,
-    TResult Function(List<StockMovement> movements)? movementsChanged,
+    TResult Function(List<StockMovementEntity> movements)? movementsChanged,
     TResult Function(String message)? streamFailed,
     required TResult orElse(),
   }) {
@@ -289,7 +289,8 @@ extension InventoryEventPatterns on InventoryEvent {
     required TResult Function(List<InventoryItem> inventory) inventoryChanged,
     required TResult Function(InventorySummary summary) summaryChanged,
     required TResult Function(List<InventoryItem> products) lowStockChanged,
-    required TResult Function(List<StockMovement> movements) movementsChanged,
+    required TResult Function(List<StockMovementEntity> movements)
+        movementsChanged,
     required TResult Function(String message) streamFailed,
   }) {
     final _that = this;
@@ -345,7 +346,7 @@ extension InventoryEventPatterns on InventoryEvent {
     TResult? Function(List<InventoryItem> inventory)? inventoryChanged,
     TResult? Function(InventorySummary summary)? summaryChanged,
     TResult? Function(List<InventoryItem> products)? lowStockChanged,
-    TResult? Function(List<StockMovement> movements)? movementsChanged,
+    TResult? Function(List<StockMovementEntity> movements)? movementsChanged,
     TResult? Function(String message)? streamFailed,
   }) {
     final _that = this;
@@ -898,11 +899,11 @@ class _$LowStockChangedCopyWithImpl<$Res>
 /// @nodoc
 
 class StockMovementsChanged implements InventoryEvent {
-  const StockMovementsChanged(final List<StockMovement> movements)
+  const StockMovementsChanged(final List<StockMovementEntity> movements)
       : _movements = movements;
 
-  final List<StockMovement> _movements;
-  List<StockMovement> get movements {
+  final List<StockMovementEntity> _movements;
+  List<StockMovementEntity> get movements {
     if (_movements is EqualUnmodifiableListView) return _movements;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_movements);
@@ -942,7 +943,7 @@ abstract mixin class $StockMovementsChangedCopyWith<$Res>
           $Res Function(StockMovementsChanged) _then) =
       _$StockMovementsChangedCopyWithImpl;
   @useResult
-  $Res call({List<StockMovement> movements});
+  $Res call({List<StockMovementEntity> movements});
 }
 
 /// @nodoc
@@ -963,7 +964,7 @@ class _$StockMovementsChangedCopyWithImpl<$Res>
       null == movements
           ? _self._movements
           : movements // ignore: cast_nullable_to_non_nullable
-              as List<StockMovement>,
+              as List<StockMovementEntity>,
     ));
   }
 }

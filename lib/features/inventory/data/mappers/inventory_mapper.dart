@@ -18,7 +18,7 @@ extension InventoryDbMapper on ProductDb {
     return InventoryItemModel(
       id: id,
       name: name,
-      barcode: barcode,
+      barcode: barcode ?? '',
       costPrice: costPrice,
       salePrice: salePrice,
       quantity: quantity,
@@ -122,8 +122,8 @@ extension StockMovementDbMapper on StockMovementDb {
 // =============================================
 
 extension StockMovementModelMapper on StockMovementModel {
-  StockMovement toEntity() {
-    return StockMovement(
+  StockMovementEntity toEntity() {
+    return StockMovementEntity(
       id: id,
       productId: productId,
       type: type,

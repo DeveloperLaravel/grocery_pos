@@ -7,16 +7,9 @@ import '../../master_data/products/product_units_table.dart';
 
 @DataClassName('PurchaseItemDb')
 class PurchaseItems extends Table {
-  // =====================================================
-  // 1. Primary Key
-  // =====================================================
-
   IntColumn get id => integer().autoIncrement()();
 
-  // =====================================================
-  // 2. Relationships
-  // =====================================================
-
+  // Relationships
   IntColumn get purchaseOrderId => integer().references(
         PurchaseOrders,
         #id,
@@ -37,21 +30,15 @@ class PurchaseItems extends Table {
         onDelete: KeyAction.setNull,
       )();
 
-  // =====================================================
-  // 3. Product Snapshot
-  // =====================================================
+  // Product snapshot
+  TextColumn get productName =>
+      text().withLength(min: 1, max: 200)();
 
-  TextColumn get productName => text()
-      .withLength(min: 1, max: 200)();
+  TextColumn get unitName =>
+      text().withDefault(const Constant('piece'))
+          .withLength(min: 1, max: 50)();
 
-  TextColumn get unitName => text()
-      .withDefault(const Constant('piece'))
-      .withLength(min: 1, max: 50)();
-
-  // =====================================================
-  // 4. Quantity
-  // =====================================================
-
+  // Quantity
   RealColumn get quantity => real()();
 
   RealColumn get conversionFactor =>
@@ -59,25 +46,15 @@ class PurchaseItems extends Table {
 
   RealColumn get baseQuantity => real()();
 
-  // =====================================================
-  // 5. Pricing
-  // =====================================================
-
+  // Pricing
   RealColumn get unitPrice => real()();
 
   RealColumn get baseUnitCost => real()();
 
   RealColumn get total => real()();
 
-  // =====================================================
-  // 6. Additional Information
-  // =====================================================
-
+  // Additional
   TextColumn get notes => text().nullable()();
-
-  // =====================================================
-  // 7. Constraints
-  // =====================================================
 
   @override
   List<String> get customConstraints => [

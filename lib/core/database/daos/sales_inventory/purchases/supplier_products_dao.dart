@@ -1,9 +1,7 @@
 
 import 'package:drift/drift.dart';
 
-import '../../app_database.dart';
-import '../../tables/purchases/supplier_products_table.dart';
-import 'supplier_products_table.dart';
+import '../../../app_database.dart';
 
 part 'supplier_products_dao.g.dart';
 

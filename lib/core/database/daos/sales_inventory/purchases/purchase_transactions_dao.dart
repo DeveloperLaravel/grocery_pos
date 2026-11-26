@@ -1,11 +1,11 @@
 
 import 'package:drift/drift.dart';
 
-import '../../app_database.dart';
+import '../../../tables/sales_inventory/purchases/purchase_items_table.dart';
+import '../../../tables/sales_inventory/purchases/purchase_payments_table.dart';
+import 'purchase_orders_table.dart';
 
-import '../../tables/purchases/purchase_orders_table.dart';
-import '../../tables/purchases/purchase_items_table.dart';
-import '../../tables/purchases/purchase_payments_table.dart';
+
 
 part 'purchase_transactions_dao.g.dart';
 

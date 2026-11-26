@@ -1,7 +1,6 @@
-
 import 'package:drift/drift.dart';
 
-import 'products_table.dart';
+import 'master_data/products/products_table.dart';
 import 'returns_table.dart';
 
 @DataClassName('ReturnItemDb')
@@ -14,10 +13,15 @@ class ReturnItems extends Table {
         onDelete: KeyAction.cascade,
       )();
 
-  IntColumn get productId =>
-      integer().references(Products, #id)();
+  IntColumn get productId => integer().references(
+        Products,
+        #id,
+        onDelete: KeyAction.restrict,
+      )();
 
   RealColumn get quantity => real()();
 
-  RealColumn get refundAmount => real()();
+  RealColumn get unitPrice => real()();
+
+  RealColumn get total => real()();
 }

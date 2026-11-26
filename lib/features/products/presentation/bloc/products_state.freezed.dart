@@ -1,0 +1,581 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'products_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$ProductsState {
+  ProductsStatus get status;
+  List<Product> get products;
+  String get searchQuery;
+  int? get selectedCategoryId;
+  int? get selectedBrandId;
+  bool get isOperationInProgress;
+  bool get isWatching;
+  String? get errorMessage;
+  String? get successMessage;
+  int? get lastAffectedProductId;
+
+  /// Create a copy of ProductsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ProductsStateCopyWith<ProductsState> get copyWith =>
+      _$ProductsStateCopyWithImpl<ProductsState>(
+          this as ProductsState, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ProductsState &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other.products, products) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            (identical(other.selectedCategoryId, selectedCategoryId) ||
+                other.selectedCategoryId == selectedCategoryId) &&
+            (identical(other.selectedBrandId, selectedBrandId) ||
+                other.selectedBrandId == selectedBrandId) &&
+            (identical(other.isOperationInProgress, isOperationInProgress) ||
+                other.isOperationInProgress == isOperationInProgress) &&
+            (identical(other.isWatching, isWatching) ||
+                other.isWatching == isWatching) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.successMessage, successMessage) ||
+                other.successMessage == successMessage) &&
+            (identical(other.lastAffectedProductId, lastAffectedProductId) ||
+                other.lastAffectedProductId == lastAffectedProductId));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      status,
+      const DeepCollectionEquality().hash(products),
+      searchQuery,
+      selectedCategoryId,
+      selectedBrandId,
+      isOperationInProgress,
+      isWatching,
+      errorMessage,
+      successMessage,
+      lastAffectedProductId);
+
+  @override
+  String toString() {
+    return 'ProductsState(status: $status, products: $products, searchQuery: $searchQuery, selectedCategoryId: $selectedCategoryId, selectedBrandId: $selectedBrandId, isOperationInProgress: $isOperationInProgress, isWatching: $isWatching, errorMessage: $errorMessage, successMessage: $successMessage, lastAffectedProductId: $lastAffectedProductId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ProductsStateCopyWith<$Res> {
+  factory $ProductsStateCopyWith(
+          ProductsState value, $Res Function(ProductsState) _then) =
+      _$ProductsStateCopyWithImpl;
+  @useResult
+  $Res call(
+      {ProductsStatus status,
+      List<Product> products,
+      String searchQuery,
+      int? selectedCategoryId,
+      int? selectedBrandId,
+      bool isOperationInProgress,
+      bool isWatching,
+      String? errorMessage,
+      String? successMessage,
+      int? lastAffectedProductId});
+}
+
+/// @nodoc
+class _$ProductsStateCopyWithImpl<$Res>
+    implements $ProductsStateCopyWith<$Res> {
+  _$ProductsStateCopyWithImpl(this._self, this._then);
+
+  final ProductsState _self;
+  final $Res Function(ProductsState) _then;
+
+  /// Create a copy of ProductsState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+    Object? products = null,
+    Object? searchQuery = null,
+    Object? selectedCategoryId = freezed,
+    Object? selectedBrandId = freezed,
+    Object? isOperationInProgress = null,
+    Object? isWatching = null,
+    Object? errorMessage = freezed,
+    Object? successMessage = freezed,
+    Object? lastAffectedProductId = freezed,
+  }) {
+    return _then(_self.copyWith(
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as ProductsStatus,
+      products: null == products
+          ? _self.products
+          : products // ignore: cast_nullable_to_non_nullable
+              as List<Product>,
+      searchQuery: null == searchQuery
+          ? _self.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String,
+      selectedCategoryId: freezed == selectedCategoryId
+          ? _self.selectedCategoryId
+          : selectedCategoryId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      selectedBrandId: freezed == selectedBrandId
+          ? _self.selectedBrandId
+          : selectedBrandId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isOperationInProgress: null == isOperationInProgress
+          ? _self.isOperationInProgress
+          : isOperationInProgress // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isWatching: null == isWatching
+          ? _self.isWatching
+          : isWatching // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      successMessage: freezed == successMessage
+          ? _self.successMessage
+          : successMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastAffectedProductId: freezed == lastAffectedProductId
+          ? _self.lastAffectedProductId
+          : lastAffectedProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [ProductsState].
+extension ProductsStatePatterns on ProductsState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ProductsState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ProductsState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ProductsState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            ProductsStatus status,
+            List<Product> products,
+            String searchQuery,
+            int? selectedCategoryId,
+            int? selectedBrandId,
+            bool isOperationInProgress,
+            bool isWatching,
+            String? errorMessage,
+            String? successMessage,
+            int? lastAffectedProductId)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState() when $default != null:
+        return $default(
+            _that.status,
+            _that.products,
+            _that.searchQuery,
+            _that.selectedCategoryId,
+            _that.selectedBrandId,
+            _that.isOperationInProgress,
+            _that.isWatching,
+            _that.errorMessage,
+            _that.successMessage,
+            _that.lastAffectedProductId);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            ProductsStatus status,
+            List<Product> products,
+            String searchQuery,
+            int? selectedCategoryId,
+            int? selectedBrandId,
+            bool isOperationInProgress,
+            bool isWatching,
+            String? errorMessage,
+            String? successMessage,
+            int? lastAffectedProductId)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState():
+        return $default(
+            _that.status,
+            _that.products,
+            _that.searchQuery,
+            _that.selectedCategoryId,
+            _that.selectedBrandId,
+            _that.isOperationInProgress,
+            _that.isWatching,
+            _that.errorMessage,
+            _that.successMessage,
+            _that.lastAffectedProductId);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            ProductsStatus status,
+            List<Product> products,
+            String searchQuery,
+            int? selectedCategoryId,
+            int? selectedBrandId,
+            bool isOperationInProgress,
+            bool isWatching,
+            String? errorMessage,
+            String? successMessage,
+            int? lastAffectedProductId)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ProductsState() when $default != null:
+        return $default(
+            _that.status,
+            _that.products,
+            _that.searchQuery,
+            _that.selectedCategoryId,
+            _that.selectedBrandId,
+            _that.isOperationInProgress,
+            _that.isWatching,
+            _that.errorMessage,
+            _that.successMessage,
+            _that.lastAffectedProductId);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+
+class _ProductsState extends ProductsState {
+  const _ProductsState(
+      {this.status = ProductsStatus.initial,
+      final List<Product> products = const <Product>[],
+      this.searchQuery = '',
+      this.selectedCategoryId,
+      this.selectedBrandId,
+      this.isOperationInProgress = false,
+      this.isWatching = false,
+      this.errorMessage,
+      this.successMessage,
+      this.lastAffectedProductId})
+      : _products = products,
+        super._();
+
+  @override
+  @JsonKey()
+  final ProductsStatus status;
+  final List<Product> _products;
+  @override
+  @JsonKey()
+  List<Product> get products {
+    if (_products is EqualUnmodifiableListView) return _products;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_products);
+  }
+
+  @override
+  @JsonKey()
+  final String searchQuery;
+  @override
+  final int? selectedCategoryId;
+  @override
+  final int? selectedBrandId;
+  @override
+  @JsonKey()
+  final bool isOperationInProgress;
+  @override
+  @JsonKey()
+  final bool isWatching;
+  @override
+  final String? errorMessage;
+  @override
+  final String? successMessage;
+  @override
+  final int? lastAffectedProductId;
+
+  /// Create a copy of ProductsState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ProductsStateCopyWith<_ProductsState> get copyWith =>
+      __$ProductsStateCopyWithImpl<_ProductsState>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ProductsState &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._products, _products) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            (identical(other.selectedCategoryId, selectedCategoryId) ||
+                other.selectedCategoryId == selectedCategoryId) &&
+            (identical(other.selectedBrandId, selectedBrandId) ||
+                other.selectedBrandId == selectedBrandId) &&
+            (identical(other.isOperationInProgress, isOperationInProgress) ||
+                other.isOperationInProgress == isOperationInProgress) &&
+            (identical(other.isWatching, isWatching) ||
+                other.isWatching == isWatching) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.successMessage, successMessage) ||
+                other.successMessage == successMessage) &&
+            (identical(other.lastAffectedProductId, lastAffectedProductId) ||
+                other.lastAffectedProductId == lastAffectedProductId));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      status,
+      const DeepCollectionEquality().hash(_products),
+      searchQuery,
+      selectedCategoryId,
+      selectedBrandId,
+      isOperationInProgress,
+      isWatching,
+      errorMessage,
+      successMessage,
+      lastAffectedProductId);
+
+  @override
+  String toString() {
+    return 'ProductsState(status: $status, products: $products, searchQuery: $searchQuery, selectedCategoryId: $selectedCategoryId, selectedBrandId: $selectedBrandId, isOperationInProgress: $isOperationInProgress, isWatching: $isWatching, errorMessage: $errorMessage, successMessage: $successMessage, lastAffectedProductId: $lastAffectedProductId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ProductsStateCopyWith<$Res>
+    implements $ProductsStateCopyWith<$Res> {
+  factory _$ProductsStateCopyWith(
+          _ProductsState value, $Res Function(_ProductsState) _then) =
+      __$ProductsStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {ProductsStatus status,
+      List<Product> products,
+      String searchQuery,
+      int? selectedCategoryId,
+      int? selectedBrandId,
+      bool isOperationInProgress,
+      bool isWatching,
+      String? errorMessage,
+      String? successMessage,
+      int? lastAffectedProductId});
+}
+
+/// @nodoc
+class __$ProductsStateCopyWithImpl<$Res>
+    implements _$ProductsStateCopyWith<$Res> {
+  __$ProductsStateCopyWithImpl(this._self, this._then);
+
+  final _ProductsState _self;
+  final $Res Function(_ProductsState) _then;
+
+  /// Create a copy of ProductsState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? status = null,
+    Object? products = null,
+    Object? searchQuery = null,
+    Object? selectedCategoryId = freezed,
+    Object? selectedBrandId = freezed,
+    Object? isOperationInProgress = null,
+    Object? isWatching = null,
+    Object? errorMessage = freezed,
+    Object? successMessage = freezed,
+    Object? lastAffectedProductId = freezed,
+  }) {
+    return _then(_ProductsState(
+      status: null == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as ProductsStatus,
+      products: null == products
+          ? _self._products
+          : products // ignore: cast_nullable_to_non_nullable
+              as List<Product>,
+      searchQuery: null == searchQuery
+          ? _self.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String,
+      selectedCategoryId: freezed == selectedCategoryId
+          ? _self.selectedCategoryId
+          : selectedCategoryId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      selectedBrandId: freezed == selectedBrandId
+          ? _self.selectedBrandId
+          : selectedBrandId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isOperationInProgress: null == isOperationInProgress
+          ? _self.isOperationInProgress
+          : isOperationInProgress // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isWatching: null == isWatching
+          ? _self.isWatching
+          : isWatching // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _self.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      successMessage: freezed == successMessage
+          ? _self.successMessage
+          : successMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastAffectedProductId: freezed == lastAffectedProductId
+          ? _self.lastAffectedProductId
+          : lastAffectedProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+// dart format on

@@ -35,6 +35,7 @@ class ReportsEmptyView extends StatelessWidget {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: AppColors.primary.withOpacity(0.10),
                   shape: BoxShape.circle,
                 ),

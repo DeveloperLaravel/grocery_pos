@@ -13,6 +13,12 @@ class AppRoutes {
   static const productDetails = 'productDetails';
   static const editProduct = 'editProduct';
 
+
+// Brands
+static const brands = 'brands';
+static const categories = 'categories';
+static const productBarcodes = 'productBarcodes';
+static const productUnits = 'productUnits';
   // Inventory
   static const stockMovements = 'stockMovements';
   static const lowStock = 'lowStock';

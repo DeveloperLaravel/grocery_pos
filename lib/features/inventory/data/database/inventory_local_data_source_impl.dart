@@ -3,7 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/database/daos/products_dao.dart';
+import '../../../../core/database/daos/master_data/products/products_dao.dart';
 import '../../../../core/database/daos/stock_dao.dart';
 
 import '../models/inventory_item_model.dart';

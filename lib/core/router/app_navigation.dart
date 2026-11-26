@@ -12,6 +12,9 @@ class AppNavigation {
   static void home(BuildContext context) {
     context.goNamed(AppRoutes.home);
   }
+static void categories(BuildContext context) {
+  context.pushNamed(AppRoutes.categories);
+}
 
   static void pos(BuildContext context) {
     context.goNamed(AppRoutes.pos);
@@ -20,7 +23,31 @@ class AppNavigation {
   static void products(BuildContext context) {
     context.goNamed(AppRoutes.products);
   }
-
+static void productBarcodes(
+  BuildContext context,
+  int productId,
+) {
+  context.pushNamed(
+    AppRoutes.productBarcodes,
+    pathParameters: {
+      'id': productId.toString(),
+    },
+  );
+}
+static void productUnits(
+  BuildContext context,
+  int productId,
+) {
+  context.pushNamed(
+    AppRoutes.productUnits,
+    pathParameters: {
+      'id': productId.toString(),
+    },
+  );
+}
+static void brands(BuildContext context) {
+  context.pushNamed(AppRoutes.brands);
+}
   static void inventory(BuildContext context) {
     context.goNamed(AppRoutes.inventory);
   }

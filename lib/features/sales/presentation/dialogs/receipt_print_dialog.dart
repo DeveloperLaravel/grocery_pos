@@ -152,7 +152,7 @@ class _ReceiptPrintDialogContentState
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          '${widget.receipt.invoiceNumber}',
+                          '"${widget.receipt.invoiceNumber}"',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),

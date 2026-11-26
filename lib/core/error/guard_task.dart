@@ -19,9 +19,6 @@ TaskEither<Failure, T> guardTask<T>(
       }
 
       return UnknownFailure(
-        message,
-        error,
-        stackTrace,
       );
     },
   );

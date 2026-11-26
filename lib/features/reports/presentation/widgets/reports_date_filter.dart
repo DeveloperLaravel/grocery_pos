@@ -164,6 +164,7 @@ class _FilterButton extends StatelessWidget {
             border: Border.all(
               color: selected
                   ? AppColors.primary
+                  // ignore: deprecated_member_use
                   : theme.colorScheme.outline.withOpacity(0.35),
             ),
           ),

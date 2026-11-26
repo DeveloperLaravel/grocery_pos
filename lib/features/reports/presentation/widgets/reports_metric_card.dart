@@ -40,6 +40,7 @@ class ReportsMetricCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
+                    // ignore: deprecated_member_use
                     color: color.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(11),
                   ),

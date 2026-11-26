@@ -81,6 +81,7 @@ class _ProductItem extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: rankColor.withOpacity(0.13),
               borderRadius: BorderRadius.circular(12),
             ),

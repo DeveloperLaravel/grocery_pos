@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
-import '../tables/products_table.dart';
+import '../tables/master_data/products/products_table.dart';
 import '../tables/sales_table.dart';
 import '../tables/sale_items_table.dart';
 import '../tables/stock_movements_table.dart';

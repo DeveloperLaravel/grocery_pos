@@ -1,31 +1,41 @@
 
 import 'package:drift/drift.dart';
 
-import 'products_table.dart';
+import 'master_data/products/products_table.dart';
 
 @DataClassName('StockMovementDb')
 class StockMovements extends Table {
-  // Primary Key
   IntColumn get id => integer().autoIncrement()();
 
-  // Related Product
-  IntColumn get productId =>
-      integer().references(Products, #id)();
+  // Product relationship
+  IntColumn get productId => integer().references(
+        Products,
+        #id,
+        onDelete: KeyAction.restrict,
+      )();
 
-  // Movement Type: in, out, sale, return
-  TextColumn get type => text()();
-
-  // Movement Quantity
-  // يجب أن تكون الكمية موجبة
+  // Movement quantity (always positive)
   RealColumn get quantity => real()();
 
-  // Optional Reference
+  // Movement type
+  // sale, sale_return, purchase, purchase_return,
+  // adjustment_in, adjustment_out, damage
+  TextColumn get type => text()();
+
+  // Reference number (invoice, purchase, etc.)
   TextColumn get reference => text().nullable()();
 
-  // Optional Note
+  // Movement description
   TextColumn get note => text().nullable()();
 
-  // Movement Date
+  // Creation timestamp
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  List<String> get customConstraints => [
+        'CHECK (quantity > 0)',
+        "CHECK (type IN ('sale', 'sale_return', 'purchase', "
+            "'purchase_return', 'adjustment_in', 'adjustment_out', 'damage'))",
+      ];
 }

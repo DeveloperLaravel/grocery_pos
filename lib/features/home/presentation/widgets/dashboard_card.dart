@@ -155,18 +155,17 @@ class DashboardView extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              _ResponsiveGrid(
-                columns: columns,
-                width: width,
-                children: statCards,
-                aspectRatio: width >= 1400
-                    ? 1.05
-                    : width >= 600
-                        ? 1.12
-                        : 1.02,
-                spacing: width >= 600 ? 14 : 10,
-              ),
-
+           _ResponsiveGrid(
+  columns: columns,
+  width: width,
+  aspectRatio: width >= 1400
+      ? 1.05
+      : width >= 600
+          ? 1.12
+          : 1.02,
+  spacing: width >= 600 ? 14 : 10,
+  children: statCards,
+),
               SizedBox(height: sectionSpacing),
 
               const SectionHeader(
@@ -177,17 +176,17 @@ class DashboardView extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              _ResponsiveGrid(
-                columns: columns,
-                width: width,
-                children: quickActions,
-                aspectRatio: width >= 1100
-                    ? 1.25
-                    : width >= 600
-                        ? 1.15
-                        : 1.08,
-                spacing: width >= 600 ? 14 : 10,
-              ),
+            _ResponsiveGrid(
+  columns: columns,
+  width: width,
+  aspectRatio: width >= 1100
+      ? 1.25
+      : width >= 600
+          ? 1.15
+          : 1.08,
+  spacing: width >= 600 ? 14 : 10,
+  children: quickActions,
+),
 
               SizedBox(height: sectionSpacing),
 

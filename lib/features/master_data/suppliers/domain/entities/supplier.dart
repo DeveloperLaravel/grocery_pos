@@ -1,0 +1,56 @@
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'supplier.freezed.dart';
+
+@freezed
+abstract class Supplier with _$Supplier {
+  const factory Supplier({
+    required int id,
+    String? supplierCode,
+    required String supplierType,
+    required String name,
+    String? companyName,
+    String? contactPerson,
+    String? imagePath,
+    String? phone,
+    String? secondaryPhone,
+    String? whatsapp,
+    String? email,
+    String? website,
+    String? nationalId,
+    String? taxNumber,
+    String? commercialRegister,
+    String? address,
+    String? country,
+    String? city,
+    String? region,
+    String? street,
+    String? buildingNumber,
+    String? postalCode,
+    String? billingAddress,
+    String? shippingAddress,
+    required String supplierCategory,
+    required String supplierLevel,
+    required double rating,
+    required bool isPreferred,
+    required bool allowCredit,
+    required double creditLimit,
+    required double openingBalance,
+    required double currentBalance,
+    required int paymentTermsDays,
+    required String preferredPaymentMethod,
+    String? bankName,
+    String? bankBranch,
+    String? bankAccountName,
+    String? bankAccountNumber,
+    String? iban,
+    String? swiftCode,
+    DateTime? lastPurchaseAt,
+    DateTime? lastPaymentAt,
+    required bool isActive,
+    String? notes,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _Supplier;
+}

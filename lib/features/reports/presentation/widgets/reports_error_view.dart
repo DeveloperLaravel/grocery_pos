@@ -27,6 +27,7 @@ class ReportsErrorView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: AppColors.error.withOpacity(0.10),
                 shape: BoxShape.circle,
               ),

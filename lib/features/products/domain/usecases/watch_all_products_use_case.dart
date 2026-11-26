@@ -1,12 +1,12 @@
 
 import 'package:injectable/injectable.dart';
 
-import '../entities/product.dart';
+import '../entities/product/product.dart';
 import '../repositories/product_repository.dart';
 
 @lazySingleton
 class WatchAllProductsUseCase {
-  final ProductRepository _repository;
+  final ProductsRepository _repository;
 
   WatchAllProductsUseCase(this._repository);
 

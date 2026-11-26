@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 // Navigation
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/pos/domain/entities/sale_receipt.dart';
+import '../../features/products/presentation/bloc/brands/brands_bloc.dart';
+import '../../features/products/presentation/bloc/product_units/product_units_bloc.dart';
+import '../../features/products/presentation/pages/barcodes/product_barcodes_page.dart';
+import '../../features/products/presentation/pages/brands/brands_page.dart';
+import '../../features/products/presentation/pages/category/categories_page.dart';
+import '../../features/products/presentation/pages/product_units/product_units_page.dart';
 import '../../features/sales/presentation/pages/receipt_page.dart';
+import '../di/injection.dart';
 import '../widgets/main_shell_page.dart';
 import 'app_routes.dart';
 import '../../features/sales/presentation/pages/receipt_print_preview_page.dart';
@@ -62,6 +70,45 @@ class AppRouter {
             ],
           ),
 
+  StatefulShellBranch(
+
+      routes: [
+GoRoute(
+  path: ':id/units',
+  name: AppRoutes.productUnits,
+  builder: (context, state) {
+    final productId = int.parse(
+      state.pathParameters['id']!,
+    );
+
+    // أنشئ ProductUnitsPage مع Bloc جديد من GetIt.
+    return ProductUnitsPage(
+      productId: productId,
+      bloc: getIt<ProductUnitsBloc>(),
+    );
+  },
+),
+      ],
+  ),
+
+          StatefulShellBranch(
+            routes: [
+             GoRoute(
+  path: ':id/barcodes',
+  name: AppRoutes.productBarcodes,
+  builder: (context, state) {
+    final productId = int.parse(
+      state.pathParameters['id']!,
+    );
+
+    return ProductBarcodesPage(
+      productId: productId,
+    );
+  },
+),
+            ],
+          ),
+
           // =====================================
           // 1 - POS
           // =====================================
@@ -113,6 +160,21 @@ class AppRouter {
                     },
                   ),
 
+    GoRoute(
+          path: 'categories',
+          name: AppRoutes.categories,
+          builder: (context, state) => const CategoriesPage(),
+        ),
+  GoRoute(
+  path: 'brands',
+  name: AppRoutes.brands,
+  builder: (context, state) {
+    return BlocProvider(
+      create: (_) => getIt<BrandsBloc>(),
+      child: const BrandsPage(),
+    );
+  },
+),
                   // أضف تفاصيل المنتج وتعديله هنا
                   // بعد إنشاء ProductDetailsPage و EditProductPage.
                 ],

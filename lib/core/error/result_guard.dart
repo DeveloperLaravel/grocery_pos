@@ -9,9 +9,6 @@ TaskEither<Failure, T> guardTask<T>(
   return TaskEither.tryCatch(
     action,
     (error, stackTrace) => UnknownFailure(
-      message,
-      error,
-      stackTrace,
     ),
   );
 }

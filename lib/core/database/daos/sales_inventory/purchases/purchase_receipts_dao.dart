@@ -1,6 +1,7 @@
 
 import 'package:drift/drift.dart';
 
+import '../../../app_database.dart';
 import '../../../tables/sales_inventory/purchases/purchase_receipts_table.dart';
 
 part 'purchase_receipts_dao.g.dart';

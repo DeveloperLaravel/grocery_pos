@@ -1,11 +1,12 @@
 
 import 'package:drift/drift.dart';
 
-import '../parties/categories_table.dart';
 import '../parties/brands_table.dart';
+import '../parties/categories_table.dart';
 
 @DataClassName('ProductDb')
 class Products extends Table {
+  // Primary Key
   IntColumn get id => integer().autoIncrement()();
 
   // Basic Information
@@ -37,21 +38,24 @@ class Products extends Table {
   TextColumn get productType =>
       text().withDefault(const Constant('piece'))();
 
-  // Default unit name (display information)
+  // Base Unit
   TextColumn get baseUnit =>
       text().withDefault(const Constant('piece'))();
 
   BoolColumn get allowDecimalQuantity =>
       boolean().withDefault(const Constant(false))();
 
-  // Default Pricing
+  // Pricing
   RealColumn get costPrice =>
       real().withDefault(const Constant(0.0))();
 
   RealColumn get salePrice =>
       real().withDefault(const Constant(0.0))();
 
-  // General reorder threshold
+  // Inventory
+  RealColumn get quantity =>
+      real().withDefault(const Constant(0.0))();
+
   RealColumn get minStock =>
       real().withDefault(const Constant(5.0))();
 
@@ -65,14 +69,12 @@ class Products extends Table {
 
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
-// Stock quantity in base units.
-RealColumn get quantity =>
-    real().withDefault(const Constant(0.0))();
+
   @override
   List<String> get customConstraints => [
         'CHECK (costPrice >= 0)',
         'CHECK (salePrice >= 0)',
-        'CHECK (minStock >= 0)',
         'CHECK (quantity >= 0)',
+        'CHECK (minStock >= 0)',
       ];
 }

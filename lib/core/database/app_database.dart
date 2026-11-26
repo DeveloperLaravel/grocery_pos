@@ -9,14 +9,11 @@ import 'daos/master_data/parties/customers_dao.dart';
 import 'daos/master_data/parties/suppliers_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_items_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_orders_dao.dart';
-import 'daos/sales_inventory/purchases/purchase_orders_table.dart';
 import 'daos/sales_inventory/purchases/purchase_payments_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_receipt_items_dao.dart';
-import 'daos/sales_inventory/purchases/purchase_receipt_items_table.dart' hide PurchaseReceiptItemsDao;
 import 'daos/sales_inventory/purchases/purchase_receipts_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_transactions_dao.dart';
 import 'daos/sales_inventory/purchases/supplier_products_dao.dart';
-import 'daos/sales_inventory/purchases/supplier_products_table.dart';
 import 'database_connection.dart';
 
 // =========================================
@@ -55,9 +52,11 @@ import 'tables/master_data/products/product_images_table.dart';
 
 import 'tables/reference_test_table.dart';
 import 'tables/sales_inventory/purchases/purchase_items_table.dart';
+import 'tables/sales_inventory/purchases/purchase_orders_table.dart';
 import 'tables/sales_inventory/purchases/purchase_payments_table.dart';
 import 'tables/sales_inventory/purchases/purchase_receipt_items_table.dart';
 import 'tables/sales_inventory/purchases/purchase_receipts_table.dart';
+import 'tables/sales_inventory/purchases/supplier_products_table.dart';
 import 'tables/sales_table.dart';
 import 'tables/sale_items_table.dart';
 import 'tables/stock_movements_table.dart';

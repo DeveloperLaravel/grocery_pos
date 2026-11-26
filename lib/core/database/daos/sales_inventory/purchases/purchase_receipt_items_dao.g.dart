@@ -3,8 +3,7 @@
 part of 'purchase_receipt_items_dao.dart';
 
 // ignore_for_file: type=lint
-mixin _$PurchaseReceiptItemsDaoMixin
-    on DatabaseAccessor<dynamic /* = invalid*/ > {
+mixin _$PurchaseReceiptItemsDaoMixin on DatabaseAccessor<AppDatabase> {
   $PurchaseReceiptItemsTable get purchaseReceiptItems =>
       attachedDatabase.purchaseReceiptItems;
   PurchaseReceiptItemsDaoManager get managers =>

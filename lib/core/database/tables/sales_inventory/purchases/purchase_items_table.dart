@@ -7,6 +7,7 @@ import '../../master_data/products/product_units_table.dart';
 
 @DataClassName('PurchaseItemDb')
 class PurchaseItems extends Table {
+  // Primary Key
   IntColumn get id => integer().autoIncrement()();
 
   // Relationships
@@ -30,13 +31,13 @@ class PurchaseItems extends Table {
         onDelete: KeyAction.setNull,
       )();
 
-  // Product snapshot
+  // Product Snapshot
   TextColumn get productName =>
       text().withLength(min: 1, max: 200)();
 
-  TextColumn get unitName =>
-      text().withDefault(const Constant('piece'))
-          .withLength(min: 1, max: 50)();
+  TextColumn get unitName => text()
+      .withDefault(const Constant('piece'))
+      .withLength(min: 1, max: 50)();
 
   // Quantity
   RealColumn get quantity => real()();
@@ -59,10 +60,10 @@ class PurchaseItems extends Table {
   @override
   List<String> get customConstraints => [
         'CHECK (quantity > 0)',
-        'CHECK (conversion_factor > 0)',
-        'CHECK (base_quantity > 0)',
-        'CHECK (unit_price >= 0)',
-        'CHECK (base_unit_cost >= 0)',
+        'CHECK (conversionFactor > 0)',
+        'CHECK (baseQuantity > 0)',
+        'CHECK (unitPrice >= 0)',
+        'CHECK (baseUnitCost >= 0)',
         'CHECK (total >= 0)',
       ];
 }

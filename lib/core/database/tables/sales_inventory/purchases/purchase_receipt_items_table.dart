@@ -6,12 +6,14 @@ import 'purchase_items_table.dart';
 
 @DataClassName('PurchaseReceiptItemDb')
 class PurchaseReceiptItems extends Table {
+  // Primary Key
   IntColumn get id => integer().autoIncrement()();
 
+  // Relationships
   IntColumn get purchaseReceiptId => integer().references(
         PurchaseReceipts,
         #id,
-        onDelete: KeyAction.restrict,
+        onDelete: KeyAction.cascade,
       )();
 
   IntColumn get purchaseItemId => integer().references(
@@ -20,37 +22,20 @@ class PurchaseReceiptItems extends Table {
         onDelete: KeyAction.restrict,
       )();
 
-  // Product snapshot
-  TextColumn get productName =>
-      text().withLength(min: 1, max: 200)();
-
-  TextColumn get unitName =>
-      text().withDefault(const Constant('piece'))
-          .withLength(min: 1, max: 50)();
-
-  // Total received quantity
+  // Received Quantity
   RealColumn get quantity => real()();
 
-  // Conversion to base unit
-  RealColumn get conversionFactor =>
-      real().withDefault(const Constant(1.0))();
-
-  // Rejected quantity in purchase unit
+  // Rejected Quantity
   RealColumn get rejectedQuantity =>
       real().withDefault(const Constant(0.0))();
 
+  // Additional
   TextColumn get notes => text().nullable()();
 
   @override
   List<String> get customConstraints => [
         'CHECK (quantity > 0)',
-        'CHECK (conversion_factor > 0)',
-        'CHECK (rejected_quantity >= 0)',
-        'CHECK (rejected_quantity <= quantity)',
-      ];
-
-  @override
-  List<Set<Column>> get uniqueKeys => [
-        {purchaseReceiptId, purchaseItemId},
+        'CHECK (rejectedQuantity >= 0)',
+        'CHECK (rejectedQuantity <= quantity)',
       ];
 }

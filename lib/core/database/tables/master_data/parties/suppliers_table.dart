@@ -213,6 +213,5 @@ class Suppliers extends Table {
   // Primary Key
   // =====================================================
 
-  @override
-  Set<Column> get primaryKey => {id};
+
 }

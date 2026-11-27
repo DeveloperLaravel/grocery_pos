@@ -8,6 +8,8 @@ import 'package:drift/drift.dart';
 import 'daos/database_maintenance_dao.dart';
 import 'daos/master_data/parties/customers_dao.dart';
 import 'daos/master_data/parties/suppliers_dao.dart';
+import 'daos/sales_inventory/customer_payments/customer_payment_allocations_dao.dart';
+import 'daos/sales_inventory/customer_payments/customer_payments_dao.dart';
 import 'daos/sales_inventory/finance/expense_categories_dao.dart';
 import 'daos/sales_inventory/finance/expenses_dao.dart';
 import 'daos/sales_inventory/finance/payment_methods_dao.dart';
@@ -37,6 +39,8 @@ import 'daos/sales_inventory/purchases/purchase_receipt_items_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_receipts_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_transactions_dao.dart';
 import 'daos/sales_inventory/purchases/supplier_products_dao.dart';
+import 'daos/sales_inventory/returns/return_items_dao.dart';
+import 'daos/sales_inventory/returns/returns_dao.dart';
 import 'daos/sales_inventory/sales/sale_items_dao.dart';
 import 'daos/sales_inventory/sales/sale_payments_dao.dart';
 import 'daos/sales_inventory/sales/sales_dao.dart';
@@ -59,6 +63,8 @@ import 'daos/reports_dao.dart';
 // Master Data Tables
 // =========================================
 
+import 'tables/sales_inventory/customer_payments/customer_payment_allocations_table.dart';
+import 'tables/sales_inventory/customer_payments/customer_payments_table.dart';
 import 'tables/sales_inventory/finance/expense_categories_table.dart';
 import 'tables/sales_inventory/finance/expenses_table.dart';
 import 'tables/sales_inventory/finance/payment_methods_table.dart';
@@ -174,6 +180,11 @@ part 'app_database.g.dart';
     PriceLists,
     PriceListItems,
 
+    CustomerPayments,
+    CustomerPaymentAllocations,
+    Returns,
+    ReturnItems,
+
 
     
     Returns,
@@ -222,6 +233,12 @@ ReferenceTestChildren,
     CouponUsagesDao,
     PriceListsDao,
     PriceListItemsDao,
+
+    CustomerPaymentsDao,
+    CustomerPaymentAllocationsDao,
+
+    ReturnsDao,
+    ReturnItemsDao,
 
  
 

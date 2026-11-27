@@ -33609,6 +33609,887 @@ class PriceListItemsCompanion extends UpdateCompanion<PriceListItemDb> {
   }
 }
 
+class $CustomerPaymentsTable extends CustomerPayments
+    with TableInfo<$CustomerPaymentsTable, CustomerPaymentDb> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CustomerPaymentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _customerIdMeta =
+      const VerificationMeta('customerId');
+  @override
+  late final GeneratedColumn<int> customerId = GeneratedColumn<int>(
+      'customer_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _paymentMethodIdMeta =
+      const VerificationMeta('paymentMethodId');
+  @override
+  late final GeneratedColumn<int> paymentMethodId = GeneratedColumn<int>(
+      'payment_method_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+      'amount', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _referenceNumberMeta =
+      const VerificationMeta('referenceNumber');
+  @override
+  late final GeneratedColumn<String> referenceNumber = GeneratedColumn<String>(
+      'reference_number', aliasedName, true,
+      additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 100),
+      type: DriftSqlType.string,
+      requiredDuringInsert: false);
+  static const VerificationMeta _transactionReferenceMeta =
+      const VerificationMeta('transactionReference');
+  @override
+  late final GeneratedColumn<String> transactionReference =
+      GeneratedColumn<String>('transaction_reference', aliasedName, true,
+          additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 150),
+          type: DriftSqlType.string,
+          requiredDuringInsert: false);
+  static const VerificationMeta _paymentDateMeta =
+      const VerificationMeta('paymentDate');
+  @override
+  late final GeneratedColumn<DateTime> paymentDate = GeneratedColumn<DateTime>(
+      'payment_date', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 20),
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('posted'));
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        customerId,
+        paymentMethodId,
+        amount,
+        referenceNumber,
+        transactionReference,
+        paymentDate,
+        status,
+        notes,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'customer_payments';
+  @override
+  VerificationContext validateIntegrity(Insertable<CustomerPaymentDb> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('customer_id')) {
+      context.handle(
+          _customerIdMeta,
+          customerId.isAcceptableOrUnknown(
+              data['customer_id']!, _customerIdMeta));
+    } else if (isInserting) {
+      context.missing(_customerIdMeta);
+    }
+    if (data.containsKey('payment_method_id')) {
+      context.handle(
+          _paymentMethodIdMeta,
+          paymentMethodId.isAcceptableOrUnknown(
+              data['payment_method_id']!, _paymentMethodIdMeta));
+    } else if (isInserting) {
+      context.missing(_paymentMethodIdMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(_amountMeta,
+          amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('reference_number')) {
+      context.handle(
+          _referenceNumberMeta,
+          referenceNumber.isAcceptableOrUnknown(
+              data['reference_number']!, _referenceNumberMeta));
+    }
+    if (data.containsKey('transaction_reference')) {
+      context.handle(
+          _transactionReferenceMeta,
+          transactionReference.isAcceptableOrUnknown(
+              data['transaction_reference']!, _transactionReferenceMeta));
+    }
+    if (data.containsKey('payment_date')) {
+      context.handle(
+          _paymentDateMeta,
+          paymentDate.isAcceptableOrUnknown(
+              data['payment_date']!, _paymentDateMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CustomerPaymentDb map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CustomerPaymentDb(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      customerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}customer_id'])!,
+      paymentMethodId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}payment_method_id'])!,
+      amount: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
+      referenceNumber: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}reference_number']),
+      transactionReference: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}transaction_reference']),
+      paymentDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}payment_date'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $CustomerPaymentsTable createAlias(String alias) {
+    return $CustomerPaymentsTable(attachedDatabase, alias);
+  }
+}
+
+class CustomerPaymentDb extends DataClass
+    implements Insertable<CustomerPaymentDb> {
+  final int id;
+  final int customerId;
+  final int paymentMethodId;
+  final double amount;
+  final String? referenceNumber;
+  final String? transactionReference;
+  final DateTime paymentDate;
+  final String status;
+  final String? notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const CustomerPaymentDb(
+      {required this.id,
+      required this.customerId,
+      required this.paymentMethodId,
+      required this.amount,
+      this.referenceNumber,
+      this.transactionReference,
+      required this.paymentDate,
+      required this.status,
+      this.notes,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['customer_id'] = Variable<int>(customerId);
+    map['payment_method_id'] = Variable<int>(paymentMethodId);
+    map['amount'] = Variable<double>(amount);
+    if (!nullToAbsent || referenceNumber != null) {
+      map['reference_number'] = Variable<String>(referenceNumber);
+    }
+    if (!nullToAbsent || transactionReference != null) {
+      map['transaction_reference'] = Variable<String>(transactionReference);
+    }
+    map['payment_date'] = Variable<DateTime>(paymentDate);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  CustomerPaymentsCompanion toCompanion(bool nullToAbsent) {
+    return CustomerPaymentsCompanion(
+      id: Value(id),
+      customerId: Value(customerId),
+      paymentMethodId: Value(paymentMethodId),
+      amount: Value(amount),
+      referenceNumber: referenceNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceNumber),
+      transactionReference: transactionReference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(transactionReference),
+      paymentDate: Value(paymentDate),
+      status: Value(status),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory CustomerPaymentDb.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CustomerPaymentDb(
+      id: serializer.fromJson<int>(json['id']),
+      customerId: serializer.fromJson<int>(json['customerId']),
+      paymentMethodId: serializer.fromJson<int>(json['paymentMethodId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      referenceNumber: serializer.fromJson<String?>(json['referenceNumber']),
+      transactionReference:
+          serializer.fromJson<String?>(json['transactionReference']),
+      paymentDate: serializer.fromJson<DateTime>(json['paymentDate']),
+      status: serializer.fromJson<String>(json['status']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'customerId': serializer.toJson<int>(customerId),
+      'paymentMethodId': serializer.toJson<int>(paymentMethodId),
+      'amount': serializer.toJson<double>(amount),
+      'referenceNumber': serializer.toJson<String?>(referenceNumber),
+      'transactionReference': serializer.toJson<String?>(transactionReference),
+      'paymentDate': serializer.toJson<DateTime>(paymentDate),
+      'status': serializer.toJson<String>(status),
+      'notes': serializer.toJson<String?>(notes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  CustomerPaymentDb copyWith(
+          {int? id,
+          int? customerId,
+          int? paymentMethodId,
+          double? amount,
+          Value<String?> referenceNumber = const Value.absent(),
+          Value<String?> transactionReference = const Value.absent(),
+          DateTime? paymentDate,
+          String? status,
+          Value<String?> notes = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      CustomerPaymentDb(
+        id: id ?? this.id,
+        customerId: customerId ?? this.customerId,
+        paymentMethodId: paymentMethodId ?? this.paymentMethodId,
+        amount: amount ?? this.amount,
+        referenceNumber: referenceNumber.present
+            ? referenceNumber.value
+            : this.referenceNumber,
+        transactionReference: transactionReference.present
+            ? transactionReference.value
+            : this.transactionReference,
+        paymentDate: paymentDate ?? this.paymentDate,
+        status: status ?? this.status,
+        notes: notes.present ? notes.value : this.notes,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  CustomerPaymentDb copyWithCompanion(CustomerPaymentsCompanion data) {
+    return CustomerPaymentDb(
+      id: data.id.present ? data.id.value : this.id,
+      customerId:
+          data.customerId.present ? data.customerId.value : this.customerId,
+      paymentMethodId: data.paymentMethodId.present
+          ? data.paymentMethodId.value
+          : this.paymentMethodId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      referenceNumber: data.referenceNumber.present
+          ? data.referenceNumber.value
+          : this.referenceNumber,
+      transactionReference: data.transactionReference.present
+          ? data.transactionReference.value
+          : this.transactionReference,
+      paymentDate:
+          data.paymentDate.present ? data.paymentDate.value : this.paymentDate,
+      status: data.status.present ? data.status.value : this.status,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomerPaymentDb(')
+          ..write('id: $id, ')
+          ..write('customerId: $customerId, ')
+          ..write('paymentMethodId: $paymentMethodId, ')
+          ..write('amount: $amount, ')
+          ..write('referenceNumber: $referenceNumber, ')
+          ..write('transactionReference: $transactionReference, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      customerId,
+      paymentMethodId,
+      amount,
+      referenceNumber,
+      transactionReference,
+      paymentDate,
+      status,
+      notes,
+      createdAt,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CustomerPaymentDb &&
+          other.id == this.id &&
+          other.customerId == this.customerId &&
+          other.paymentMethodId == this.paymentMethodId &&
+          other.amount == this.amount &&
+          other.referenceNumber == this.referenceNumber &&
+          other.transactionReference == this.transactionReference &&
+          other.paymentDate == this.paymentDate &&
+          other.status == this.status &&
+          other.notes == this.notes &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class CustomerPaymentsCompanion extends UpdateCompanion<CustomerPaymentDb> {
+  final Value<int> id;
+  final Value<int> customerId;
+  final Value<int> paymentMethodId;
+  final Value<double> amount;
+  final Value<String?> referenceNumber;
+  final Value<String?> transactionReference;
+  final Value<DateTime> paymentDate;
+  final Value<String> status;
+  final Value<String?> notes;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const CustomerPaymentsCompanion({
+    this.id = const Value.absent(),
+    this.customerId = const Value.absent(),
+    this.paymentMethodId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.referenceNumber = const Value.absent(),
+    this.transactionReference = const Value.absent(),
+    this.paymentDate = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  CustomerPaymentsCompanion.insert({
+    this.id = const Value.absent(),
+    required int customerId,
+    required int paymentMethodId,
+    required double amount,
+    this.referenceNumber = const Value.absent(),
+    this.transactionReference = const Value.absent(),
+    this.paymentDate = const Value.absent(),
+    this.status = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  })  : customerId = Value(customerId),
+        paymentMethodId = Value(paymentMethodId),
+        amount = Value(amount);
+  static Insertable<CustomerPaymentDb> custom({
+    Expression<int>? id,
+    Expression<int>? customerId,
+    Expression<int>? paymentMethodId,
+    Expression<double>? amount,
+    Expression<String>? referenceNumber,
+    Expression<String>? transactionReference,
+    Expression<DateTime>? paymentDate,
+    Expression<String>? status,
+    Expression<String>? notes,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (customerId != null) 'customer_id': customerId,
+      if (paymentMethodId != null) 'payment_method_id': paymentMethodId,
+      if (amount != null) 'amount': amount,
+      if (referenceNumber != null) 'reference_number': referenceNumber,
+      if (transactionReference != null)
+        'transaction_reference': transactionReference,
+      if (paymentDate != null) 'payment_date': paymentDate,
+      if (status != null) 'status': status,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  CustomerPaymentsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? customerId,
+      Value<int>? paymentMethodId,
+      Value<double>? amount,
+      Value<String?>? referenceNumber,
+      Value<String?>? transactionReference,
+      Value<DateTime>? paymentDate,
+      Value<String>? status,
+      Value<String?>? notes,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return CustomerPaymentsCompanion(
+      id: id ?? this.id,
+      customerId: customerId ?? this.customerId,
+      paymentMethodId: paymentMethodId ?? this.paymentMethodId,
+      amount: amount ?? this.amount,
+      referenceNumber: referenceNumber ?? this.referenceNumber,
+      transactionReference: transactionReference ?? this.transactionReference,
+      paymentDate: paymentDate ?? this.paymentDate,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (customerId.present) {
+      map['customer_id'] = Variable<int>(customerId.value);
+    }
+    if (paymentMethodId.present) {
+      map['payment_method_id'] = Variable<int>(paymentMethodId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (referenceNumber.present) {
+      map['reference_number'] = Variable<String>(referenceNumber.value);
+    }
+    if (transactionReference.present) {
+      map['transaction_reference'] =
+          Variable<String>(transactionReference.value);
+    }
+    if (paymentDate.present) {
+      map['payment_date'] = Variable<DateTime>(paymentDate.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomerPaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('customerId: $customerId, ')
+          ..write('paymentMethodId: $paymentMethodId, ')
+          ..write('amount: $amount, ')
+          ..write('referenceNumber: $referenceNumber, ')
+          ..write('transactionReference: $transactionReference, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('status: $status, ')
+          ..write('notes: $notes, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CustomerPaymentAllocationsTable extends CustomerPaymentAllocations
+    with
+        TableInfo<$CustomerPaymentAllocationsTable,
+            CustomerPaymentAllocationDb> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CustomerPaymentAllocationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _customerPaymentIdMeta =
+      const VerificationMeta('customerPaymentId');
+  @override
+  late final GeneratedColumn<int> customerPaymentId = GeneratedColumn<int>(
+      'customer_payment_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _saleIdMeta = const VerificationMeta('saleId');
+  @override
+  late final GeneratedColumn<int> saleId = GeneratedColumn<int>(
+      'sale_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+      'amount', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, customerPaymentId, saleId, amount, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'customer_payment_allocations';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<CustomerPaymentAllocationDb> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('customer_payment_id')) {
+      context.handle(
+          _customerPaymentIdMeta,
+          customerPaymentId.isAcceptableOrUnknown(
+              data['customer_payment_id']!, _customerPaymentIdMeta));
+    } else if (isInserting) {
+      context.missing(_customerPaymentIdMeta);
+    }
+    if (data.containsKey('sale_id')) {
+      context.handle(_saleIdMeta,
+          saleId.isAcceptableOrUnknown(data['sale_id']!, _saleIdMeta));
+    } else if (isInserting) {
+      context.missing(_saleIdMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(_amountMeta,
+          amount.isAcceptableOrUnknown(data['amount']!, _amountMeta));
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {customerPaymentId, saleId},
+      ];
+  @override
+  CustomerPaymentAllocationDb map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CustomerPaymentAllocationDb(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      customerPaymentId: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}customer_payment_id'])!,
+      saleId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}sale_id'])!,
+      amount: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $CustomerPaymentAllocationsTable createAlias(String alias) {
+    return $CustomerPaymentAllocationsTable(attachedDatabase, alias);
+  }
+}
+
+class CustomerPaymentAllocationDb extends DataClass
+    implements Insertable<CustomerPaymentAllocationDb> {
+  final int id;
+  final int customerPaymentId;
+  final int saleId;
+  final double amount;
+  final DateTime createdAt;
+  const CustomerPaymentAllocationDb(
+      {required this.id,
+      required this.customerPaymentId,
+      required this.saleId,
+      required this.amount,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['customer_payment_id'] = Variable<int>(customerPaymentId);
+    map['sale_id'] = Variable<int>(saleId);
+    map['amount'] = Variable<double>(amount);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  CustomerPaymentAllocationsCompanion toCompanion(bool nullToAbsent) {
+    return CustomerPaymentAllocationsCompanion(
+      id: Value(id),
+      customerPaymentId: Value(customerPaymentId),
+      saleId: Value(saleId),
+      amount: Value(amount),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory CustomerPaymentAllocationDb.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CustomerPaymentAllocationDb(
+      id: serializer.fromJson<int>(json['id']),
+      customerPaymentId: serializer.fromJson<int>(json['customerPaymentId']),
+      saleId: serializer.fromJson<int>(json['saleId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'customerPaymentId': serializer.toJson<int>(customerPaymentId),
+      'saleId': serializer.toJson<int>(saleId),
+      'amount': serializer.toJson<double>(amount),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  CustomerPaymentAllocationDb copyWith(
+          {int? id,
+          int? customerPaymentId,
+          int? saleId,
+          double? amount,
+          DateTime? createdAt}) =>
+      CustomerPaymentAllocationDb(
+        id: id ?? this.id,
+        customerPaymentId: customerPaymentId ?? this.customerPaymentId,
+        saleId: saleId ?? this.saleId,
+        amount: amount ?? this.amount,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  CustomerPaymentAllocationDb copyWithCompanion(
+      CustomerPaymentAllocationsCompanion data) {
+    return CustomerPaymentAllocationDb(
+      id: data.id.present ? data.id.value : this.id,
+      customerPaymentId: data.customerPaymentId.present
+          ? data.customerPaymentId.value
+          : this.customerPaymentId,
+      saleId: data.saleId.present ? data.saleId.value : this.saleId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomerPaymentAllocationDb(')
+          ..write('id: $id, ')
+          ..write('customerPaymentId: $customerPaymentId, ')
+          ..write('saleId: $saleId, ')
+          ..write('amount: $amount, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, customerPaymentId, saleId, amount, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CustomerPaymentAllocationDb &&
+          other.id == this.id &&
+          other.customerPaymentId == this.customerPaymentId &&
+          other.saleId == this.saleId &&
+          other.amount == this.amount &&
+          other.createdAt == this.createdAt);
+}
+
+class CustomerPaymentAllocationsCompanion
+    extends UpdateCompanion<CustomerPaymentAllocationDb> {
+  final Value<int> id;
+  final Value<int> customerPaymentId;
+  final Value<int> saleId;
+  final Value<double> amount;
+  final Value<DateTime> createdAt;
+  const CustomerPaymentAllocationsCompanion({
+    this.id = const Value.absent(),
+    this.customerPaymentId = const Value.absent(),
+    this.saleId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  CustomerPaymentAllocationsCompanion.insert({
+    this.id = const Value.absent(),
+    required int customerPaymentId,
+    required int saleId,
+    required double amount,
+    this.createdAt = const Value.absent(),
+  })  : customerPaymentId = Value(customerPaymentId),
+        saleId = Value(saleId),
+        amount = Value(amount);
+  static Insertable<CustomerPaymentAllocationDb> custom({
+    Expression<int>? id,
+    Expression<int>? customerPaymentId,
+    Expression<int>? saleId,
+    Expression<double>? amount,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (customerPaymentId != null) 'customer_payment_id': customerPaymentId,
+      if (saleId != null) 'sale_id': saleId,
+      if (amount != null) 'amount': amount,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  CustomerPaymentAllocationsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? customerPaymentId,
+      Value<int>? saleId,
+      Value<double>? amount,
+      Value<DateTime>? createdAt}) {
+    return CustomerPaymentAllocationsCompanion(
+      id: id ?? this.id,
+      customerPaymentId: customerPaymentId ?? this.customerPaymentId,
+      saleId: saleId ?? this.saleId,
+      amount: amount ?? this.amount,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (customerPaymentId.present) {
+      map['customer_payment_id'] = Variable<int>(customerPaymentId.value);
+    }
+    if (saleId.present) {
+      map['sale_id'] = Variable<int>(saleId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomerPaymentAllocationsCompanion(')
+          ..write('id: $id, ')
+          ..write('customerPaymentId: $customerPaymentId, ')
+          ..write('saleId: $saleId, ')
+          ..write('amount: $amount, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ReturnsTable extends Returns with TableInfo<$ReturnsTable, ReturnDb> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -34591,6 +35472,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CouponUsagesTable couponUsages = $CouponUsagesTable(this);
   late final $PriceListsTable priceLists = $PriceListsTable(this);
   late final $PriceListItemsTable priceListItems = $PriceListItemsTable(this);
+  late final $CustomerPaymentsTable customerPayments =
+      $CustomerPaymentsTable(this);
+  late final $CustomerPaymentAllocationsTable customerPaymentAllocations =
+      $CustomerPaymentAllocationsTable(this);
   late final $ReturnsTable returns = $ReturnsTable(this);
   late final $ReturnItemsTable returnItems = $ReturnItemsTable(this);
   late final $ReferenceTestParentsTable referenceTestParents =
@@ -34656,6 +35541,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final PriceListsDao priceListsDao = PriceListsDao(this as AppDatabase);
   late final PriceListItemsDao priceListItemsDao =
       PriceListItemsDao(this as AppDatabase);
+  late final CustomerPaymentsDao customerPaymentsDao =
+      CustomerPaymentsDao(this as AppDatabase);
+  late final CustomerPaymentAllocationsDao customerPaymentAllocationsDao =
+      CustomerPaymentAllocationsDao(this as dynamic /* = invalid*/);
+  late final ReturnsDao returnsDao = ReturnsDao(this as AppDatabase);
+  late final ReturnItemsDao returnItemsDao =
+      ReturnItemsDao(this as AppDatabase);
   late final ReportsDao reportsDao = ReportsDao(this as AppDatabase);
   late final HomeDao homeDao = HomeDao(this as AppDatabase);
   late final DatabaseMaintenanceDao databaseMaintenanceDao =
@@ -34709,6 +35601,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         couponUsages,
         priceLists,
         priceListItems,
+        customerPayments,
+        customerPaymentAllocations,
         returns,
         returnItems,
         referenceTestParents,
@@ -49466,6 +50360,446 @@ typedef $$PriceListItemsTableProcessedTableManager = ProcessedTableManager<
     ),
     PriceListItemDb,
     PrefetchHooks Function()>;
+typedef $$CustomerPaymentsTableCreateCompanionBuilder
+    = CustomerPaymentsCompanion Function({
+  Value<int> id,
+  required int customerId,
+  required int paymentMethodId,
+  required double amount,
+  Value<String?> referenceNumber,
+  Value<String?> transactionReference,
+  Value<DateTime> paymentDate,
+  Value<String> status,
+  Value<String?> notes,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+typedef $$CustomerPaymentsTableUpdateCompanionBuilder
+    = CustomerPaymentsCompanion Function({
+  Value<int> id,
+  Value<int> customerId,
+  Value<int> paymentMethodId,
+  Value<double> amount,
+  Value<String?> referenceNumber,
+  Value<String?> transactionReference,
+  Value<DateTime> paymentDate,
+  Value<String> status,
+  Value<String?> notes,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+class $$CustomerPaymentsTableFilterComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentsTable> {
+  $$CustomerPaymentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get customerId => $composableBuilder(
+      column: $table.customerId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get paymentMethodId => $composableBuilder(
+      column: $table.paymentMethodId,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get referenceNumber => $composableBuilder(
+      column: $table.referenceNumber,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get transactionReference => $composableBuilder(
+      column: $table.transactionReference,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get paymentDate => $composableBuilder(
+      column: $table.paymentDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$CustomerPaymentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentsTable> {
+  $$CustomerPaymentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get customerId => $composableBuilder(
+      column: $table.customerId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get paymentMethodId => $composableBuilder(
+      column: $table.paymentMethodId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get referenceNumber => $composableBuilder(
+      column: $table.referenceNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get transactionReference => $composableBuilder(
+      column: $table.transactionReference,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get paymentDate => $composableBuilder(
+      column: $table.paymentDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$CustomerPaymentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentsTable> {
+  $$CustomerPaymentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get customerId => $composableBuilder(
+      column: $table.customerId, builder: (column) => column);
+
+  GeneratedColumn<int> get paymentMethodId => $composableBuilder(
+      column: $table.paymentMethodId, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get referenceNumber => $composableBuilder(
+      column: $table.referenceNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get transactionReference => $composableBuilder(
+      column: $table.transactionReference, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get paymentDate => $composableBuilder(
+      column: $table.paymentDate, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$CustomerPaymentsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CustomerPaymentsTable,
+    CustomerPaymentDb,
+    $$CustomerPaymentsTableFilterComposer,
+    $$CustomerPaymentsTableOrderingComposer,
+    $$CustomerPaymentsTableAnnotationComposer,
+    $$CustomerPaymentsTableCreateCompanionBuilder,
+    $$CustomerPaymentsTableUpdateCompanionBuilder,
+    (
+      CustomerPaymentDb,
+      BaseReferences<_$AppDatabase, $CustomerPaymentsTable, CustomerPaymentDb>
+    ),
+    CustomerPaymentDb,
+    PrefetchHooks Function()> {
+  $$CustomerPaymentsTableTableManager(
+      _$AppDatabase db, $CustomerPaymentsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CustomerPaymentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CustomerPaymentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CustomerPaymentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> customerId = const Value.absent(),
+            Value<int> paymentMethodId = const Value.absent(),
+            Value<double> amount = const Value.absent(),
+            Value<String?> referenceNumber = const Value.absent(),
+            Value<String?> transactionReference = const Value.absent(),
+            Value<DateTime> paymentDate = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              CustomerPaymentsCompanion(
+            id: id,
+            customerId: customerId,
+            paymentMethodId: paymentMethodId,
+            amount: amount,
+            referenceNumber: referenceNumber,
+            transactionReference: transactionReference,
+            paymentDate: paymentDate,
+            status: status,
+            notes: notes,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int customerId,
+            required int paymentMethodId,
+            required double amount,
+            Value<String?> referenceNumber = const Value.absent(),
+            Value<String?> transactionReference = const Value.absent(),
+            Value<DateTime> paymentDate = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              CustomerPaymentsCompanion.insert(
+            id: id,
+            customerId: customerId,
+            paymentMethodId: paymentMethodId,
+            amount: amount,
+            referenceNumber: referenceNumber,
+            transactionReference: transactionReference,
+            paymentDate: paymentDate,
+            status: status,
+            notes: notes,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CustomerPaymentsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $CustomerPaymentsTable,
+    CustomerPaymentDb,
+    $$CustomerPaymentsTableFilterComposer,
+    $$CustomerPaymentsTableOrderingComposer,
+    $$CustomerPaymentsTableAnnotationComposer,
+    $$CustomerPaymentsTableCreateCompanionBuilder,
+    $$CustomerPaymentsTableUpdateCompanionBuilder,
+    (
+      CustomerPaymentDb,
+      BaseReferences<_$AppDatabase, $CustomerPaymentsTable, CustomerPaymentDb>
+    ),
+    CustomerPaymentDb,
+    PrefetchHooks Function()>;
+typedef $$CustomerPaymentAllocationsTableCreateCompanionBuilder
+    = CustomerPaymentAllocationsCompanion Function({
+  Value<int> id,
+  required int customerPaymentId,
+  required int saleId,
+  required double amount,
+  Value<DateTime> createdAt,
+});
+typedef $$CustomerPaymentAllocationsTableUpdateCompanionBuilder
+    = CustomerPaymentAllocationsCompanion Function({
+  Value<int> id,
+  Value<int> customerPaymentId,
+  Value<int> saleId,
+  Value<double> amount,
+  Value<DateTime> createdAt,
+});
+
+class $$CustomerPaymentAllocationsTableFilterComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentAllocationsTable> {
+  $$CustomerPaymentAllocationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get customerPaymentId => $composableBuilder(
+      column: $table.customerPaymentId,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get saleId => $composableBuilder(
+      column: $table.saleId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$CustomerPaymentAllocationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentAllocationsTable> {
+  $$CustomerPaymentAllocationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get customerPaymentId => $composableBuilder(
+      column: $table.customerPaymentId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get saleId => $composableBuilder(
+      column: $table.saleId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+      column: $table.amount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$CustomerPaymentAllocationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CustomerPaymentAllocationsTable> {
+  $$CustomerPaymentAllocationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get customerPaymentId => $composableBuilder(
+      column: $table.customerPaymentId, builder: (column) => column);
+
+  GeneratedColumn<int> get saleId =>
+      $composableBuilder(column: $table.saleId, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$CustomerPaymentAllocationsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CustomerPaymentAllocationsTable,
+    CustomerPaymentAllocationDb,
+    $$CustomerPaymentAllocationsTableFilterComposer,
+    $$CustomerPaymentAllocationsTableOrderingComposer,
+    $$CustomerPaymentAllocationsTableAnnotationComposer,
+    $$CustomerPaymentAllocationsTableCreateCompanionBuilder,
+    $$CustomerPaymentAllocationsTableUpdateCompanionBuilder,
+    (
+      CustomerPaymentAllocationDb,
+      BaseReferences<_$AppDatabase, $CustomerPaymentAllocationsTable,
+          CustomerPaymentAllocationDb>
+    ),
+    CustomerPaymentAllocationDb,
+    PrefetchHooks Function()> {
+  $$CustomerPaymentAllocationsTableTableManager(
+      _$AppDatabase db, $CustomerPaymentAllocationsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CustomerPaymentAllocationsTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CustomerPaymentAllocationsTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CustomerPaymentAllocationsTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> customerPaymentId = const Value.absent(),
+            Value<int> saleId = const Value.absent(),
+            Value<double> amount = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              CustomerPaymentAllocationsCompanion(
+            id: id,
+            customerPaymentId: customerPaymentId,
+            saleId: saleId,
+            amount: amount,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int customerPaymentId,
+            required int saleId,
+            required double amount,
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              CustomerPaymentAllocationsCompanion.insert(
+            id: id,
+            customerPaymentId: customerPaymentId,
+            saleId: saleId,
+            amount: amount,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CustomerPaymentAllocationsTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $CustomerPaymentAllocationsTable,
+        CustomerPaymentAllocationDb,
+        $$CustomerPaymentAllocationsTableFilterComposer,
+        $$CustomerPaymentAllocationsTableOrderingComposer,
+        $$CustomerPaymentAllocationsTableAnnotationComposer,
+        $$CustomerPaymentAllocationsTableCreateCompanionBuilder,
+        $$CustomerPaymentAllocationsTableUpdateCompanionBuilder,
+        (
+          CustomerPaymentAllocationDb,
+          BaseReferences<_$AppDatabase, $CustomerPaymentAllocationsTable,
+              CustomerPaymentAllocationDb>
+        ),
+        CustomerPaymentAllocationDb,
+        PrefetchHooks Function()>;
 typedef $$ReturnsTableCreateCompanionBuilder = ReturnsCompanion Function({
   Value<int> id,
   required int saleId,
@@ -50126,6 +51460,12 @@ class $AppDatabaseManager {
       $$PriceListsTableTableManager(_db, _db.priceLists);
   $$PriceListItemsTableTableManager get priceListItems =>
       $$PriceListItemsTableTableManager(_db, _db.priceListItems);
+  $$CustomerPaymentsTableTableManager get customerPayments =>
+      $$CustomerPaymentsTableTableManager(_db, _db.customerPayments);
+  $$CustomerPaymentAllocationsTableTableManager
+      get customerPaymentAllocations =>
+          $$CustomerPaymentAllocationsTableTableManager(
+              _db, _db.customerPaymentAllocations);
   $$ReturnsTableTableManager get returns =>
       $$ReturnsTableTableManager(_db, _db.returns);
   $$ReturnItemsTableTableManager get returnItems =>

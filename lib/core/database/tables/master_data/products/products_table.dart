@@ -6,10 +6,16 @@ import '../parties/categories_table.dart';
 
 @DataClassName('ProductDb')
 class Products extends Table {
-  // Primary Key
+  // =====================================================
+  // 1. Primary Key
+  // =====================================================
+
   IntColumn get id => integer().autoIncrement()();
 
-  // Basic Information
+  // =====================================================
+  // 2. Basic Information
+  // =====================================================
+
   TextColumn get name => text().withLength(
         min: 1,
         max: 150,
@@ -17,7 +23,10 @@ class Products extends Table {
 
   TextColumn get description => text().nullable()();
 
-  // Classification
+  // =====================================================
+  // 3. Classification
+  // =====================================================
+
   IntColumn get categoryId => integer()
       .nullable()
       .references(
@@ -34,47 +43,62 @@ class Products extends Table {
         onDelete: KeyAction.setNull,
       )();
 
-  // Product Type
+  // =====================================================
+  // 4. Product Type
+  // =====================================================
+
+  // piece / weight / volume
+
   TextColumn get productType =>
       text().withDefault(const Constant('piece'))();
 
-  // Base Unit
+  // =====================================================
+  // 5. Base Unit
+  // =====================================================
+
+  // piece / kg / g / liter / ml
+
   TextColumn get baseUnit =>
       text().withDefault(const Constant('piece'))();
 
   BoolColumn get allowDecimalQuantity =>
       boolean().withDefault(const Constant(false))();
 
-  // Pricing
+  // =====================================================
+  // 6. Pricing
+  // =====================================================
+
   RealColumn get costPrice =>
       real().withDefault(const Constant(0.0))();
 
   RealColumn get salePrice =>
       real().withDefault(const Constant(0.0))();
 
-  // Inventory
-  RealColumn get quantity =>
-      real().withDefault(const Constant(0.0))();
+  // =====================================================
+  // 7. Status
+  // =====================================================
 
-  RealColumn get minStock =>
-      real().withDefault(const Constant(5.0))();
-
-  // Status
   BoolColumn get isActive =>
       boolean().withDefault(const Constant(true))();
 
-  // Timestamps
+  // =====================================================
+  // 8. Timestamps
+  // =====================================================
+
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
 
+  // =====================================================
+  // 9. Constraints
+  // =====================================================
+
   @override
   List<String> get customConstraints => [
         'CHECK (costPrice >= 0)',
         'CHECK (salePrice >= 0)',
-        'CHECK (quantity >= 0)',
-        'CHECK (minStock >= 0)',
+        "CHECK (productType IN ('piece', 'weight', 'volume'))",
       ];
 }

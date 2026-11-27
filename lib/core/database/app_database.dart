@@ -7,6 +7,10 @@ import 'package:drift/drift.dart';
 
 import 'daos/master_data/parties/customers_dao.dart';
 import 'daos/master_data/parties/suppliers_dao.dart';
+import 'daos/sales_inventory/inventory/product_stocks_dao.dart';
+import 'daos/sales_inventory/inventory/stock_movements_dao.dart';
+import 'daos/sales_inventory/inventory/stock_transfers_dao.dart';
+import 'daos/sales_inventory/inventory/stores_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_items_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_orders_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_payments_dao.dart';
@@ -29,7 +33,6 @@ import 'daos/master_data/products/products_dao.dart';
 import 'daos/home_dao.dart';
 import 'daos/reports_dao.dart';
 import 'daos/sales_dao.dart';
-import 'daos/stock_dao.dart';
 import 'daos/database_maintenance_dao.dart';
 
 // =========================================
@@ -51,6 +54,14 @@ import 'tables/master_data/products/product_images_table.dart';
 // =========================================
 
 import 'tables/reference_test_table.dart';
+import 'tables/sales_inventory/inventory/product_stocks_table.dart';
+import 'tables/sales_inventory/inventory/stock_adjustment_items_table.dart';
+import 'tables/sales_inventory/inventory/stock_adjustments_table.dart';
+import 'tables/sales_inventory/inventory/stock_count_items_table.dart';
+import 'tables/sales_inventory/inventory/stock_counts_table.dart';
+import 'tables/sales_inventory/inventory/stock_transfer_items_table.dart';
+import 'tables/sales_inventory/inventory/stock_transfers_table.dart';
+import 'tables/sales_inventory/inventory/stores_table.dart';
 import 'tables/sales_inventory/purchases/purchase_items_table.dart';
 import 'tables/sales_inventory/purchases/purchase_orders_table.dart';
 import 'tables/sales_inventory/purchases/purchase_payments_table.dart';
@@ -59,7 +70,7 @@ import 'tables/sales_inventory/purchases/purchase_receipts_table.dart';
 import 'tables/sales_inventory/purchases/supplier_products_table.dart';
 import 'tables/sales_table.dart';
 import 'tables/sale_items_table.dart';
-import 'tables/stock_movements_table.dart';
+import 'tables/sales_inventory/inventory/stock_movements_table.dart';
 import 'tables/returns_table.dart';
 import 'tables/return_items_table.dart';
 
@@ -83,12 +94,26 @@ part 'app_database.g.dart';
     PurchaseReceiptItems,
     PurchasePayments,
     SupplierProducts,
+    Stores,
+    ProductStocks,
+    StockMovements,
+
+      // Stock Transfers
+  StockTransfers,
+  StockTransferItems,
+
+  // Stock Counts
+  StockCounts,
+  StockCountItems,
+
+  // Stock Adjustments
+  StockAdjustments,
+  StockAdjustmentItems,
 
 
     
     Sales,
     SaleItems,
-    StockMovements,
     Returns,
     ReturnItems,
     ReferenceTestParents,
@@ -106,12 +131,15 @@ ReferenceTestChildren,
     PurchasePaymentsDao,
     SupplierProductsDao,
     PurchaseTransactionsDao,
+    StoresDao,
+    ProductStocksDao,
+    StockMovementsDao,
+    StockTransfersDao,
 
 
 
 
     SalesDao,
-    StockDao,
     ReportsDao,
     HomeDao,
     DatabaseMaintenanceDao,
@@ -121,7 +149,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   Future<void> _createProductIndexes() async {
     // One base unit per product.
@@ -212,6 +240,41 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await _checkNoDuplicateProductFlags();
             await _createProductIndexes();
+          }
+
+          if (from < 4) {
+            final currentTable = await customSelect(
+              '''SELECT name FROM sqlite_master
+              WHERE type = 'table' AND name = 'stock_movements' ''',
+            ).get();
+            final legacyTable = await customSelect(
+              '''SELECT name FROM sqlite_master
+              WHERE type = 'table' AND name = 'legacy_stock_movements' ''',
+            ).get();
+
+            if (currentTable.isNotEmpty) {
+              if (legacyTable.isNotEmpty) {
+                throw StateError(
+                  'Cannot archive stock_movements because '
+                  'legacy_stock_movements already exists.',
+                );
+              }
+
+              await customStatement(
+                'ALTER TABLE stock_movements '
+                'RENAME TO legacy_stock_movements',
+              );
+            }
+
+            await migrator.createTable(stores);
+            await migrator.createTable(productStocks);
+            await migrator.createTable(stockMovements);
+            await migrator.createTable(stockTransfers);
+            await migrator.createTable(stockTransferItems);
+            await migrator.createTable(stockCounts);
+            await migrator.createTable(stockCountItems);
+            await migrator.createTable(stockAdjustments);
+            await migrator.createTable(stockAdjustmentItems);
           }
         },
         beforeOpen: (details) async {

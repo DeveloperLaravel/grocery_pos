@@ -279,7 +279,6 @@ import '../database/daos/master_data/parties/suppliers_dao.dart' as _i934;
 import '../database/daos/master_data/products/products_dao.dart' as _i1036;
 import '../database/daos/reports_dao.dart' as _i534;
 import '../database/daos/sales_dao.dart' as _i340;
-import '../database/daos/stock_dao.dart' as _i671;
 import '../settings/app_settings_controller.dart' as _i131;
 import 'app_module.dart' as _i460;
 
@@ -319,8 +318,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i534.ReportsDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i340.SalesDao>(
         () => _i340.SalesDao(gh<_i982.AppDatabase>()));
-    gh.lazySingleton<_i671.StockDao>(
-        () => _i671.StockDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i963.ProductsRepository>(
         () => _i764.ProductRepositoryImpl(gh<_i351.ProductsLocalDataSource>()));
     gh.lazySingleton<_i543.SupplierRepository>(() =>
@@ -333,18 +330,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i958.GoogleDriveDataSource(gh<_i85.GoogleAuthDataSource>()));
     gh.lazySingleton<_i735.HomeLocalDataSource>(
         () => _i139.HomeLocalDataSourceImpl(gh<_i450.HomeDao>()));
-    gh.lazySingleton<_i814.InventoryLocalDataSource>(
-        () => _i1039.InventoryLocalDataSourceImpl(
-              gh<_i982.AppDatabase>(),
-              gh<_i1036.ProductsDao>(),
-              gh<_i671.StockDao>(),
-            ));
     gh.lazySingleton<_i0.HomeRepository>(
         () => _i76.HomeRepositoryImpl(gh<_i735.HomeLocalDataSource>()));
     gh.lazySingleton<_i442.CustomerLocalDataSource>(
         () => _i882.CustomerLocalDataSourceImpl(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i871.GetHomeDashboardUseCase>(
         () => _i871.GetHomeDashboardUseCase(gh<_i0.HomeRepository>()));
+    gh.lazySingleton<_i814.InventoryLocalDataSource>(
+        () => _i1039.InventoryLocalDataSourceImpl(
+              gh<_i982.AppDatabase>(),
+              gh<_i1036.ProductsDao>(),
+              gh<InvalidType>(),
+            ));
     gh.lazySingleton<_i349.SupplierFilterUseCases>(
         () => _i349.SupplierFilterUseCases(gh<_i543.SupplierRepository>()));
     gh.lazySingleton<_i689.SupplierFinancialUseCases>(

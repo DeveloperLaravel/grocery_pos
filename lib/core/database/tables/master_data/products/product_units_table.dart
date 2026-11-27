@@ -7,48 +7,38 @@ import 'products_table.dart';
 class ProductUnits extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  // Product relationship
   IntColumn get productId => integer().references(
         Products,
         #id,
         onDelete: KeyAction.cascade,
       )();
 
-  // Unit name
   TextColumn get unitName => text().withLength(
         min: 1,
         max: 100,
       )();
 
-  // Conversion to base unit
-  // Piece = 1, Box = 12, Carton = 144
   RealColumn get conversionFactor =>
       real().withDefault(const Constant(1.0))();
 
-  // Unit prices
   RealColumn get costPrice =>
       real().withDefault(const Constant(0.0))();
 
   RealColumn get salePrice =>
       real().withDefault(const Constant(0.0))();
 
-  // Base unit
   BoolColumn get isBaseUnit =>
       boolean().withDefault(const Constant(false))();
 
-  // Default selling unit
   BoolColumn get isDefault =>
       boolean().withDefault(const Constant(false))();
 
-  // Status
   BoolColumn get isActive =>
       boolean().withDefault(const Constant(true))();
 
-  // Sorting
   IntColumn get sortOrder =>
       integer().withDefault(const Constant(0))();
 
-  // Timestamps
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
 
@@ -62,9 +52,9 @@ class ProductUnits extends Table {
 
   @override
   List<String> get customConstraints => [
-        'CHECK (conversionFactor > 0)',
-        'CHECK (costPrice >= 0)',
-        'CHECK (salePrice >= 0)',
-        'CHECK (sortOrder >= 0)',
+        'CHECK (conversion_factor > 0)',
+        'CHECK (cost_price >= 0)',
+        'CHECK (sale_price >= 0)',
+        'CHECK (sort_order >= 0)',
       ];
 }

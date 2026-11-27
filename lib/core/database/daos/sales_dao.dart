@@ -5,7 +5,8 @@ import '../app_database.dart';
 import '../tables/master_data/products/products_table.dart';
 import '../tables/sales_table.dart';
 import '../tables/sale_items_table.dart';
-import '../tables/stock_movements_table.dart';
+import '../tables/sales_inventory/inventory/stock_movements_table.dart';
+import '../tables/sales_inventory/inventory/stores_table.dart';
 
 part 'sales_dao.g.dart';
 
@@ -15,11 +16,11 @@ part 'sales_dao.g.dart';
     Sales,
     SaleItems,
     StockMovements,
+    Stores,
   ],
 )
 @lazySingleton
-class SalesDao extends DatabaseAccessor<AppDatabase>
-    with _$SalesDaoMixin {
+class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   SalesDao(super.db);
 
   double _money(double value) {
@@ -53,6 +54,19 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
     return attachedDatabase.transaction(() async {
       final now = DateTime.now();
 
+      final mainStore = await (select(stores)
+            ..where(
+              (table) =>
+                  table.isMain.equals(true) & table.isActive.equals(true),
+            )
+            ..orderBy([(table) => OrderingTerm.asc(table.id)])
+            ..limit(1))
+          .getSingleOrNull();
+
+      if (mainStore == null) {
+        throw StateError('يجب تحديد مخزن رئيسي نشط قبل تسجيل المبيعات.');
+      }
+
       var subtotal = 0.0;
 
       final productsToSell = <ProductDb>[];
@@ -67,18 +81,13 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
         }
 
         final product = await (select(products)
-              ..where((tbl) => tbl.id.equals(productId)))
+              ..where(
+                (tbl) => tbl.id.equals(productId) & tbl.isActive.equals(true),
+              ))
             .getSingleOrNull();
 
         if (product == null) {
-          throw StateError('المنتج رقم $productId غير موجود.');
-        }
-
-        if (product.quantity < quantity) {
-          throw StateError(
-            'الكمية غير كافية للمنتج: ${product.name}. '
-            'المتاح: ${product.quantity}',
-          );
+          throw StateError('المنتج رقم $productId غير موجود أو غير نشط.');
         }
 
         if (product.salePrice < 0 || product.costPrice < 0) {
@@ -134,35 +143,25 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
           ),
         );
 
-        // خصم الكمية من المخزون.
-        final newQuantity = product.quantity - quantity;
-
-        await (update(products)
-              ..where((tbl) => tbl.id.equals(product.id)))
-            .write(
-          ProductsCompanion(
-            quantity: Value(newQuantity),
-            updatedAt: Value(now),
-          ),
-        );
-
-        // تسجيل حركة البيع.
-        await into(stockMovements).insert(
-          StockMovementsCompanion.insert(
-            productId: product.id,
-            type: 'sale',
-            quantity: quantity,
-            reference: Value(invoiceNumber.trim()),
-            note: Value('بيع من الفاتورة $invoiceNumber'),
-            createdAt: Value(now),
-          ),
+        await attachedDatabase.stockMovementsDao.recordMovementInTransaction(
+          storeId: mainStore.id,
+          productId: product.id,
+          movementNumber: 'SALE-$saleId-${product.id}',
+          movementType: 'sale',
+          referenceType: 'sale',
+          referenceId: saleId,
+          enteredQuantity: quantity,
+          unitCost: product.costPrice,
+          note: 'بيع من الفاتورة $invoiceNumber',
+          movementDate: now,
         );
       }
 
       return saleId;
     });
   }
- /// إلغاء فاتورة وإرجاع المنتجات إلى المخزون.
+
+  /// إلغاء فاتورة وإرجاع المنتجات إلى المخزون.
   ///
   /// تتم جميع العمليات داخل Transaction واحدة:
   /// 1. التحقق من وجود الفاتورة.
@@ -179,8 +178,7 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
 
     return attachedDatabase.transaction(() async {
       // 1. البحث عن الفاتورة.
-      final sale = await (select(sales)
-            ..where((tbl) => tbl.id.equals(saleId)))
+      final sale = await (select(sales)..where((tbl) => tbl.id.equals(saleId)))
           .getSingleOrNull();
 
       if (sale == null) {
@@ -188,13 +186,14 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
       }
 
       // 2. منع إلغاء الفاتورة أكثر من مرة.
-      // وجود حركة sale_return لنفس رقم الفاتورة
+      // وجود حركة إرجاع مرتبطة بالفاتورة
       // يعني أن عملية الإلغاء سبق تنفيذها.
       final existingReturn = await (select(stockMovements)
             ..where(
               (tbl) =>
-                  tbl.type.equals('sale_return') &
-                  tbl.reference.equals(sale.invoiceNumber),
+                  tbl.movementType.equals('return') &
+                  tbl.referenceType.equals('sale_cancel') &
+                  tbl.referenceId.equals(saleId),
             )
             ..limit(1))
           .getSingleOrNull();
@@ -234,30 +233,34 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
           );
         }
 
-        final restoredQuantity = product.quantity + item.quantity;
+        final saleMovement = await (select(stockMovements)
+              ..where(
+                (tbl) =>
+                    tbl.movementType.equals('sale') &
+                    tbl.referenceType.equals('sale') &
+                    tbl.referenceId.equals(saleId) &
+                    tbl.productId.equals(item.productId),
+              )
+              ..limit(1))
+            .getSingleOrNull();
 
-        // إعادة الكمية.
-        await (update(products)
-              ..where((tbl) => tbl.id.equals(item.productId)))
-            .write(
-          ProductsCompanion(
-            quantity: Value(restoredQuantity),
-            updatedAt: Value(now),
-          ),
-        );
+        if (saleMovement == null) {
+          throw StateError(
+            'تعذر العثور على حركة البيع للمنتج ${item.productName}.',
+          );
+        }
 
-        // تسجيل حركة عكسية للبيع.
-        await into(stockMovements).insert(
-          StockMovementsCompanion.insert(
-            productId: item.productId,
-            type: 'sale_return',
-            quantity: item.quantity,
-            reference: Value(sale.invoiceNumber),
-            note: Value(
-              'إرجاع مخزون بسبب إلغاء الفاتورة ${sale.invoiceNumber}',
-            ),
-            createdAt: Value(now),
-          ),
+        await attachedDatabase.stockMovementsDao.recordMovementInTransaction(
+          storeId: saleMovement.storeId,
+          productId: item.productId,
+          movementNumber: 'SALE-RETURN-$saleId-${item.productId}',
+          movementType: 'return',
+          referenceType: 'sale_cancel',
+          referenceId: saleId,
+          enteredQuantity: item.quantity,
+          unitCost: saleMovement.unitCost,
+          note: 'إرجاع مخزون بسبب إلغاء الفاتورة ${sale.invoiceNumber}',
+          movementDate: now,
         );
       }
 
@@ -266,15 +269,11 @@ class SalesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<SaleDb?> getSaleById(int id) {
-    return (select(sales)
-          ..where((tbl) => tbl.id.equals(id)))
-        .getSingleOrNull();
+    return (select(sales)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<SaleItemDb>> getSaleItems(int saleId) {
-    return (select(saleItems)
-          ..where((tbl) => tbl.saleId.equals(saleId)))
-        .get();
+    return (select(saleItems)..where((tbl) => tbl.saleId.equals(saleId))).get();
   }
 
   Future<List<SaleDb>> getAllSales({

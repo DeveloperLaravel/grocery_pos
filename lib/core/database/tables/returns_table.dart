@@ -1,7 +1,7 @@
 
 import 'package:drift/drift.dart';
 
-import 'sales_table.dart';
+import 'sales_inventory/sales/sales_table.dart';
 
 @DataClassName('ReturnDb')
 class Returns extends Table {

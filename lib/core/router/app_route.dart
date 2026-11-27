@@ -27,6 +27,7 @@ import '../../features/products/presentation/pages/products_page.dart';
 // Inventory
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/stock_movements_page.dart';
+import '../../features/inventory/presentation/pages/stock_transfers_page.dart';
 
 // Sales
 import '../../features/sales/presentation/pages/sales_page.dart';
@@ -70,42 +71,41 @@ class AppRouter {
             ],
           ),
 
-  StatefulShellBranch(
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: ':id/units',
+                name: AppRoutes.productUnits,
+                builder: (context, state) {
+                  final productId = int.parse(
+                    state.pathParameters['id']!,
+                  );
 
-      routes: [
-GoRoute(
-  path: ':id/units',
-  name: AppRoutes.productUnits,
-  builder: (context, state) {
-    final productId = int.parse(
-      state.pathParameters['id']!,
-    );
-
-    // أنشئ ProductUnitsPage مع Bloc جديد من GetIt.
-    return ProductUnitsPage(
-      productId: productId,
-      bloc: getIt<ProductUnitsBloc>(),
-    );
-  },
-),
-      ],
-  ),
+                  // أنشئ ProductUnitsPage مع Bloc جديد من GetIt.
+                  return ProductUnitsPage(
+                    productId: productId,
+                    bloc: getIt<ProductUnitsBloc>(),
+                  );
+                },
+              ),
+            ],
+          ),
 
           StatefulShellBranch(
             routes: [
-             GoRoute(
-  path: ':id/barcodes',
-  name: AppRoutes.productBarcodes,
-  builder: (context, state) {
-    final productId = int.parse(
-      state.pathParameters['id']!,
-    );
+              GoRoute(
+                path: ':id/barcodes',
+                name: AppRoutes.productBarcodes,
+                builder: (context, state) {
+                  final productId = int.parse(
+                    state.pathParameters['id']!,
+                  );
 
-    return ProductBarcodesPage(
-      productId: productId,
-    );
-  },
-),
+                  return ProductBarcodesPage(
+                    productId: productId,
+                  );
+                },
+              ),
             ],
           ),
 
@@ -160,21 +160,21 @@ GoRoute(
                     },
                   ),
 
-    GoRoute(
-          path: 'categories',
-          name: AppRoutes.categories,
-          builder: (context, state) => const CategoriesPage(),
-        ),
-  GoRoute(
-  path: 'brands',
-  name: AppRoutes.brands,
-  builder: (context, state) {
-    return BlocProvider(
-      create: (_) => getIt<BrandsBloc>(),
-      child: const BrandsPage(),
-    );
-  },
-),
+                  GoRoute(
+                    path: 'categories',
+                    name: AppRoutes.categories,
+                    builder: (context, state) => const CategoriesPage(),
+                  ),
+                  GoRoute(
+                    path: 'brands',
+                    name: AppRoutes.brands,
+                    builder: (context, state) {
+                      return BlocProvider(
+                        create: (_) => getIt<BrandsBloc>(),
+                        child: const BrandsPage(),
+                      );
+                    },
+                  ),
                   // أضف تفاصيل المنتج وتعديله هنا
                   // بعد إنشاء ProductDetailsPage و EditProductPage.
                 ],
@@ -204,6 +204,13 @@ GoRoute(
                     name: AppRoutes.stockMovements,
                     builder: (context, state) {
                       return const StockMovementsPage();
+                    },
+                  ),
+                  GoRoute(
+                    path: 'transfers',
+                    name: AppRoutes.stockTransfers,
+                    builder: (context, state) {
+                      return const StockTransfersPage();
                     },
                   ),
                   GoRoute(

@@ -21,6 +21,7 @@ static const productBarcodes = 'productBarcodes';
 static const productUnits = 'productUnits';
   // Inventory
   static const stockMovements = 'stockMovements';
+  static const stockTransfers = 'stockTransfers';
   static const lowStock = 'lowStock';
 
   // Sales

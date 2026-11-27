@@ -145,8 +145,9 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     int? createdBy,
   }) async {
     final number = _normalizeText(transferNumber, 'رقم التحويل');
-
-    await _validateStores(fromStoreId, toStoreId);
+    if (number.length > 50) {
+      throw ArgumentError('رقم التحويل يجب ألا يتجاوز 50 حرفاً.');
+    }
 
     if (expectedArrivalDate != null &&
         expectedArrivalDate.isBefore(transferDate)) {
@@ -156,6 +157,8 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     }
 
     return transaction(() async {
+      await _validateStores(fromStoreId, toStoreId);
+
       final existing = await (select(stockTransfers)
             ..where((t) => t.transferNumber.equals(number)))
           .getSingleOrNull();
@@ -169,10 +172,10 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
           transferNumber: number,
           fromStoreId: fromStoreId,
           toStoreId: toStoreId,
-          transferDate: transferDate,
+          transferDate: Value(transferDate),
           expectedArrivalDate: Value(expectedArrivalDate),
           note: Value(note?.trim()),
-          createdBy: Value(createdBy),
+          createdBy: Value(createdBy?.toString()),
         ),
       );
     });
@@ -205,11 +208,15 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     }
 
     final normalizedUnit = _normalizeText(unitName, 'اسم الوحدة');
+    if (normalizedUnit.length > 100) {
+      throw ArgumentError('اسم الوحدة يجب ألا يتجاوز 100 حرف.');
+    }
+    if (productUnitId != null) {
+      _validatePositive(productUnitId, 'رقم وحدة المنتج');
+    }
 
     return transaction(() async {
       await _ensureDraft(transferId);
-
-      final transfer = await _getTransfer(transferId);
 
       final product = await (select(products)
             ..where((t) => t.id.equals(productId) & t.isActive.equals(true)))
@@ -233,8 +240,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
           throw StateError('وحدة المنتج غير موجودة أو غير نشطة.');
         }
 
-        if ((unit.conversionFactor - conversionFactor).abs() >
-            _epsilon) {
+        if ((unit.conversionFactor - conversionFactor).abs() > _epsilon) {
           throw ArgumentError(
             'معامل التحويل لا يطابق معامل الوحدة المسجل للمنتج.',
           );
@@ -353,12 +359,11 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
         throw StateError('لا يمكن اعتماد تحويل بدون أصناف.');
       }
 
-      await (update(stockTransfers)
-            ..where((t) => t.id.equals(transferId)))
+      await (update(stockTransfers)..where((t) => t.id.equals(transferId)))
           .write(
         StockTransfersCompanion(
           status: const Value('approved'),
-          approvedBy: Value(approvedBy),
+          approvedBy: Value(approvedBy?.toString()),
           updatedAt: Value(DateTime.now()),
         ),
       );
@@ -394,7 +399,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
           storeId: transfer.fromStoreId,
           productId: item.productId,
           productUnitId: item.productUnitId,
-          movementNumber: '${transfer.transferNumber}-L${item.id}-OUT',
+          movementNumber: 'TRF-${transfer.id}-L${item.id}-OUT',
           movementType: 'transfer_out',
           referenceType: 'stock_transfer',
           referenceId: transferId,
@@ -407,8 +412,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
           movementDate: date,
         );
 
-        await (update(stockTransferItems)
-              ..where((t) => t.id.equals(item.id)))
+        await (update(stockTransferItems)..where((t) => t.id.equals(item.id)))
             .write(
           StockTransferItemsCompanion(
             shippedQuantity: Value(item.baseQuantity),
@@ -417,13 +421,12 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
         );
       }
 
-      await (update(stockTransfers)
-            ..where((t) => t.id.equals(transferId)))
+      await (update(stockTransfers)..where((t) => t.id.equals(transferId)))
           .write(
         StockTransfersCompanion(
           status: const Value('shipped'),
           shippedAt: Value(date),
-          shippedBy: Value(shippedBy),
+          shippedBy: Value(shippedBy?.toString()),
           updatedAt: Value(DateTime.now()),
         ),
       );
@@ -454,11 +457,9 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
         throw StateError('لا يمكن استلام هذا التحويل في حالته الحالية.');
       }
 
-      final baseReceived =
-          receivedEnteredQuantity * item.conversionFactor;
+      final baseReceived = receivedEnteredQuantity * item.conversionFactor;
 
-      final remaining =
-          item.shippedQuantity - item.receivedQuantity;
+      final remaining = item.shippedQuantity - item.receivedQuantity;
 
       if (baseReceived - remaining > _epsilon) {
         throw StateError('الكمية المستلمة أكبر من الكمية المشحونة المتبقية.');
@@ -466,8 +467,21 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
 
       final date = receivedAt ?? DateTime.now();
 
+      final transferMovements =
+          await db.stockMovementsDao.getMovementsByReference(
+        referenceType: 'stock_transfer',
+        referenceId: transfer.id,
+      );
+      final receiptSequence = transferMovements
+              .where(
+                (movement) =>
+                    movement.movementType == 'transfer_in' &&
+                    movement.productId == item.productId,
+              )
+              .length +
+          1;
       final movementNumber =
-          '${transfer.transferNumber}-L${item.id}-IN-${(item.receivedQuantity * 1000000).round()}';
+          'TRF-${transfer.id}-L${item.id}-IN-$receiptSequence';
 
       await db.stockMovementsDao.recordMovement(
         storeId: transfer.toStoreId,
@@ -481,16 +495,15 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
         conversionFactor: item.conversionFactor,
         unitName: item.unitName,
         unitCost: item.unitCost,
-        note: note?.trim() ??
-            'استلام تحويل مخزون رقم ${transfer.transferNumber}',
+        note:
+            note?.trim() ?? 'استلام تحويل مخزون رقم ${transfer.transferNumber}',
         createdBy: receivedBy,
         movementDate: date,
       );
 
       final newReceived = item.receivedQuantity + baseReceived;
 
-      await (update(stockTransferItems)
-            ..where((t) => t.id.equals(item.id)))
+      await (update(stockTransferItems)..where((t) => t.id.equals(item.id)))
           .write(
         StockTransferItemsCompanion(
           receivedQuantity: Value(newReceived),
@@ -501,18 +514,15 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
       final allItems = await _getTransferItems(transfer.id);
 
       final allReceived = allItems.every(
-        (line) =>
-            line.id == item.id
-                ? (newReceived + _epsilon >= line.shippedQuantity)
-                : (line.receivedQuantity + _epsilon >=
-                    line.shippedQuantity),
+        (line) => line.id == item.id
+            ? (newReceived + _epsilon >= line.shippedQuantity)
+            : (line.receivedQuantity + _epsilon >= line.shippedQuantity),
       );
 
       final anyReceived = allItems.any(
-        (line) =>
-            line.id == item.id
-                ? newReceived > _epsilon
-                : line.receivedQuantity > _epsilon,
+        (line) => line.id == item.id
+            ? newReceived > _epsilon
+            : line.receivedQuantity > _epsilon,
       );
 
       final newStatus = allReceived
@@ -521,13 +531,12 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
               ? 'partially_received'
               : 'shipped';
 
-      await (update(stockTransfers)
-            ..where((t) => t.id.equals(transfer.id)))
+      await (update(stockTransfers)..where((t) => t.id.equals(transfer.id)))
           .write(
         StockTransfersCompanion(
           status: Value(newStatus),
           receivedAt: allReceived ? Value(date) : const Value.absent(),
-          receivedBy: Value(receivedBy),
+          receivedBy: Value(receivedBy?.toString()),
           updatedAt: Value(DateTime.now()),
         ),
       );
@@ -548,8 +557,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
         );
       }
 
-      await (update(stockTransfers)
-            ..where((t) => t.id.equals(transferId)))
+      await (update(stockTransfers)..where((t) => t.id.equals(transferId)))
           .write(
         StockTransfersCompanion(
           status: const Value('cancelled'),
@@ -592,8 +600,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<StockTransferDb?> getTransferById(int id) {
-    return (select(stockTransfers)
-          ..where((t) => t.id.equals(id)))
+    return (select(stockTransfers)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
   }
 
@@ -625,9 +632,7 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
 
     return (select(stockTransfers)
           ..where(
-            (t) =>
-                t.fromStoreId.equals(storeId) |
-                t.toStoreId.equals(storeId),
+            (t) => t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId),
           )
           ..orderBy([
             (t) => OrderingTerm.desc(t.createdAt),
@@ -696,4 +701,5 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
 
     return (await query.getSingle()).read(count) ?? 0;
   }
+
 }

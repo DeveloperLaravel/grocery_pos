@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 import '../tables/master_data/products/products_table.dart';
-import '../tables/sales_table.dart';
+import '../tables/sales_inventory/sales/sales_table.dart';
 
 part 'home_dao.g.dart';
 

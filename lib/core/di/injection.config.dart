@@ -278,7 +278,6 @@ import '../database/daos/home_dao.dart' as _i450;
 import '../database/daos/master_data/parties/suppliers_dao.dart' as _i934;
 import '../database/daos/master_data/products/products_dao.dart' as _i1036;
 import '../database/daos/reports_dao.dart' as _i534;
-import '../database/daos/sales_dao.dart' as _i340;
 import '../settings/app_settings_controller.dart' as _i131;
 import 'app_module.dart' as _i460;
 
@@ -316,14 +315,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i450.HomeDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i534.ReportsDao>(
         () => _i534.ReportsDao(gh<_i982.AppDatabase>()));
-    gh.lazySingleton<_i340.SalesDao>(
-        () => _i340.SalesDao(gh<_i982.AppDatabase>()));
     gh.lazySingleton<_i963.ProductsRepository>(
         () => _i764.ProductRepositoryImpl(gh<_i351.ProductsLocalDataSource>()));
     gh.lazySingleton<_i543.SupplierRepository>(() =>
         _i993.SupplierRepositoryImpl(gh<_i1021.SupplierLocalDataSource>()));
-    gh.lazySingleton<_i1035.SalesLocalDataSource>(
-        () => _i1012.SalesLocalDataSourceImpl(gh<_i340.SalesDao>()));
     gh.singleton<_i131.AppSettingsController>(
         () => _i131.AppSettingsController(gh<_i460.SharedPreferences>()));
     gh.lazySingleton<_i958.GoogleDriveDataSource>(
@@ -459,6 +454,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i740.PosLocalDataSource>(
         () => _i679.PosLocalDataSourceImpl(gh<_i982.AppDatabase>()));
+    gh.lazySingleton<_i1035.SalesLocalDataSource>(
+        () => _i1012.SalesLocalDataSourceImpl(gh<InvalidType>()));
     gh.lazySingleton<_i812.SupplierCrudUseCases>(
         () => _i812.SupplierCrudUseCases(gh<_i543.SupplierRepository>()));
     gh.lazySingleton<_i411.SupplierSearchUseCases>(

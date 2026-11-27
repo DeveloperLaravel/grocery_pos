@@ -6,12 +6,14 @@ class InventoryHeader extends StatelessWidget {
     super.key,
     required this.onRefresh,
     required this.onMovements,
+    required this.onTransfers,
     required this.onAdjust,
     this.isLoading = false,
   });
 
   final VoidCallback onRefresh;
   final VoidCallback onMovements;
+  final VoidCallback onTransfers;
   final VoidCallback onAdjust;
   final bool isLoading;
 
@@ -100,6 +102,12 @@ class InventoryHeader extends StatelessWidget {
                 icon: const Icon(Icons.history_rounded),
                 label: const Text('حركات المخزون'),
               ),
+              const SizedBox(height: 9),
+              OutlinedButton.icon(
+                onPressed: onTransfers,
+                icon: const Icon(Icons.swap_horiz_rounded),
+                label: const Text('تحويلات المخزون'),
+              ),
             ],
           )
         else
@@ -115,6 +123,12 @@ class InventoryHeader extends StatelessWidget {
                 onPressed: onMovements,
                 icon: const Icon(Icons.history_rounded),
                 label: const Text('حركات المخزون'),
+              ),
+              const SizedBox(width: 10),
+              OutlinedButton.icon(
+                onPressed: onTransfers,
+                icon: const Icon(Icons.swap_horiz_rounded),
+                label: const Text('تحويلات المخزون'),
               ),
             ],
           ),

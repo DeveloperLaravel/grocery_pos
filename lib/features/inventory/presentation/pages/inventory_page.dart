@@ -126,6 +126,9 @@ class _InventoryViewState extends State<_InventoryView> {
                               onMovements: () {
                                 context.pushNamed('stockMovements');
                               },
+                              onTransfers: () {
+                                context.pushNamed('stockTransfers');
+                              },
                               onAdjust: () {
                                 _showAdjustmentDialog(
                                   context,

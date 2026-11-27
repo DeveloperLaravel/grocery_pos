@@ -5,12 +5,31 @@ import 'package:drift/drift.dart';
 // Database Connection
 // =========================================
 
+import 'daos/database_maintenance_dao.dart';
 import 'daos/master_data/parties/customers_dao.dart';
 import 'daos/master_data/parties/suppliers_dao.dart';
+import 'daos/sales_inventory/finance/expense_categories_dao.dart';
+import 'daos/sales_inventory/finance/expenses_dao.dart';
+import 'daos/sales_inventory/finance/payment_methods_dao.dart';
 import 'daos/sales_inventory/inventory/product_stocks_dao.dart';
 import 'daos/sales_inventory/inventory/stock_movements_dao.dart';
 import 'daos/sales_inventory/inventory/stock_transfers_dao.dart';
 import 'daos/sales_inventory/inventory/stores_dao.dart';
+import 'daos/sales_inventory/pos/cash_movements_dao.dart';
+import 'daos/sales_inventory/pos/pos_held_sales_dao.dart';
+import 'daos/sales_inventory/pos/pos_settings_dao.dart';
+import 'daos/sales_inventory/pos/pos_terminals_dao.dart';
+import 'daos/sales_inventory/pos/cashier_shifts_dao.dart';
+import 'daos/sales_inventory/pos/cash_registers_dao.dart';
+import 'daos/sales_inventory/pos/pos_held_sale_items_dao.dart';
+import 'daos/sales_inventory/pricing/coupon_usages_dao.dart';
+import 'daos/sales_inventory/pricing/coupons_dao.dart';
+import 'daos/sales_inventory/pricing/discount_rules_dao.dart';
+import 'daos/sales_inventory/pricing/price_list_items_dao.dart';
+import 'daos/sales_inventory/pricing/price_lists_dao.dart';
+import 'daos/sales_inventory/pricing/product_taxes_dao.dart';
+import 'daos/sales_inventory/pricing/sale_taxes_dao.dart';
+import 'daos/sales_inventory/pricing/taxes_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_items_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_orders_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_payments_dao.dart';
@@ -18,6 +37,9 @@ import 'daos/sales_inventory/purchases/purchase_receipt_items_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_receipts_dao.dart';
 import 'daos/sales_inventory/purchases/purchase_transactions_dao.dart';
 import 'daos/sales_inventory/purchases/supplier_products_dao.dart';
+import 'daos/sales_inventory/sales/sale_items_dao.dart';
+import 'daos/sales_inventory/sales/sale_payments_dao.dart';
+import 'daos/sales_inventory/sales/sales_dao.dart';
 import 'database_connection.dart';
 
 // =========================================
@@ -32,13 +54,30 @@ import 'daos/master_data/products/products_dao.dart';
 
 import 'daos/home_dao.dart';
 import 'daos/reports_dao.dart';
-import 'daos/sales_dao.dart';
-import 'daos/database_maintenance_dao.dart';
 
 // =========================================
 // Master Data Tables
 // =========================================
 
+import 'tables/sales_inventory/finance/expense_categories_table.dart';
+import 'tables/sales_inventory/finance/expenses_table.dart';
+import 'tables/sales_inventory/finance/payment_methods_table.dart';
+import 'tables/sales_inventory/pos/cash_movements_table.dart';
+import 'tables/sales_inventory/pos/cash_registers_table.dart';
+import 'tables/sales_inventory/pos/cashier_shifts_table.dart';
+import 'tables/sales_inventory/pos/pos_held_sale_items_table.dart';
+import 'tables/sales_inventory/pos/pos_held_sales_table.dart';
+import 'tables/sales_inventory/pos/pos_settings_table.dart';
+import 'tables/sales_inventory/pos/pos_terminals_table.dart';
+import 'tables/sales_inventory/pricing/coupon_usages_table.dart';
+import 'tables/sales_inventory/pricing/coupons_table.dart';
+import 'tables/sales_inventory/pricing/discount_rules_table.dart';
+import 'tables/sales_inventory/pricing/price_list_items_table.dart';
+import 'tables/sales_inventory/pricing/price_lists_table.dart';
+import 'tables/sales_inventory/pricing/product_taxes_table.dart';
+import 'tables/sales_inventory/pricing/sale_taxes_table.dart';
+import 'tables/sales_inventory/pricing/taxes_table.dart';
+import 'tables/sales_inventory/sales/sale_payments_table.dart';
 import 'tables/master_data/parties/brands_table.dart';
 import 'tables/master_data/parties/categories_table.dart';
 
@@ -68,8 +107,8 @@ import 'tables/sales_inventory/purchases/purchase_payments_table.dart';
 import 'tables/sales_inventory/purchases/purchase_receipt_items_table.dart';
 import 'tables/sales_inventory/purchases/purchase_receipts_table.dart';
 import 'tables/sales_inventory/purchases/supplier_products_table.dart';
-import 'tables/sales_table.dart';
-import 'tables/sale_items_table.dart';
+import 'tables/sales_inventory/sales/sales_table.dart';
+import 'tables/sales_inventory/sales/sale_items_table.dart';
 import 'tables/sales_inventory/inventory/stock_movements_table.dart';
 import 'tables/returns_table.dart';
 import 'tables/return_items_table.dart';
@@ -110,10 +149,33 @@ part 'app_database.g.dart';
   StockAdjustments,
   StockAdjustmentItems,
 
-
-    
     Sales,
     SaleItems,
+    SalePayments,
+
+    PosTerminals,
+    CashRegisters,
+    CashierShifts,
+    CashMovements,
+    PosSettings,
+    PosHeldSales,
+    PosHeldSaleItems,
+
+    PaymentMethods,
+    ExpenseCategories,
+    Expenses,
+
+    Taxes,
+    ProductTaxes,
+    SaleTaxes,
+    DiscountRules,
+    Coupons,
+    CouponUsages,
+    PriceLists,
+    PriceListItems,
+
+
+    
     Returns,
     ReturnItems,
     ReferenceTestParents,
@@ -136,10 +198,36 @@ ReferenceTestChildren,
     StockMovementsDao,
     StockTransfersDao,
 
-
-
-
     SalesDao,
+    SaleItemsDao,
+    SalePaymentsDao,
+
+    PosTerminalsDao,
+    CashRegistersDao,
+    CashierShiftsDao,
+    CashMovementsDao,
+    PosSettingsDao,
+    PosHeldSalesDao,
+    PosHeldSaleItemsDao,
+
+    PaymentMethodsDao,
+    ExpenseCategoriesDao,
+    ExpensesDao,
+
+    TaxesDao,
+    ProductTaxesDao,
+    SaleTaxesDao,
+    DiscountRulesDao,
+    CouponsDao,
+    CouponUsagesDao,
+    PriceListsDao,
+    PriceListItemsDao,
+
+ 
+
+
+
+
     ReportsDao,
     HomeDao,
     DatabaseMaintenanceDao,

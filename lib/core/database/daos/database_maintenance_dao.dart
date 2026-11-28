@@ -3,8 +3,8 @@ import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 import '../tables/master_data/products/products_table.dart';
-import '../tables/return_items_table.dart';
-import '../tables/returns_table.dart';
+import '../tables/sales_inventory/returns/return_items_table.dart';
+import '../tables/sales_inventory/returns/returns_table.dart';
 import '../tables/sales_inventory/sales/sale_items_table.dart';
 import '../tables/sales_inventory/sales/sales_table.dart';
 import '../tables/sales_inventory/inventory/stock_movements_table.dart';

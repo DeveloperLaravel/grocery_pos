@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/di/injection.dart';
+import '../../../../app/di/injection.dart';
 import 'receipt_print_preview_page.dart';
 
 class SaleDetailsPage extends StatefulWidget {

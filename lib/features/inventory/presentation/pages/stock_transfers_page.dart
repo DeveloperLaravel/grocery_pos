@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/di/injection.dart';
+import '../../../../app/di/injection.dart';
 
 class StockTransfersPage extends StatefulWidget {
   const StockTransfersPage({super.key});

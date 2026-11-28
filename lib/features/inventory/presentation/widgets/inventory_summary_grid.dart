@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/inventory_summary.dart';
 import '../helpers/inventory_formatters.dart';
 import 'inventory_stat_card.dart';

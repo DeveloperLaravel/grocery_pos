@@ -3,9 +3,9 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:grocery_pos/core/database/app_database.dart';
-import 'package:grocery_pos/core/di/injection.dart';
+import 'package:grocery_pos/app/di/injection.dart';
 
-import '../../../pos/domain/repositories/pos_repository.dart';
+import '../../../pos/cashier_shifts/domain/repositories/pos_repository.dart';
 
 class SalesPage extends StatefulWidget {
   const SalesPage({super.key});

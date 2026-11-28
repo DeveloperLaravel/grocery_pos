@@ -3,9 +3,10 @@ import 'package:drift/drift.dart';
 
 
 
+import '../../../app_database.dart';
 import '../../../tables/sales_inventory/customer_payments/customer_payment_allocations_table.dart';
 import '../../../tables/sales_inventory/customer_payments/customer_payments_table.dart';
-import '../sales/sales_table.dart';
+import '../../../tables/sales_inventory/sales/sales_table.dart';
 
 part 'customer_payment_allocations_dao.g.dart';
 
@@ -127,10 +128,10 @@ class CustomerPaymentAllocationsDao
 
       // 7. Check invoice remaining balance
 
-      if (amount > sale.remaining + epsilon) {
+      if (amount > sale.remainingAmount + epsilon) {
         throw StateError(
           'Allocation exceeds invoice remaining balance. '
-          'Remaining: ${sale.remaining}',
+          'Remaining: ${sale.remainingAmount}',
         );
       }
 
@@ -147,10 +148,10 @@ class CustomerPaymentAllocationsDao
 
       // 9. Update invoice balance
 
-      final newPaid = sale.paid + amount;
+      final newPaid = sale.paidAmount + amount;
 
       final newRemaining =
-          (sale.remaining - amount).clamp(0.0, double.infinity);
+          (sale.remainingAmount - amount).clamp(0.0, sale.total);
 
       final newPaymentStatus =
           newRemaining <= epsilon
@@ -163,8 +164,8 @@ class CustomerPaymentAllocationsDao
             ..where((t) => t.id.equals(saleId)))
           .write(
         SalesCompanion(
-          paid: Value(newPaid),
-          remaining: Value(newRemaining),
+          paidAmount: Value(newPaid),
+          remainingAmount: Value(newRemaining),
           paymentStatus: Value(newPaymentStatus),
         ),
       );
@@ -259,11 +260,12 @@ class CustomerPaymentAllocationsDao
       // 4. Reverse invoice balance
 
       final newPaid =
-          (sale.paid - allocation.amount)
+          (sale.paidAmount - allocation.amount)
               .clamp(0.0, double.infinity);
 
       final newRemaining =
-          sale.remaining + allocation.amount;
+          (sale.remainingAmount + allocation.amount)
+              .clamp(0.0, sale.total);
 
       const epsilon = 0.000001;
 
@@ -280,8 +282,8 @@ class CustomerPaymentAllocationsDao
             ..where((t) => t.id.equals(allocation.saleId)))
           .write(
         SalesCompanion(
-          paid: Value(newPaid),
-          remaining: Value(newRemaining),
+          paidAmount: Value(newPaid),
+          remainingAmount: Value(newRemaining),
           paymentStatus: Value(newPaymentStatus),
         ),
       );

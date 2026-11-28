@@ -27,6 +27,7 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase>
     required int saleId,
     int? customerId,
     String returnType = 'partial',
+    String refundStatus = 'pending',
     String? reason,
     String? notes,
     int? createdBy,
@@ -37,6 +38,7 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase>
         saleId: saleId,
         customerId: Value(customerId),
         returnType: Value(returnType),
+        refundStatus: Value(refundStatus),
         reason: Value(reason),
         notes: Value(notes),
         createdBy: Value(createdBy),
@@ -275,7 +277,7 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase>
         (sum, item) => sum + item.totalAmount,
       );
 
-      if (total <= 0) {
+      if (total <= 0 && returnData.refundStatus != 'not_applicable') {
         throw StateError('Invalid return total.');
       }
 

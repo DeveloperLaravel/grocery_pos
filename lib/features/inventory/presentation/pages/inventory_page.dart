@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/di/injection.dart';
+import '../../../../app/di/injection.dart';
 import '../../domain/entities/inventory_item.dart';
 
 import '../bloc/inventory_bloc.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../pos/domain/entities/sale_receipt.dart';
+import '../../../pos/cashier_shifts/domain/entities/sale_receipt.dart';
 
 class ReceiptPage extends StatelessWidget {
   const ReceiptPage({

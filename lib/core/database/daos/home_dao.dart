@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../app_database.dart';
 import '../tables/master_data/products/products_table.dart';
+import '../tables/sales_inventory/inventory/product_stocks_table.dart';
 import '../tables/sales_inventory/sales/sales_table.dart';
 
 part 'home_dao.g.dart';
@@ -11,6 +12,7 @@ part 'home_dao.g.dart';
 @DriftAccessor(
   tables: [
     Products,
+    ProductStocks,
     Sales,
   ],
 )
@@ -75,19 +77,15 @@ class HomeDao extends DatabaseAccessor<AppDatabase>
 
   // عدد المنتجات منخفضة المخزون
   Future<int> getLowStockCount() async {
-    final countExpression = products.id.count();
+    final lowStocks = await (select(productStocks)
+          ..where(
+            (table) =>
+                table.availableQuantity.isSmallerOrEqual(table.minStock) &
+                table.isActive.equals(true),
+          ))
+        .get();
 
-    final query = selectOnly(products)
-      ..addColumns([countExpression])
-      ..where(
-        products.quantity.isSmallerOrEqual(
-          products.minStock,
-        ),
-      );
-
-    final row = await query.getSingle();
-
-    return row.read(countExpression) ?? 0;
+    return lowStocks.map((stock) => stock.productId).toSet().length;
   }
 
   // آخر خمس فواتير
@@ -102,18 +100,30 @@ class HomeDao extends DatabaseAccessor<AppDatabase>
   }
 
   // المنتجات منخفضة المخزون
-  Future<List<ProductDb>> getLowStockProducts() {
-    final query = select(products)
-      ..where(
-        (table) => table.quantity.isSmallerOrEqual(
-          table.minStock,
-        ),
-      )
-      ..orderBy([
-        (table) => OrderingTerm.asc(table.quantity),
-      ])
-      ..limit(5);
+  Future<List<ProductDb>> getLowStockProducts() async {
+    final lowStocks = await (select(productStocks)
+          ..where(
+            (table) =>
+                table.availableQuantity.isSmallerOrEqual(table.minStock) &
+                table.isActive.equals(true),
+          )
+          ..orderBy([
+            (table) => OrderingTerm.asc(table.availableQuantity),
+          ]))
+        .get();
 
-    return query.get();
+    final productIds = lowStocks
+        .map((stock) => stock.productId)
+        .toSet()
+        .take(5)
+        .toList();
+
+    if (productIds.isEmpty) {
+      return [];
+    }
+
+    return (select(products)
+          ..where((table) => table.id.isIn(productIds)))
+        .get();
   }
 }

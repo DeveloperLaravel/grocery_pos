@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
 import 'pos_product_card.dart';
 
 class PosProductGrid extends StatelessWidget {

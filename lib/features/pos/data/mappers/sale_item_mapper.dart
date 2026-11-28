@@ -1,6 +1,6 @@
 import '../../../../core/database/app_database.dart';
 
-import '../../domain/entities/sale_receipt_item.dart';
+import '../../cashier_shifts/domain/entities/sale_receipt_item.dart';
 import '../models/sale_item_model.dart';
 
 extension SaleItemModelMapper on SaleItemModel {

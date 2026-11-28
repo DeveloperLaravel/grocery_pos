@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../pos/domain/entities/sale_receipt.dart';
+import '../../../pos/cashier_shifts/domain/entities/sale_receipt.dart';
 import '../../domain/entities/receipt_paper_size.dart';
 import '../../data/services/receipt_printer_service.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/cart_item.dart';
+import '../../cashier_shifts/domain/entities/cart_item.dart';
 
 class CartItemCard extends StatelessWidget {
   const CartItemCard({

@@ -5,7 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../../pos/domain/entities/sale_receipt.dart';
+import '../../../pos/cashier_shifts/domain/entities/sale_receipt.dart';
 import '../../domain/entities/receipt_paper_size.dart';
 
 class ReceiptPrinterService {

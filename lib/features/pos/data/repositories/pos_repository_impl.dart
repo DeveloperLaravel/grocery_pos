@@ -3,10 +3,10 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
 
-import '../../domain/entities/cart_item.dart';
-import '../../domain/entities/product_entity.dart';
-import '../../domain/entities/sale_receipt.dart';
-import '../../domain/repositories/pos_repository.dart';
+import '../../cashier_shifts/domain/entities/cart_item.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/sale_receipt.dart';
+import '../../cashier_shifts/domain/repositories/pos_repository.dart';
 
 import '../database/pos_local_data_source.dart';
 import '../models/checkout_item_model.dart';

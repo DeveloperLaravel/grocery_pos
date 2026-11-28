@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
 
-import '../core/di/injection.dart';
-import '../core/router/app_route.dart';
+import 'di/injection.dart';
+import 'router/app_route.dart';
 import '../core/settings/app_settings_controller.dart';
 import '../core/settings/app_settings_scope.dart';
-import '../core/theme/app_theme.dart';
+import 'theme/app_theme.dart';
 
 class GroceryApp extends StatelessWidget {
   const GroceryApp({super.key});

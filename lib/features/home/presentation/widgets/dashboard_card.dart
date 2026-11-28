@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/router/app_navigation.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../app/router/app_navigation.dart';
+import '../../../../app/theme/app_colors.dart';
 
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';

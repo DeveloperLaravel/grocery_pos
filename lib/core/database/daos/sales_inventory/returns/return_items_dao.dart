@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 
 import '../../../app_database.dart';
@@ -31,8 +30,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
   // =====================================================
 
   Future<ReturnItemDb?> getItemById(int id) {
-    return (select(returnItems)
-          ..where((t) => t.id.equals(id)))
+    return (select(returnItems)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
   }
 
@@ -67,8 +65,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
   // =====================================================
 
   Future<ReturnDb> _requireDraftReturn(int returnId) async {
-    final result = await (select(returns)
-          ..where((t) => t.id.equals(returnId)))
+    final result = await (select(returns)..where((t) => t.id.equals(returnId)))
         .getSingleOrNull();
 
     if (result == null) {
@@ -139,31 +136,24 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
     required int saleItemId,
     required int productId,
     int? productUnitId,
-
     required String productName,
     required String unitName,
-
     required double quantity,
     required double conversionFactor,
     required double baseQuantity,
     required String baseUnit,
-
     required double unitPrice,
     required double originalQuantity,
     required double originalBaseQuantity,
-
     double discountPercentage = 0,
     double discountAmount = 0,
-
     double taxPercentage = 0,
     double taxAmount = 0,
-
     required double subtotal,
     required double totalAmount,
-
     String itemCondition = 'good',
     String inventoryDisposition = 'restock',
-
+    bool addedToStock = false,
     String? reason,
     String? notes,
   }) async {
@@ -174,8 +164,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
       final existing = await (select(returnItems)
             ..where(
               (t) =>
-                  t.returnId.equals(returnId) &
-                  t.saleItemId.equals(saleItemId),
+                  t.returnId.equals(returnId) & t.saleItemId.equals(saleItemId),
             ))
           .getSingleOrNull();
 
@@ -204,8 +193,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
         throw ArgumentError('Invalid financial values.');
       }
 
-      if (itemCondition == 'good' &&
-          inventoryDisposition == 'scrapped') {
+      if (itemCondition == 'good' && inventoryDisposition == 'scrapped') {
         // Allowed only if explicitly intended.
       }
 
@@ -245,6 +233,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
           totalAmount: totalAmount,
           itemCondition: Value(itemCondition),
           inventoryDisposition: Value(inventoryDisposition),
+          addedToStock: Value(addedToStock),
           reason: Value(reason),
           notes: Value(notes),
         ),
@@ -302,8 +291,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
         saleId: parent.saleId,
       );
 
-      final available =
-          item.originalQuantity - previouslyReturned;
+      final available = item.originalQuantity - previouslyReturned;
 
       if (quantity > available + 0.000001) {
         throw StateError(
@@ -312,9 +300,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
         );
       }
 
-      await (update(returnItems)
-            ..where((t) => t.id.equals(itemId)))
-          .write(
+      await (update(returnItems)..where((t) => t.id.equals(itemId))).write(
         ReturnItemsCompanion(
           quantity: Value(quantity),
           conversionFactor: Value(conversionFactor),
@@ -352,9 +338,8 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
 
       await _requireDraftReturn(item.returnId);
 
-      final affected = await (delete(returnItems)
-            ..where((t) => t.id.equals(itemId)))
-          .go();
+      final affected =
+          await (delete(returnItems)..where((t) => t.id.equals(itemId))).go();
 
       return affected > 0;
     });
@@ -367,8 +352,7 @@ class ReturnItemsDao extends DatabaseAccessor<AppDatabase>
   Future<int> deleteItemsByReturnId(int returnId) async {
     await _requireDraftReturn(returnId);
 
-    return (delete(returnItems)
-          ..where((t) => t.returnId.equals(returnId)))
+    return (delete(returnItems)..where((t) => t.returnId.equals(returnId)))
         .go();
   }
 

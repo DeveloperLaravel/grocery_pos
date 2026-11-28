@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../router/app_navigation.dart';
+import '../../app/router/app_navigation.dart';
 import 'navigation_header.dart';
 import 'navigation_item.dart';
 

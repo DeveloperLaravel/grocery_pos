@@ -1,17 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../domain/entities/cart_item.dart';
-import '../../domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/cart_item.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
 
-import '../../domain/usecases/add_product_usecase.dart';
-import '../../domain/usecases/adjust_stock_usecase.dart';
-import '../../domain/usecases/checkout_usecase.dart';
-import '../../domain/usecases/delete_product_usecase.dart';
-import '../../domain/usecases/get_product_by_barcode_usecase.dart';
-import '../../domain/usecases/get_products_usecase.dart';
-import '../../domain/usecases/return_sale_item_usecase.dart';
-import '../../domain/usecases/update_product_usecase.dart';
+import '../../cashier_shifts/domain/usecases/add_product_usecase.dart';
+import '../../cashier_shifts/domain/usecases/adjust_stock_usecase.dart';
+import '../../cashier_shifts/domain/usecases/checkout_usecase.dart';
+import '../../cashier_shifts/domain/usecases/delete_product_usecase.dart';
+import '../../cashier_shifts/domain/usecases/get_product_by_barcode_usecase.dart';
+import '../../cashier_shifts/domain/usecases/get_products_usecase.dart';
+import '../../cashier_shifts/domain/usecases/return_sale_item_usecase.dart';
+import '../../cashier_shifts/domain/usecases/update_product_usecase.dart';
 
 import 'pos_event.dart';
 import 'pos_state.dart';

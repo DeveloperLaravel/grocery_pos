@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 import '../app_database.dart';
 import '../tables/sales_inventory/sales/sales_table.dart';
 import '../tables/sales_inventory/sales/sale_items_table.dart';
-import '../tables/returns_table.dart';
+import '../tables/sales_inventory/returns/returns_table.dart';
 import '../tables/master_data/products/products_table.dart';
 
 part 'reports_dao.g.dart';
@@ -66,10 +66,11 @@ class ReportsDao extends DatabaseAccessor<AppDatabase>
 
         COALESCE(
           (
-            SELECT SUM(r.total)
+            SELECT SUM(r.total_amount)
             FROM returns r
             WHERE r.created_at >= ?
               AND r.created_at < ?
+              AND r.status = 'confirmed'
           ), 0
         ) AS returns_total,
 

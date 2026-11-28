@@ -8,7 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/di/injection.dart';
+import '../../../../app/di/injection.dart';
 
 enum ReceiptPaperSize {
   a4,

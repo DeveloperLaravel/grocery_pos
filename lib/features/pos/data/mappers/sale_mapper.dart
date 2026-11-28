@@ -1,6 +1,6 @@
 import '../../../../core/database/app_database.dart';
 
-import '../../domain/entities/sale_receipt.dart';
+import '../../cashier_shifts/domain/entities/sale_receipt.dart';
 import '../models/sale_item_model.dart';
 import '../models/sale_model.dart';
 

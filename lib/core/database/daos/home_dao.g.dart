@@ -5,6 +5,7 @@ part of 'home_dao.dart';
 // ignore_for_file: type=lint
 mixin _$HomeDaoMixin on DatabaseAccessor<AppDatabase> {
   $ProductsTable get products => attachedDatabase.products;
+  $ProductStocksTable get productStocks => attachedDatabase.productStocks;
   $SalesTable get sales => attachedDatabase.sales;
   HomeDaoManager get managers => HomeDaoManager(this);
 }
@@ -14,6 +15,8 @@ class HomeDaoManager {
   HomeDaoManager(this._db);
   $$ProductsTableTableManager get products =>
       $$ProductsTableTableManager(_db.attachedDatabase, _db.products);
+  $$ProductStocksTableTableManager get productStocks =>
+      $$ProductStocksTableTableManager(_db.attachedDatabase, _db.productStocks);
   $$SalesTableTableManager get sales =>
       $$SalesTableTableManager(_db.attachedDatabase, _db.sales);
 }

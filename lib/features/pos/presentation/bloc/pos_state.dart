@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/cart_item.dart';
-import '../../domain/entities/product_entity.dart';
-import '../../domain/entities/sale_receipt.dart';
+import '../../cashier_shifts/domain/entities/cart_item.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/sale_receipt.dart';
 
 part 'pos_state.freezed.dart';
 

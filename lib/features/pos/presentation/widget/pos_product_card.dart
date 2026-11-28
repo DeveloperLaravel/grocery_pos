@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
 
 class PosProductCard extends StatelessWidget {
   const PosProductCard({

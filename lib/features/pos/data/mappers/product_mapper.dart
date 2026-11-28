@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../../../core/database/app_database.dart';
 
-import '../../domain/entities/product_entity.dart';
+import '../../cashier_shifts/domain/entities/product_entity.dart';
 import '../models/product_model.dart';
 
 extension ProductModelMapper on ProductModel {
